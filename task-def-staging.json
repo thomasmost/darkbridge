@@ -1,0 +1,60 @@
+{
+  "family": "darkbridge-task-staging",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "darkbridge",
+      "memory": 200,
+      "cpu": 10,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "awslogs-ecs-darkbridge-staging",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "awslogs-ecs-darkbridge-staging"
+        }
+      },
+      "environment": [
+        {
+          "name": "MYSQL_PORT",
+          "value": "3306"
+        },
+        {
+          "name": "TEST_PUBLIC_VARIABLE",
+          "value": "Not sensitive"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "TEST_SECRET_VARIABLE",
+          "valueFrom": "[[arn]]"
+        },
+        {
+          "name": "MYSQL_USERNAME",
+          "valueFrom": "[[arn]]"
+        },
+        {
+          "name": "MYSQL_HOST",
+          "valueFrom": "[[arn]]"
+        },
+        {
+          "name": "MYSQL_PASSWORD",
+          "valueFrom": "[[arn]]"
+        }
+      ]
+    }
+  ],
+  "executionRoleArn": "arn:aws:iam::921538683536:role/ecsTaskExecutionRole",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512"
+}
