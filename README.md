@@ -35,27 +35,28 @@ Here's what to expect.
 2. Run `npm install`
 3. Add a `.env` file to connect to your development MySQL server
 4. Create a `demodb` schema and run the `demodb.sql` file against your local MySQL server
-5. Run `npm run dev` to run the local server
+5. Run `npm run dev` to start the development servers and begin hacking
 
 # Infrastructure
+You will need the aws command line tool installed to execute these steps.
 
-## Creating a Container Registry
+## Create a Container Registry
 
 ```bash
-aws ecr create-repository --repository-name demo_registry --region us-east-1
+aws ecr create-repository --repository-name darkbridge_registry --region us-east-1
 ```
 ## Set up a Fargate service
 
 Register the task definition:
 
 ```bash
-aws ecs register-task-definition --region us-east-1 --cli-input-json file://$HOME/darkbridge/task-def.json
+aws ecs register-task-definition --region us-east-1 --cli-input-json file://$HOME/darkbridge/task-def-staging.json
 ```
 
 ## Create an ECS cluster:
 
 ```bash
-aws ecs create-cluster --region us-east-1 --cluster-name default
+aws ecs create-cluster --region us-east-1 --cluster-name darkbridge-staging
 ```
 
 ## Create a Fargate service:
@@ -78,7 +79,6 @@ See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/specifying-sens
 
 * Make sure the security group has an HTTP inbound rule set to 0.0.0.0 to allow public access
 * The ALB must be created and the target group specified before the service is created (see above)
-* The cluster name should probably not be 'default' going forward...
 * Similarly the app in the task definition file, the alb, and so on should be named better.
 * By default, Fargate containers are limited to 200 MiB of memory; running the server with ts-node for example creates an unstable service since ts-node compiles to memory -- it's much better to compile to disk for production.
 * RE: ENV VARIABLES, Fargate only supports secrets that are a single value, not the JSON or key value secrets. So choose OTHER when creating the secret and just put a single text value there.
@@ -101,7 +101,7 @@ docker run -d -p 80:80 [tag_name]
 
 See [Database Management](/docs/DatabaseManagement.md)
 
-## Up Next
+# Up Next
 
 - [x] ~Connecting to RDS~
 - [ ] Connecting to S3
