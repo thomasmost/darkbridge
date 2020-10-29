@@ -10,7 +10,7 @@ An opinionated infrastructure-forward modern web template built for continuous i
 ![Deploy to Production](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%20Production/badge.svg)
 
 # Resources
-Based on... 
+Created in part with reference to the following guides:
 
 * https://aws.amazon.com/blogs/opensource/github-actions-aws-fargate/
 * https://itnext.io/run-your-containers-on-aws-fargate-c2d4f6a47fda
@@ -54,13 +54,13 @@ Register the task definition:
 aws ecs register-task-definition --region us-east-1 --cli-input-json file://$HOME/darkbridge/task-def-staging.json
 ```
 
-## Create an ECS cluster:
+## Create an ECS cluster
 
 ```bash
 aws ecs create-cluster --region us-east-1 --cluster-name darkbridge-staging
 ```
 
-## Create a Fargate service:
+## Create a Fargate service
 
 **Note that you have to associate the load balancer with the service at the time of the service creation**
 
