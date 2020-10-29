@@ -25,7 +25,7 @@
 
 on: push
 
-name: Deploy to Staging Environment
+name: Deploy to Staging
 
 jobs:
   deploy:

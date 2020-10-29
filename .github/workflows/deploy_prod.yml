@@ -25,7 +25,7 @@
 
 on: workflow_dispatch
 
-name: Deploy to Production Environment
+name: Deploy to Production
 
 jobs:
   deploy:

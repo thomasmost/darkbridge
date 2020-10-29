@@ -3,10 +3,11 @@
 </p>
 <h1 align="center">Darkbridge</h1>
 
-An opinionated infrastructure-focused modern web template built for continuous integration and delivery; using Docker, AWS Fargate, and NodeJS
+An opinionated infrastructure-forward modern web template built for continuous integration and delivery; using Docker, AWS Fargate, and NodeJS
 
 ![Code Quality](https://github.com/thomasmost/darkbridge/workflows/Code%20Quality/badge.svg)
-![Deploy to Staging](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%20Staging%20Environment/badge.svg)
+![Deploy to Staging](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%20Staging/badge.svg)
+![Deploy to Production](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%20Production/badge.svg)
 
 # Resources
 Based on... 
