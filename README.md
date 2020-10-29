@@ -1,8 +1,12 @@
-# Fargate Action Demo
-Proof of concept for CI/CD with Docker, Node, and AWS Fargate
+<p align="center">
+  <img width="200" height="100" src="/darkbridge.png">
+</p>
+<h1 align="center">Darkbridge</h1>
+
+An opinionated infrastructure-focused modern web template built for continuous integration and delivery; using Docker, AWS Fargate, and NodeJS
 
 ![Code Quality](https://github.com/thomasmost/darkbridge/workflows/Code%20Quality/badge.svg)
-![Last Deploy](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%20Demo%20Environment/badge.svg)
+![Last Deploy](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%Staging%20Environment/badge.svg)
 
 # Resources
 Based on... 
