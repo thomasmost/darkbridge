@@ -1,7 +1,7 @@
 {
   "name": "darkbridge",
   "version": "0.1.0",
-  "description": "an opinionated-infrastructure modern web template built for continuous integration and delivery; using docker, fargate, and nodejs",
+  "description": "An opinionated infrastructure-forward modern web template built for continuous integration and delivery on GitHub Actions; using Docker, AWS Fargate, and NodeJS",
   "main": "src/index.ts",
   "scripts": {
     "start": "pm2 start pm2.prod.yml && pm2 log",

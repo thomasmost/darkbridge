@@ -6,7 +6,7 @@
 An opinionated infrastructure-focused modern web template built for continuous integration and delivery; using Docker, AWS Fargate, and NodeJS
 
 ![Code Quality](https://github.com/thomasmost/darkbridge/workflows/Code%20Quality/badge.svg)
-![Last Deploy](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%Staging%20Environment/badge.svg)
+![Deploy to Staging](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%20Staging%20Environment/badge.svg)
 
 # Resources
 Based on... 
@@ -15,6 +15,29 @@ Based on...
 * https://itnext.io/run-your-containers-on-aws-fargate-c2d4f6a47fda
 * https://medium.com/@ariklevliber/aws-fargate-from-start-to-finish-for-a-nodejs-app-9a0e5fbf6361
 * https://docs.aws.amazon.com/AmazonECS/latest/userguide/create-application-load-balancer.html
+
+# Development
+Here's what to expect.
+
+## Tech Stack
+* Served by NodeJS using the Koa framework
+* Rendered by React
+* Styled with Emotion
+* Tested with Jest
+* Linted, prettified, and written in highly safe and readable TypeScript
+* Packaged into a Docker image on deploy
+
+**Note that you do not need Docker installed to run the application in development,** but you will likely want to have it eventually to customize your containers.
+
+## Getting Started in Development
+
+1. Clone the repository
+2. Run `npm install`
+3. Add a `.env` file to connect to your development MySQL server
+4. Create a `demodb` schema and run the `demodb.sql` file against your local MySQL server
+5. Run `npm run dev` to run the local server
+
+# Infrastructure
 
 ## Creating a Container Registry
 
