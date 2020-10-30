@@ -3,7 +3,7 @@ import { theme } from '../theme';
 
 export const AccountForm = styled.form`
   display: block;
-  max-width: 800px;
+  max-width: 400px;
   margin: auto;
 
   a {
@@ -13,6 +13,22 @@ export const AccountForm = styled.form`
     &:hover,
     &:focus {
       color: ${theme.activeLinkColor};
+    }
+  }
+  button,
+  input[type='submit'] {
+    outline: none;
+    border: none;
+    margin-top: 5px;
+    background-color: ${theme.buttonColorPassive};
+    color: ${theme.buttonTextColor};
+    padding: 10px 30px;
+    border-radius: 3px;
+    transition: 0.5s background-color;
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      background-color: ${theme.buttonColorActive};
     }
   }
 `;

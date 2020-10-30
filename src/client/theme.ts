@@ -1,28 +1,35 @@
 // Descriptive Colors
 
-const lsLight = '#484A6D';
-const lsDark = '#2C3045';
-const lsDarkest = '#1C2035';
+const darkbridgeBlueLight = '#496089';
+const darkbridgeBlueDark = '#091D3E';
+const darkbridgeCoronaOrange = '#EEA520';
 const red = '#C32727';
 const green = '#23C38A';
+const black = '#000';
+const white = '#fff';
 const eggshell = '#efede8';
-const lightGray = '#DADADA';
-const vividPink = '#FF265D';
+const lightGray = '#dadada';
+const pink = '#FF265D';
 const lightPink = '#FF6699';
 // const gunmetal = '#01040b';
 
 export const theme = {
-  passiveLinkColor: lightPink,
-  activeLinkColor: vividPink,
-  applicationBackgroundLight: lsLight,
-  applicationBackgroundDark: lsDark,
-  applicationBackgroundDarkest: lsDarkest,
+  activeLinkColor: lightPink,
+  activePageColor: darkbridgeCoronaOrange,
+  applicationBackgroundDark: darkbridgeBlueDark,
+  applicationBackgroundLight: darkbridgeBlueLight,
   applicationTextColor: eggshell,
-  biscuitColor: lsDark,
-  categoryColor: vividPink,
-  downvoteColor: red,
-  headerBackground: lsDark,
+  headerBackground: black,
   headerTextColor: lightGray,
+  highlightColor: darkbridgeCoronaOrange,
+  passiveLinkColor: darkbridgeCoronaOrange,
+  positiveColor: pink,
   textColor: lightGray,
   upvoteColor: green,
+  warningColor: red,
+  pageHeaderColor: white,
+  buttonColorPassive: darkbridgeBlueLight,
+  buttonColorActive: darkbridgeBlueDark,
+  buttonColorDisabled: lightGray,
+  buttonTextColor: white,
 };

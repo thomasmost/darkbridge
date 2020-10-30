@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { toast } from 'react-toastify';
 import { clientTokenStore } from '../clientTokenStore';
 import { AccountForm } from '../elements/AccountForm';
-import { InlineFormField } from '../elements/InlineFormField';
+import { FormFieldPair } from '../elements/FormFieldPair';
 
 const FormHeader = styled.h2`
   font-weight: 600;
@@ -72,7 +72,7 @@ export const Register: React.FC<RouteComponentProps> = () => {
         </Link>
       </p>
 
-      <InlineFormField>
+      <FormFieldPair>
         <p>Email</p>
         <input
           type="email"
@@ -82,8 +82,8 @@ export const Register: React.FC<RouteComponentProps> = () => {
           required
           ref={userEmail}
         />
-      </InlineFormField>
-      <InlineFormField>
+      </FormFieldPair>
+      <FormFieldPair>
         <p>Password</p>
         <input
           type="password"
@@ -93,8 +93,8 @@ export const Register: React.FC<RouteComponentProps> = () => {
           required
           ref={userPassword}
         />
-      </InlineFormField>
-      <InlineFormField>
+      </FormFieldPair>
+      <FormFieldPair>
         <p>Confirm Password</p>
         <input
           type="password"
@@ -104,7 +104,7 @@ export const Register: React.FC<RouteComponentProps> = () => {
           required
           ref={confirmPasswordRef}
         />
-      </InlineFormField>
+      </FormFieldPair>
       <input type="submit" value="Register" />
     </AccountForm>
   );

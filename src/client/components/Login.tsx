@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { toast } from 'react-toastify';
 import { clientTokenStore } from '../clientTokenStore';
 import { AccountForm } from '../elements/AccountForm';
-import { InlineFormField } from '../elements/InlineFormField';
+import { FormFieldPair } from '../elements/FormFieldPair';
 
 const FormHeader = styled.h2`
   font-weight: 600;
@@ -53,7 +53,7 @@ export const Login: React.FC<RouteComponentProps> = () => {
           <b>Sign up!</b>
         </Link>
       </p>
-      <InlineFormField>
+      <FormFieldPair>
         <p>Email</p>
         <input
           type="email"
@@ -63,8 +63,8 @@ export const Login: React.FC<RouteComponentProps> = () => {
           required
           ref={userEmail}
         />
-      </InlineFormField>
-      <InlineFormField>
+      </FormFieldPair>
+      <FormFieldPair>
         <p>Password</p>
         <input
           type="password"
@@ -74,7 +74,7 @@ export const Login: React.FC<RouteComponentProps> = () => {
           required
           ref={userPassword}
         />
-      </InlineFormField>
+      </FormFieldPair>
       <p />
       <input type="submit" value="Log In" />
       <p>

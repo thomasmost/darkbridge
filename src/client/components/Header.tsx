@@ -10,9 +10,9 @@ const Logo = styled.span`
 `;
 
 const LoggedInHeader = styled.span`
-  display: inline-block;
-  margin-right: 10px;
+  display: block;
   float: right;
+  margin-right: 10px;
 `;
 
 const StyledHeader = styled.header`
@@ -34,8 +34,7 @@ const StyledLink = styled(Link)`
   text-decoration: none;
   padding: 0 10px;
   &[aria-current] {
-    color: ${theme.activeLinkColor};
-    background-color: white;
+    color: ${theme.activePageColor};
   }
 `;
 
@@ -44,7 +43,7 @@ export const Header: React.FC = () => {
   return (
     <StyledHeader>
       <StyledLink to="/">
-        <Logo>Fargate Action Demo</Logo>
+        <Logo>Darkbridge</Logo>
       </StyledLink>
       <StyledLink to="/dashboard">Dashboard</StyledLink>
       <StyledLink to="/register">Register</StyledLink>
