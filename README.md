@@ -34,7 +34,7 @@ Here's what to expect.
 
 1. Clone the repository
 2. Run `npm install`
-3. Add a `.env` file to connect to your development MySQL server; likely you can just copy the `template.env` file provided 
+3. Make a copy of the `template.env` file provided and rename it as your local `.env` file (this lets you connect to your local MySQL server)
 4. Create a `demodb` schema and run the `demodb.sql` file against your local MySQL server
 5. Run `npm run dev` to start the development servers and begin hacking
 
