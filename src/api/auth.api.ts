@@ -10,8 +10,8 @@ import { VerifyEmailRequest } from '../models/verify_email_request.model';
 const BCRYPT_WORK_FACTOR = parseInt(process.env.BCRYPT_WORK_FACTOR || '12', 10);
 
 const DEFAULT_BAD_REQUEST_MESSAGE = 'Must include a valid email and password';
-// const DEFAULT_FAILED_LOGIN_MESSAGE =
-//   'The provided email and password were not a match.';
+const DEFAULT_FAILED_LOGIN_MESSAGE =
+  'The provided email and password were not a match.';
 
 export function tokenFromAuthorizationHeader(authHeader: string) {
   if (!authHeader) {
@@ -58,37 +58,37 @@ export async function logout(ctx: Koa.ParameterizedContext) {
   }
 }
 
-// export async function login(ctx: Koa.ParameterizedContext) {
-//   const { email, password } = ctx.request.body;
+export async function login(ctx: Koa.ParameterizedContext) {
+  const { email, password } = ctx.request.body;
 
-//   if (!email || !password) {
-//     throw new AuthenticationError(DEFAULT_BAD_REQUEST_MESSAGE);
-//   }
+  if (!email || !password) {
+    throw new AuthenticationError(DEFAULT_BAD_REQUEST_MESSAGE);
+  }
 
-//   if (!validator.isEmail(email)) {
-//     throw new AuthenticationError(DEFAULT_BAD_REQUEST_MESSAGE);
-//   }
+  if (!validator.isEmail(email)) {
+    throw new AuthenticationError(DEFAULT_BAD_REQUEST_MESSAGE);
+  }
 
-//   const user = await User.findOne({
-//     where: {
-//       email: email,
-//     },
-//   });
+  const user = await User.findOne({
+    where: {
+      email: email,
+    },
+  });
 
-//   if (!user) {
-//     throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
-//   }
+  if (!user) {
+    throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
+  }
 
-//   const ok = await bcrypt.compare(password, user.password_hash);
+  const ok = await bcrypt.compare(password, user.password_hash);
 
-//   if (!ok) {
-//     throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
-//   }
+  if (!ok) {
+    throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
+  }
 
-//   const token = await issueToken(user.id, null, 'email_password');
+  const token = await issueToken(user.id, 'email_password');
 
-//   ctx.body = { token, user };
-// }
+  ctx.body = { token, user };
+}
 
 export async function register(ctx: Koa.ParameterizedContext) {
   const {

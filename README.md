@@ -34,7 +34,7 @@ Here's what to expect.
 
 1. Clone the repository
 2. Run `npm install`
-3. Add a `.env` file to connect to your development MySQL server
+3. Add a `.env` file to connect to your development MySQL server; likely you can just copy the `template.env` file provided 
 4. Create a `demodb` schema and run the `demodb.sql` file against your local MySQL server
 5. Run `npm run dev` to start the development servers and begin hacking
 
@@ -71,7 +71,7 @@ aws ecs create-service --region us-east-1 --service-name darkbridge-service-stag
 ## Working with Environment Variables
 1. Go to the AWS Secrets Manager
 2. Add an 'Other' > 'Plaintext' Secret
-3. Name it TEST_SECRET_VARIABLE and replace the arn in task-def.json
+3. Name it EXAMPLE_SECRET_VARIABLE and replace the arn in task-def.json
 4. Add the SecretsManagerReadWrite policy to your task-def's executionRole
 
 See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/specifying-sensitive-data-secrets.html

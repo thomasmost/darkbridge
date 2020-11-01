@@ -22,7 +22,7 @@ console.log(`NODE_ENV: ${NODE_ENV}`);
 
 import { doMath } from './api/do_math';
 import App from './client/App';
-import { register, tokenFromAuthorizationHeader } from './api/auth.api';
+import { login, register, tokenFromAuthorizationHeader } from './api/auth.api';
 import { consumeToken } from './helpers/auth_token.helper';
 
 const app = new Koa();
@@ -51,6 +51,7 @@ app.use(async (ctx, next) => {
 });
 
 api.post('/register', register);
+api.post('/login', login);
 api.get('/current_user', (ctx) => (ctx.body = (ctx as any).user));
 
 api.get('/do_math', (ctx) => {
@@ -62,9 +63,15 @@ api.get('/test_crash', () => {
   process.exit(1);
 });
 
-api.get('/get_test_var', (ctx) => {
+api.get('/get_secret_var', (ctx) => {
   ctx.body = {
-    var: process.env.TEST_SECRET_VARIABLE || 'None Found',
+    var: process.env.EXAMPLE_SECRET_VARIABLE || 'None Found',
+  };
+});
+
+api.get('/get_public_var', (ctx) => {
+  ctx.body = {
+    var: process.env.EXAMPLE_PUBLIC_VARIABLE || 'None Found',
   };
 });
 

@@ -22,7 +22,8 @@ export const AccountForm = styled.form`
     margin-top: 5px;
     background-color: ${theme.buttonColorPassive};
     color: ${theme.buttonTextColor};
-    padding: 10px 30px;
+    padding: 10px;
+    width: 100%;
     border-radius: 3px;
     transition: 0.5s background-color;
     cursor: pointer;

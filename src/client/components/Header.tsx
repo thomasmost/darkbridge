@@ -3,15 +3,20 @@ import { Link } from '@reach/router';
 import React from 'react';
 import { useAuth } from '../AuthProvider';
 import { theme } from '../theme';
+import { Popdown } from './Popdown';
 
 const Logo = styled.span`
   display: inline-block;
   margin-right: 10px;
 `;
 
-const LoggedInHeader = styled.span`
+const Right = styled.span`
   display: block;
   float: right;
+`;
+
+const LoggedInHeader = styled.span`
+  padding: 0 10px;
   margin-right: 10px;
 `;
 
@@ -46,12 +51,19 @@ export const Header: React.FC = () => {
         <Logo>Darkbridge</Logo>
       </StyledLink>
       <StyledLink to="/dashboard">Dashboard</StyledLink>
-      <StyledLink to="/register">Register</StyledLink>
-      <StyledLink to="/login">Log In</StyledLink>
-      <StyledLink to="/logout">Logout</StyledLink>
-      <LoggedInHeader>
-        {Boolean(user) && <>Logged in as {user?.given_name}</>}
-      </LoggedInHeader>
+      {!user && <StyledLink to="/register">Register</StyledLink>}
+      {!user && <StyledLink to="/login">Log In</StyledLink>}
+      <Right>
+        {Boolean(user) && (
+          <Popdown
+            targetContent={
+              <LoggedInHeader>Logged in as {user?.given_name}</LoggedInHeader>
+            }
+          >
+            <StyledLink to="/logout">Logout</StyledLink>
+          </Popdown>
+        )}
+      </Right>
     </StyledHeader>
   );
 };

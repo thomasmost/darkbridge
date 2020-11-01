@@ -27,13 +27,13 @@
           "value": "3306"
         },
         {
-          "name": "TEST_PUBLIC_VARIABLE",
+          "name": "EXAMPLE_PUBLIC_VARIABLE",
           "value": "Not sensitive"
         }
       ],
       "secrets": [
         {
-          "name": "TEST_SECRET_VARIABLE",
+          "name": "EXAMPLE_SECRET_VARIABLE",
           "valueFrom": "[[arn]]"
         },
         {

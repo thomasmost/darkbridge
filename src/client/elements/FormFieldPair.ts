@@ -16,5 +16,6 @@ export const FormFieldPair = styled.div`
     border-radius: 3px;
     outline: none;
     border: none;
+    box-sizing: border-box;
   }
 `;

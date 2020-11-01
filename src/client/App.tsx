@@ -3,13 +3,14 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { Router } from '@reach/router';
 
-import { Dashboard } from './components/Dashboard';
+import { Dashboard } from './pages/Dashboard';
 import { Header } from './components/Header';
-import { Home } from './components/Home';
-import { Login } from './components/Login';
-import { Register } from './components/Register';
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
 import { theme } from './theme';
 import { AuthProvider } from './AuthProvider';
+import { Logout } from './pages/Logout';
 
 if (typeof window !== 'undefined') {
   require('react-toastify/dist/ReactToastify.css');
@@ -55,6 +56,7 @@ const App = () => {
             <Home path="/" />
             <Dashboard path="dashboard" />
             <Login path="login" />
+            <Logout path="logout" />
             <Register path="register" />
           </Router>
         </Main>

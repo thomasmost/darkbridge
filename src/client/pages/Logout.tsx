@@ -1,9 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { useAuth } from '../AuthProvider';
+import React, { useEffect, useState } from 'react';
 
 import { Link, RouteComponentProps } from '@reach/router';
 import styled from '@emotion/styled';
-// import { toast } from 'react-toastify';
 import { clientTokenStore } from '../clientTokenStore';
 
 const FormHeader = styled.h2`
@@ -11,18 +9,17 @@ const FormHeader = styled.h2`
 `;
 
 export const Logout: React.FC<RouteComponentProps> = () => {
-  const userEmail = useRef<HTMLInputElement>(null);
-  const userPassword = useRef<HTMLInputElement>(null);
-  const { login } = useAuth();
+  const [sessionCleared, setSessionCleared] = useState<boolean>(false);
 
   useEffect(() => {
     fetch('/api/logout');
     clientTokenStore.clear();
+    setSessionCleared(true);
   });
 
   return (
     <div>
-      <FormHeader>You are now logged out.</FormHeader>
+      {sessionCleared && <FormHeader>You are now logged out.</FormHeader>}
       <Link to="/home">Go Home</Link>
     </div>
   );

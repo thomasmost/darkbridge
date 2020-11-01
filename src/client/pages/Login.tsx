@@ -18,23 +18,29 @@ export const Login: React.FC<RouteComponentProps> = () => {
   const { login } = useAuth();
 
   async function loginUser(email: string, password: string) {
-    const result = await fetch('/.netlify/functions/api?auth=login', {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-    const data = (await result.json()) as { token: string; user: any };
-    login(data.user);
-    clientTokenStore.set(data.token);
+    try {
+      const result = await fetch('/api/login', {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = (await result.json()) as { token: string; user: any };
+      login(data.user);
+      clientTokenStore.set(data.token);
+    } catch (err) {
+      toast.error('Login failed');
+    }
   }
 
-  function onSubmit() {
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     const email = userEmail.current?.value;
     const password = userPassword.current?.value;
     if (!email || !password) {
