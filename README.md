@@ -17,6 +17,11 @@ Created in part with reference to the following guides:
 * https://medium.com/@ariklevliber/aws-fargate-from-start-to-finish-for-a-nodejs-app-9a0e5fbf6361
 * https://docs.aws.amazon.com/AmazonECS/latest/userguide/create-application-load-balancer.html
 
+# Why
+This is kind of a big question. Fundamentally, though, I think that 90% of tutorials, templates, and 'get started' guides only ever take you about half the way there (if that!) and as a relative newcomer to scalable, production-quality infrastructure, I could have really benefited from a guide like this one.
+
+For a more detailed breakdown, see this [piece-by-piece rationale](/docs/Why.md).
+
 # Development
 Here's what to expect.
 
@@ -37,6 +42,13 @@ Here's what to expect.
 3. Make a copy of the `template.env` file provided and rename it as your local `.env` file (this lets you connect to your local MySQL server)
 4. Create a `demodb` schema and run the `demodb.sql` file against your local MySQL server
 5. Run `npm run dev` to start the development servers and begin hacking
+
+## Next Steps
+When you're ready to deploy your application to a 'production-like' staging environment, follow the steps below ([Infrastructure](#Infrastructure)) to set up AWS resources for that environment (you will need to repeat these steps for your production environment). Once the resources are available, configure the necessary environment variables as secrets in the AWS Secrets Manager and replace the `[[arn]]` fields in your `task-def-staging.json` file.
+
+Test the deploy by going to your GitHub repository and navigating to **Actions** > **Deploy to Staging** > **Run workflow** and hitting the green button to run the workflow.
+
+Once you've verified that your manual deploys are working, I'd recommend changing the run condition in `.github/workflow/deploy_staging.yml` to run the staging deploy on every push to the `main` branch. **The production deploy trigger should always be manual.**
 
 # Infrastructure
 You will need the aws command line tool installed to execute these steps.
