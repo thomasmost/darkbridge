@@ -5,6 +5,7 @@ import { IUserDto } from '../shared/user.dto';
 export interface IAuthContext {
   user: IUserDto | null;
   login: (user: IUserDto) => void;
+  logout: () => void;
   // updateUser: (updates: IUserUpdateFields) => void;
 }
 

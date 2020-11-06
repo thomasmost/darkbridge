@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../AuthProvider';
 
-import { Link, RouteComponentProps } from '@reach/router';
+import { Link, RouteComponentProps, useNavigate } from '@reach/router';
 import styled from '@emotion/styled';
 import { toast } from 'react-toastify';
 import { clientTokenStore } from '../clientTokenStore';
@@ -15,7 +15,14 @@ const FormHeader = styled.h2`
 export const Login: React.FC<RouteComponentProps> = () => {
   const userEmail = useRef<HTMLInputElement>(null);
   const userPassword = useRef<HTMLInputElement>(null);
-  const { login } = useAuth();
+  const navigate = useNavigate();
+  const { login, user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  });
 
   async function loginUser(email: string, password: string) {
     try {
@@ -34,6 +41,7 @@ export const Login: React.FC<RouteComponentProps> = () => {
       const data = (await result.json()) as { token: string; user: any };
       login(data.user);
       clientTokenStore.set(data.token);
+      navigate('/');
     } catch (err) {
       toast.error('Login failed');
     }

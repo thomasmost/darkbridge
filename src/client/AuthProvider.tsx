@@ -22,6 +22,7 @@ function getCurrentUser() {
 const AuthContext = React.createContext<IAuthContext>({
   user: null,
   login: () => null,
+  logout: () => null,
   // updateUser: () => null,
 });
 
@@ -44,9 +45,15 @@ export const AuthProvider: React.FC = ({ children }) => {
     setUser(user);
   };
 
+  const logout = async () => {
+    setUser(null);
+    clientTokenStore.clear();
+  };
+
   const value = useMemo(() => {
     return {
       login,
+      logout,
       // updateUser,
       user,
     };
