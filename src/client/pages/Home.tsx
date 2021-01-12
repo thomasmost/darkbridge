@@ -3,6 +3,8 @@ import { RouteComponentProps } from '@reach/router';
 import React from 'react';
 import { theme } from '../theme';
 
+import { Icon } from '../elements/Icon';
+
 const Header = styled.h1`
   font-size: 2em;
   padding: 20px;
@@ -11,6 +13,9 @@ const Header = styled.h1`
 
 export const Home: React.FC<RouteComponentProps> = () => (
   <div>
-    <Header>Welcome Home</Header>
+    <Header>
+      <Icon name="darkbridge" />
+      Welcome Home
+    </Header>
   </div>
 );
