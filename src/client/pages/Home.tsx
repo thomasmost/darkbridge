@@ -11,11 +11,15 @@ const Header = styled.h1`
   color: ${theme.pageHeaderColor};
 `;
 
+const HeaderText = styled.span`
+  padding-left: 10px;
+`;
+
 export const Home: React.FC<RouteComponentProps> = () => (
   <div>
     <Header>
-      <Icon name="darkbridge" />
-      Welcome Home
+      <Icon name="home" />
+      <HeaderText>Welcome Home</HeaderText>
     </Header>
   </div>
 );
