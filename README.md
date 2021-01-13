@@ -121,6 +121,7 @@ See [Database Management](/docs/DatabaseManagement.md)
 
 - [x] ~Connecting to RDS~
 - [ ] Connecting to S3
+- [ ] Optional connecting to Mailgun
 - [x] ~Continuous integration tests run on push~
 - [ ] Sourcemaps for production error monitoring
 - [ ] Use the image output from the staging deploy for the prod deploy
