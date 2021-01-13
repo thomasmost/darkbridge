@@ -44,7 +44,10 @@ Here's what to expect.
 5. Run `npm run dev` to start the development servers and begin hacking
 
 ## Debugging
-One of the most critical pieces of development is easily being able to step through code. **At this time, debugging Darkbridge projects is sub-optimal** (see [Todos](#Todos)); ideally you'd be able to attach to the running server process. Currently you have to stop the server (`pm2 stop server`) and then run the `Launch Debug Server` configuration from VS Code's debug menu (configured in the [launch.json](/.vscode/launch.json) file) in order to step through the server code.
+One of the most critical pieces of development is easily being able to step through code. There are two ways to step through the server code:
+
+  1. Attach to the currently running process, by running the `Attach to Server` configuration from VS Code's debug menu.
+  2. Stop the server (`pm2 stop server`) and then run the `Launch Debug Server` configuration from VS Code's debug menu (configured in the [launch.json](/.vscode/launch.json) file) in order to step through the server code.
 
 ## Next Steps
 When you're ready to deploy your application to a 'production-like' staging environment, follow the steps below ([Infrastructure](#Infrastructure)) to set up AWS resources for that environment (you will need to repeat these steps for your production environment). Once the resources are available, configure the necessary environment variables as secrets in the AWS Secrets Manager and replace the `[[arn]]` fields in your `task-def-staging.json` file.
@@ -125,4 +128,4 @@ See [Database Management](/docs/DatabaseManagement.md)
 - [x] ~Continuous integration tests run on push~
 - [ ] Sourcemaps for production error monitoring
 - [ ] Use the image output from the staging deploy for the prod deploy
-- [ ] Allow attaching to the server process for debugging
+- [x] Allow attaching to the server process for debugging
