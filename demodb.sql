@@ -8,6 +8,7 @@ create table `user` (
   given_name VARCHAR(255) NULL,
   family_name VARCHAR(255) NULL,
   password_hash varchar(255) NULL,
+  password_salt varchar(255) NULL,
   phone_number varchar(255) NULL,
   company_name varchar(255) NULL,
   title varchar(255) NULL,

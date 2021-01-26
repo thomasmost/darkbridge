@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import Koa from 'koa';
 import validator from 'validator';
 import { AuthenticationError } from '../helpers/error.helper';
@@ -79,7 +80,11 @@ export async function login(ctx: Koa.ParameterizedContext) {
     throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
   }
 
-  const ok = await bcrypt.compare(password, user.password_hash);
+  const { password_salt } = user;
+
+  const seasoned_password = `${password_salt}:${password}`;
+
+  const ok = await bcrypt.compare(seasoned_password, user.password_hash);
 
   if (!ok) {
     throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
@@ -110,12 +115,16 @@ export async function register(ctx: Koa.ParameterizedContext) {
   if (password !== confirm_password) {
     throw new Error('Passwords must match');
   }
+  const password_salt = crypto.randomBytes(16).toString();
 
-  const password_hash = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+  const seasoned_password = `${password_salt}:${password}`;
+
+  const password_hash = await bcrypt.hash(seasoned_password, BCRYPT_WORK_FACTOR);
 
   const user = await User.create({
     email,
     password_hash,
+    password_salt,
     given_name,
     family_name,
   });
