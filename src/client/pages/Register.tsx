@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../AuthProvider';
 
-import { Link, RouteComponentProps } from '@reach/router';
+import { Link, RouteComponentProps, useNavigate } from '@reach/router';
 import styled from '@emotion/styled';
 import { toast } from 'react-toastify';
 import { clientTokenStore } from '../clientTokenStore';
@@ -46,7 +46,14 @@ export const Register: React.FC<RouteComponentProps> = () => {
   const userHandle = useRef<HTMLInputElement>(null);
   const userPassword = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
-  const { login } = useAuth();
+  const navigate = useNavigate();
+  const { login, user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  });
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
