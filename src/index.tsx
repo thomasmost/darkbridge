@@ -22,7 +22,12 @@ console.log(`NODE_ENV: ${NODE_ENV}`);
 
 import { doMath } from './api/do_math';
 import App from './client/App';
-import { login, register, tokenFromAuthorizationHeader } from './api/auth.api';
+import {
+  login,
+  register,
+  tokenFromAuthorizationHeader,
+  verifyEmail,
+} from './api/auth.api';
 import { consumeToken } from './helpers/auth_token.helper';
 
 const app = new Koa();
@@ -51,6 +56,7 @@ app.use(async (ctx, next) => {
 });
 
 api.post('/register', register);
+api.get('/verify_email', verifyEmail);
 api.post('/login', login);
 api.get('/current_user', (ctx) => (ctx.body = (ctx as any).user));
 

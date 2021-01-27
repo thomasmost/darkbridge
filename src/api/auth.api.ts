@@ -8,6 +8,7 @@ import { issueToken } from '../helpers/auth_token.helper';
 import { User } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
 import { sendEmail } from '../helpers/email.helper';
+import { ResetPasswordRequest } from '../models/reset_password_request.model';
 
 const BCRYPT_WORK_FACTOR = parseInt(process.env.BCRYPT_WORK_FACTOR || '12', 10);
 
@@ -152,94 +153,118 @@ export async function register(ctx: Koa.ParameterizedContext) {
   const data = {
     to: email,
     subject: 'Welcome!',
-    template: 'welcome',
-    'v:host': '',
-    'v:token': verifyEmailRequest.verification_token,
+    html: `
+<div>
+    To verify your email,
+    <a href="${process.env.HOST_DOMAIN}/api/verify_email?token=${verifyEmailRequest.verification_token}">
+      click here
+    </a>.
+</div>
+`,
+    text: `To verify your email, visit ${process.env.HOST_DOMAIN}/api/verify_email?token=${verifyEmailRequest.verification_token}`,
+    // 'v:host': '',
+    // 'v:token': verifyEmailRequest.verification_token,
   };
   await sendEmail(data);
 
   ctx.body = { token, user };
 }
 
-// export async function requestPasswordReset(ctx: Koa.ParameterizedContext) {
-//   const { email } = ctx.request.body;
+export async function requestPasswordReset(ctx: Koa.ParameterizedContext) {
+  const { email } = ctx.request.body;
 
-//   if (!email) {
-//     throw new ValidationError('Email required to reset password');
-//   }
+  if (!email) {
+    throw new ValidationError('Email required to reset password');
+  }
 
-//   if (!validator.isEmail(email)) {
-//     throw new ValidationError('Email not valid');
-//   }
+  if (!validator.isEmail(email)) {
+    throw new ValidationError('Email not valid');
+  }
 
-//   const user = await User.findOne({
-//     where: {
-//       email,
-//     },
-//   });
+  const user = await User.findOne({
+    where: {
+      email,
+    },
+  });
 
-//   if (!user) {
-//     return;
-//   }
+  if (!user) {
+    return;
+  }
 
-//   const resetPasswordRequest = await ResetPasswordRequest.create({
-//     email_sent_to: email,
-//     user_id: user.id,
-//   });
+  const resetPasswordRequest = await ResetPasswordRequest.create({
+    email_sent_to: email,
+    user_id: user.id,
+  });
 
-//   const data = {
-//     to: email,
-//     subject: 'Reset your password',
-//     template: 'reset_password',
-//     'v:host': '',
-//     'v:token': resetPasswordRequest.verification_token,
-//   };
-//   await handleSendEmail(data);
-//   ctx.status = 204;
-// }
+  const data = {
+    to: email,
+    subject: 'Reset your password',
+    html: `
+<div>
+    To reset your password, <a href="${process.env.HOST_DOMAIN}/api/reset_password?token=${resetPasswordRequest.verification_token}">click here</a>.
+</div>
+`,
+    text: `To reset your password, visit ${process.env.HOST_DOMAIN}/api/reset_password?token=${resetPasswordRequest.verification_token}`,
+    // 'v:host': '',
+    // 'v:token': resetPasswordRequest.verification_token,
+  };
+  await sendEmail(data);
+  ctx.status = 204;
+}
 
-// export async function verifyResetPassword(ctx: Koa.ParameterizedContext) {
-//   const { token, password, confirm_password } = ctx.request.body;
+export async function verifyResetPassword(ctx: Koa.ParameterizedContext) {
+  const { token, password, confirm_password } = ctx.request.body;
 
-//   if (!token) {
-//     ctx.body = 'No token provided';
-//     return;
-//   }
+  if (!token) {
+    ctx.body = 'No token provided';
+    return;
+  }
 
-//   if (password !== confirm_password) {
-//     throw new AuthenticationError('Passwords must match');
-//   }
+  if (password !== confirm_password) {
+    throw new AuthenticationError('Passwords must match');
+  }
 
-//   const verificationRequest = await ResetPasswordRequest.findOne({
-//     where: {
-//       verification_token: token,
-//     },
-//   });
+  const verificationRequest = await ResetPasswordRequest.findOne({
+    where: {
+      verification_token: token,
+    },
+  });
 
-//   const user_id = verificationRequest.user_id;
+  if (!verificationRequest) {
+    ctx.status = 400;
+    return;
+  }
 
-//   const user = await User.findByPk(user_id);
+  const user_id = verificationRequest.user_id;
 
-//   console.log(`Found user ${user.given_name}!`);
+  const user = await User.findByPk(user_id);
 
-//   if (verificationRequest.fulfilled_at) {
-//     throw new ValidationError('This token has already been used!');
-//   }
+  if (!user) {
+    ctx.status = 400;
+    return;
+  }
 
-//   if (verificationRequest.created_at <= Date.now() - 30 * 60 * 1000) {
-//     throw new ValidationError('This token has expired');
-//   }
+  console.log(`Found user ${user.given_name}!`);
 
-//   user.password_hash = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-//   verificationRequest.fulfilled_at = Date.now();
+  if (verificationRequest.fulfilled_at) {
+    throw new ValidationError('This token has already been used!');
+  }
 
-//   await Promise.all([user.save(), verificationRequest.save()]);
+  if (verificationRequest.created_at <= Date.now() - 30 * 60 * 1000) {
+    throw new ValidationError('This token has expired');
+  }
 
-//   return ctx.redirect('/');
-// }
+  user.password_hash = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+  verificationRequest.fulfilled_at = Date.now();
+
+  await Promise.all([user.save(), verificationRequest.save()]);
+
+  return ctx.redirect('/');
+}
 
 export async function verifyEmail(ctx: Koa.ParameterizedContext) {
   const token = ctx.query.token;
+  console.log('hello');
   if (!token) {
     ctx.body = 'No token provided';
     return;

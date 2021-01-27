@@ -12,10 +12,14 @@ interface UserAttributes {
   email: string;
   password_hash: string;
   password_salt: string;
+  verified_at: number;
 }
 
 // Some attributes are optional in `User.build` and `User.create` calls
-type UserCreationAttributes = Optional<UserAttributes, 'id' | 'created_at'>;
+type UserCreationAttributes = Optional<
+  UserAttributes,
+  'id' | 'created_at' | 'verified_at'
+>;
 
 export class User
   extends Model<UserAttributes, UserCreationAttributes>
@@ -49,6 +53,10 @@ User.init(
       defaultValue: function () {
         return Date.now();
       },
+    },
+    verified_at: {
+      type: DataTypes.NUMBER,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING,
