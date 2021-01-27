@@ -15,8 +15,8 @@ import { ServerLocation } from '@reach/router';
 import request from 'request';
 
 // Initialize constants
-const port = process.env.port ? parseInt(process.env.port) : 80;
 dotenv.config();
+const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
 const NODE_ENV = process.env.NODE_ENV;
 console.log(`NODE_ENV: ${NODE_ENV}`);
 
