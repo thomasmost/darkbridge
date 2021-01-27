@@ -1,0 +1,74 @@
+name: Code Quality
+
+# Run this workflow every time a new commit pushed to your repository
+on: push
+
+jobs:
+  # Set the job key. The key is displayed as the job name
+  # when a job name is not provided
+  code-quality:
+    # Name the Job
+    name: Lint
+    # Set the type of machine to run on
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dev dependencies
+        id: install-dev-dependencies
+        run: |
+          npm install git://github.com/substack/node-mkdirp.git
+          npm i --only=dev
+
+      - name: ESLint
+        id: run-eslint
+        run: |
+          npm run lint
+  test:
+    # Name the Job
+    name: Test
+    # Set the type of machine to run on
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: github_password
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        id: install-dependencies
+        run: |
+          npm install git://github.com/substack/node-mkdirp.git
+          npm ci
+
+      - name: Setup Database
+        id: setup-db
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          MYSQL_HOST: 0.0.0.0
+          MYSQL_USERNAME: root
+          MYSQL_PASSWORD: github_password
+        run: |
+          npm run setup_db
+
+      - name: Test
+        id: run-tests
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          MYSQL_HOST: 0.0.0.0
+          MYSQL_USERNAME: root
+          MYSQL_PASSWORD: github_password
+        run: |
+          echo Running test suite...
+          npm run test
