@@ -10,28 +10,32 @@ An opinionated infrastructure-forward modern web template built for continuous i
 ![Deploy to Production](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%20Production/badge.svg)
 
 # Resources
+
 Created in part with reference to the following guides:
 
-* https://aws.amazon.com/blogs/opensource/github-actions-aws-fargate/
-* https://itnext.io/run-your-containers-on-aws-fargate-c2d4f6a47fda
-* https://medium.com/@ariklevliber/aws-fargate-from-start-to-finish-for-a-nodejs-app-9a0e5fbf6361
-* https://docs.aws.amazon.com/AmazonECS/latest/userguide/create-application-load-balancer.html
+- https://aws.amazon.com/blogs/opensource/github-actions-aws-fargate/
+- https://itnext.io/run-your-containers-on-aws-fargate-c2d4f6a47fda
+- https://medium.com/@ariklevliber/aws-fargate-from-start-to-finish-for-a-nodejs-app-9a0e5fbf6361
+- https://docs.aws.amazon.com/AmazonECS/latest/userguide/create-application-load-balancer.html
 
 # Why
+
 This is kind of a big question. Fundamentally, though, I think that 90% of tutorials, templates, and 'get started' guides only ever take you about half the way there (if that!) and as a relative newcomer to scalable, production-quality infrastructure, I could have really benefited from a guide like this one.
 
 For a more detailed breakdown, see this [piece-by-piece rationale](/docs/Why.md).
 
 # Development
+
 Here's what to expect.
 
 ## Tech Stack
-* Served by NodeJS using the Koa framework
-* Rendered by React
-* Styled with Emotion
-* Tested with Jest
-* Linted, prettified, and written in highly safe and readable TypeScript
-* Packaged into a Docker image on deploy
+
+- Served by NodeJS using the Koa framework
+- Rendered by React
+- Styled with Emotion
+- Tested with Jest
+- Linted, prettified, and written in highly safe and readable TypeScript
+- Packaged into a Docker image on deploy
 
 **Note that you do not need Docker installed to run the application in development,** but you will likely want to have it eventually to customize your containers.
 
@@ -44,12 +48,14 @@ Here's what to expect.
 5. Run `npm run dev` to start the development servers and begin hacking
 
 ## Debugging
+
 One of the most critical pieces of development is easily being able to step through code. There are two ways to step through the server code:
 
-  1. Attach to the currently running process, by running the `Attach to Server` configuration from VS Code's debug menu.
-  2. Stop the server (`pm2 stop server`) and then run the `Launch Debug Server` configuration from VS Code's debug menu (configured in the [launch.json](/.vscode/launch.json) file) in order to step through the server code.
+1. Attach to the currently running process, by running the `Attach to Server` configuration from VS Code's debug menu.
+2. Stop the server (`pm2 stop server`) and then run the `Launch Debug Server` configuration from VS Code's debug menu (configured in the [launch.json](/.vscode/launch.json) file) in order to step through the server code.
 
 ## Next Steps
+
 When you're ready to deploy your application to a 'production-like' staging environment, follow the steps below ([Infrastructure](#Infrastructure)) to set up AWS resources for that environment (you will need to repeat these steps for your production environment). Once the resources are available, configure the necessary environment variables as secrets in the AWS Secrets Manager and replace the `[[arn]]` fields in your `task-def-staging.json` file.
 
 Test the deploy by going to your GitHub repository and navigating to **Actions** > **Deploy to Staging** > **Run workflow** and hitting the green button to run the workflow.
@@ -57,6 +63,7 @@ Test the deploy by going to your GitHub repository and navigating to **Actions**
 Once you've verified that your manual deploys are working, I'd recommend changing the run condition in `.github/workflow/deploy_staging.yml` to run the staging deploy on every push to the `main` branch. **The production deploy trigger should always be manual.**
 
 # Infrastructure
+
 You will need the aws command line tool installed to execute these steps.
 
 ## Create a Container Registry
@@ -64,6 +71,7 @@ You will need the aws command line tool installed to execute these steps.
 ```bash
 aws ecr create-repository --repository-name darkbridge_registry --region us-east-1
 ```
+
 ## Set up a Fargate service
 
 Register the task definition:
@@ -87,6 +95,7 @@ aws ecs create-service --region us-east-1 --service-name darkbridge-service-stag
 ```
 
 ## Working with Environment Variables
+
 1. Go to the AWS Secrets Manager
 2. Add an 'Other' > 'Plaintext' Secret
 3. Name it EXAMPLE_SECRET_VARIABLE and replace the arn in task-def.json
@@ -96,25 +105,27 @@ See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/specifying-sens
 
 ## Gotchas
 
-* Make sure the security group has an HTTP inbound rule set to 0.0.0.0 to allow public access
-* The ALB must be created and the target group specified before the service is created (see above)
-* Similarly the app in the task definition file, the alb, and so on should be named better.
-* By default, Fargate containers are limited to 200 MiB of memory; running the server with ts-node for example creates an unstable service since ts-node compiles to memory -- it's much better to compile to disk for production.
-* RE: ENV VARIABLES, Fargate only supports secrets that are a single value, not the JSON or key value secrets. So choose OTHER when creating the secret and just put a single text value there.
+- Make sure the security group has an HTTP inbound rule set to 0.0.0.0 to allow public access
+- The ALB must be created and the target group specified before the service is created (see above)
+- Similarly the app in the task definition file, the alb, and so on should be named better.
+- By default, Fargate containers are limited to 200 MiB of memory; running the server with ts-node for example creates an unstable service since ts-node compiles to memory -- it's much better to compile to disk for production.
+- RE: ENV VARIABLES, Fargate only supports secrets that are a single value, not the JSON or key value secrets. So choose OTHER when creating the secret and just put a single text value there.
 
 ## Testing the Docker Image Locally
 
-* Build the image
+- Build the image
+
 ```bash
 docker build -t [tag_name] .
 ```
 
-* Launch the image in the background, exposing port 80
+- Launch the image in the background, exposing port 80
+
 ```bash
 docker run -d -p 80:80 [tag_name]
 ```
 
-* Navigate to `localhost` in your browser
+- Navigate to `localhost` in your browser
 
 ## Connecting to RDS
 
@@ -123,9 +134,9 @@ See [Database Management](/docs/DatabaseManagement.md)
 # Todos
 
 - [x] ~Connecting to RDS~
-- [ ] Connecting to S3
-- [ ] Optional connecting to Mailgun
+- [x] ~Allow attaching to the server process for debugging~
+- [x] ~Optional connecting to Mailgun~
 - [x] ~Continuous integration tests run on push~
+- [ ] Connecting to S3
 - [ ] Sourcemaps for production error monitoring
 - [ ] Use the image output from the staging deploy for the prod deploy
-- [x] Allow attaching to the server process for debugging
