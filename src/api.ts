@@ -5,7 +5,11 @@ import { doMath } from './api/do_math';
 
 export const api = new Router();
 
-api.use('/appointment', appointmentAPI.routes(), appointmentAPI.allowedMethods());
+api.use(
+  '/appointment',
+  appointmentAPI.routes(),
+  appointmentAPI.allowedMethods(),
+);
 api.use('/auth', authAPI.routes(), authAPI.allowedMethods());
 
 api.get('/test_crash', () => {
