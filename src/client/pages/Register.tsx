@@ -39,6 +39,7 @@ async function registerUser(
   return data.user;
 }
 
+// eslint-disable-next-line max-lines-per-function
 export const Register: React.FC<RouteComponentProps> = () => {
   const userGivenName = useRef<HTMLInputElement>(null);
   const userFamilyName = useRef<HTMLInputElement>(null);
@@ -66,7 +67,7 @@ export const Register: React.FC<RouteComponentProps> = () => {
     }
     const user = await registerUser(
       userGivenName.current?.value || 'First',
-      userGivenName.current?.value || 'Last',
+      userFamilyName.current?.value || 'Last',
       email,
       password,
       confirmPassword,

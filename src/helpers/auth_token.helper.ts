@@ -1,5 +1,6 @@
 import { AuthToken } from '../models/auth_token.model';
 import { User } from '../models/user.model';
+import { IUserDto } from '../shared/user.dto';
 import { AuthenticationError } from './error.helper';
 
 export async function issueToken(user_id: string, auth_method: string) {
@@ -13,7 +14,7 @@ export async function issueToken(user_id: string, auth_method: string) {
   return token.id as string;
 }
 
-export async function consumeToken(tokenId: string): Promise<any> {
+export async function consumeToken(tokenId: string): Promise<IUserDto> {
   const token = await AuthToken.findOne({
     where: {
       id: tokenId,
@@ -56,6 +57,7 @@ export async function consumeToken(tokenId: string): Promise<any> {
 
   const permissionedUser = {
     id: user.id,
+    email: user.email,
     given_name: user.given_name,
     family_name: user.family_name,
     created_at: user.created_at,

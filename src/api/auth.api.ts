@@ -119,7 +119,10 @@ export async function register(ctx: Koa.ParameterizedContext) {
 
   const seasoned_password = `${password_salt}:${password}`;
 
-  const password_hash = await bcrypt.hash(seasoned_password, BCRYPT_WORK_FACTOR);
+  const password_hash = await bcrypt.hash(
+    seasoned_password,
+    BCRYPT_WORK_FACTOR,
+  );
 
   const user = await User.create({
     email,

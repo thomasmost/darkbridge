@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { clientTokenStore } from '../clientTokenStore';
 import { AccountForm } from '../elements/AccountForm';
 import { FormFieldPair } from '../elements/FormFieldPair';
+import { IUserDto } from '../../shared/user.dto';
 
 const FormHeader = styled.h2`
   font-weight: 600;
@@ -38,7 +39,7 @@ export const Login: React.FC<RouteComponentProps> = () => {
         }),
       });
 
-      const data = (await result.json()) as { token: string; user: any };
+      const data = (await result.json()) as { token: string; user: IUserDto };
       login(data.user);
       clientTokenStore.set(data.token);
       navigate('/');
