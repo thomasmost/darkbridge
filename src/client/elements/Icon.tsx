@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
-type IconName = 'darkbridge' | 'home';
+type IconName = 'pencil' | 'home';
 
 interface IIconProps {
   name: IconName;
@@ -10,14 +10,14 @@ interface IIconProps {
 }
 
 const iconUnicode: Record<IconName, string> = {
-  darkbridge: '\\e900',
   home: '\\e903',
+  pencil: '\\e905',
 };
 
 export const Icon: React.FC<IIconProps> = ({ name, color, onClick }) => {
   const StyledIcon = styled.span`
     &:before {
-      font-family: 'Darkbridge Icons';
+      font-family: 'Teddy Icons';
       content: '${iconUnicode[name]}';
       ${color ? `color: ${color};` : ''}
       ${onClick ? `cursor: pointer;` : ''}

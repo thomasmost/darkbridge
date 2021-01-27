@@ -6,7 +6,7 @@ const StyledFooter = styled.footer`
   width: 100%;
   padding: 20px;
   color: ${theme.headerTextColor};
-  background-color: ${theme.headerBackground};
+  background-color: ${theme.applicationBackgroundColor};
 `;
 
 export const Footer: React.FC = () => (

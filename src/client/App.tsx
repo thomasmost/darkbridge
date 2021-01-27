@@ -17,18 +17,14 @@ if (typeof window !== 'undefined') {
 }
 
 const AppContainer = styled.div`
-  font-family: 'DM Sans', Helvetica, sans-serif;
+  font-family: 'Poppins', Helvetica, sans-serif;
   display: flex;
   flex-wrap: wrap;
 `;
 
 const Main = styled.main`
   color: ${theme.applicationTextColor};
-  background-image: linear-gradient(
-    to right,
-    ${theme.applicationBackgroundLight},
-    ${theme.applicationBackgroundDark}
-  );
+  background-color: ${theme.applicationBackgroundColor};
   height: calc(100vh - 80px);
   width: 100%;
   display: block;

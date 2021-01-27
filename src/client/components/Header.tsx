@@ -8,6 +8,8 @@ import { Popdown } from './Popdown';
 const Logo = styled.span`
   display: inline-block;
   margin-right: 10px;
+  position: relative;
+  top: 6px;
 `;
 
 const Right = styled.span`
@@ -21,13 +23,14 @@ const LoggedInHeader = styled.span`
 `;
 
 const StyledHeader = styled.header`
-  height: 40px;
-  line-height: 40px;
+  height: 50px;
+  line-height: 50px;
   padding: 0 20px;
   position: sticky;
   top: 0;
   left: 0;
-  background-color: ${theme.headerBackground};
+  background-color: ${theme.headerBackgroundColor};
+  border-bottom: 2px solid ${theme.headerBorderColor};
   color: ${theme.headerTextColor};
   font-size: 1.2em;
   width: 100%;
@@ -48,7 +51,9 @@ export const Header: React.FC = () => {
   return (
     <StyledHeader>
       <StyledLink to="/">
-        <Logo>Darkbridge</Logo>
+        <Logo>
+          <img height="40px" src="/logo.png" />
+        </Logo>
       </StyledLink>
       <StyledLink to="/dashboard">Dashboard</StyledLink>
       {!user && <StyledLink to="/register">Register</StyledLink>}

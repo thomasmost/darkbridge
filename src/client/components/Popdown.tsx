@@ -29,7 +29,7 @@ export const Popdown: React.FC<IPopdownProps> = ({
     position: absolute;
     top: 40px;
     width: 100%;
-    background-color: ${theme.headerBackground};
+    background-color: ${theme.applicationBackgroundColor};
   `;
 
   return (

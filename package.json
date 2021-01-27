@@ -1,7 +1,7 @@
 {
-  "name": "darkbridge",
+  "name": "teddy_web",
   "version": "0.1.0",
-  "description": "An opinionated infrastructure-forward modern web template built for continuous integration and delivery on GitHub Actions; using Docker, AWS Fargate, and NodeJS",
+  "description": "The core api, server, and web client for the Teddy application",
   "main": "src/index.ts",
   "scripts": {
     "start": "pm2 start pm2.prod.yml && pm2 log",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thomascmost/darkbridge.git"
+    "url": "git+https://github.com/callteddy/web.git"
   },
   "author": "",
   "license": "ISC",
@@ -76,7 +76,7 @@
     "ts-loader": "^8.0.3",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2",
-    "webpack": "^5.0.0-rc.3",
+    "webpack": "^5.18.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-node-externals": "^2.5.2",

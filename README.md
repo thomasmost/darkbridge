@@ -1,13 +1,13 @@
 <p align="center">
-  <img width="200" height="100" src="/darkbridge.png">
+  <img width="284" height="100" src="/public/logo.png">
 </p>
-<h1 align="center">Darkbridge</h1>
+<h1 align="center">Teddy Web</h1>
 
-An opinionated infrastructure-forward modern web template built for continuous integration and delivery; using Docker, AWS Fargate, and NodeJS
+The core api, server, and web client for the Teddy application
 
-![Code Quality](https://github.com/thomasmost/darkbridge/workflows/Code%20Quality/badge.svg)
-![Deploy to Staging](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%20Staging/badge.svg)
-![Deploy to Production](https://github.com/thomasmost/darkbridge/workflows/Deploy%20to%20Production/badge.svg)
+![Code Quality](https://github.com/callteddy/web/workflows/Code%20Quality/badge.svg)
+![Deploy to Staging](https://github.com/callteddy/web/workflows/Deploy%20to%20Staging/badge.svg)
+![Deploy to Production](https://github.com/callteddy/web/workflows/Deploy%20to%20Production/badge.svg)
 
 # Resources
 
