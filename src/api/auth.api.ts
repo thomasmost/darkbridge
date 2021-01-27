@@ -2,11 +2,12 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import Koa from 'koa';
 import validator from 'validator';
-import { AuthenticationError } from '../helpers/error.helper';
+import { AuthenticationError, ValidationError } from '../helpers/error.helper';
 import { AuthToken } from '../models/auth_token.model';
 import { issueToken } from '../helpers/auth_token.helper';
 import { User } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
+import { sendEmail } from '../helpers/email.helper';
 
 const BCRYPT_WORK_FACTOR = parseInt(process.env.BCRYPT_WORK_FACTOR || '12', 10);
 
@@ -143,16 +144,19 @@ export async function register(ctx: Koa.ParameterizedContext) {
     user_id,
   });
 
-  const [token] = await Promise.all([tokenPromise, verifyEmailPromise]);
+  const [token, verifyEmailRequest] = await Promise.all([
+    tokenPromise,
+    verifyEmailPromise,
+  ]);
 
-  // const data = {
-  //   to: email,
-  //   subject: 'Welcome!',
-  //   template: 'welcome',
-  //   'v:host': '',
-  //   'v:token': verifyEmail.verification_token,
-  // };
-  // await handleSendEmail(data);
+  const data = {
+    to: email,
+    subject: 'Welcome!',
+    template: 'welcome',
+    'v:host': '',
+    'v:token': verifyEmailRequest.verification_token,
+  };
+  await sendEmail(data);
 
   ctx.body = { token, user };
 }
@@ -234,43 +238,53 @@ export async function register(ctx: Koa.ParameterizedContext) {
 //   return ctx.redirect('/');
 // }
 
-// export async function verifyEmail(ctx: Koa.ParameterizedContext) {
-//   const token = ctx.query.token;
-//   if (!token) {
-//     ctx.body = 'No token provided';
-//     return;
-//   }
-//   const verificationRequest = await VerifyEmailRequest.findOne({
-//     where: {
-//       verification_token: token,
-//     },
-//   });
+export async function verifyEmail(ctx: Koa.ParameterizedContext) {
+  const token = ctx.query.token;
+  if (!token) {
+    ctx.body = 'No token provided';
+    return;
+  }
+  const verificationRequest = await VerifyEmailRequest.findOne({
+    where: {
+      verification_token: token,
+    },
+  });
 
-//   const user_id = verificationRequest.user_id;
+  if (!verificationRequest) {
+    ctx.status = 400;
+    return;
+  }
 
-//   const user = await User.findByPk(user_id);
+  const user_id = verificationRequest.user_id;
 
-//   console.log(`Found user ${user.given_name}!`);
+  const user = await User.findByPk(user_id);
 
-//   if (verificationRequest.fulfilled_at) {
-//     throw new ValidationError('This token has already been used!');
-//   }
+  if (!user) {
+    ctx.status = 400;
+    return;
+  }
 
-//   // if (verificationRequest.created_at <= Date.now() - 24 * 60 * 60 * 1000) {
-//   //   throw new ValidationError('This token has expired');
-//   // }
+  console.log(`Found user ${user.given_name}!`);
 
-//   if (verificationRequest.email_type === 'primary') {
-//     if (!user.verified_at) {
-//       user.verified_at = Date.now();
-//     }
-//     user.email = verificationRequest.email;
-//   } else {
-//     throw Error('Not Yet Implemented');
-//   }
-//   verificationRequest.fulfilled_at = Date.now();
+  if (verificationRequest.fulfilled_at) {
+    throw new ValidationError('This token has already been used!');
+  }
 
-//   await Promise.all([user.save(), verificationRequest.save()]);
+  if (verificationRequest.created_at <= Date.now() - 24 * 60 * 60 * 1000) {
+    throw new ValidationError('This token has expired');
+  }
 
-//   return ctx.redirect('/');
-// }
+  if (verificationRequest.email_type === 'primary') {
+    if (!user.verified_at) {
+      user.verified_at = Date.now();
+    }
+    user.email = verificationRequest.email;
+  } else {
+    throw Error('Not Yet Implemented');
+  }
+  verificationRequest.fulfilled_at = Date.now();
+
+  await Promise.all([user.save(), verificationRequest.save()]);
+
+  return ctx.redirect('/');
+}

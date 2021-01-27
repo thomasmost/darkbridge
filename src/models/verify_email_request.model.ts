@@ -32,7 +32,7 @@ export class VerifyEmailRequest
 
   // timestamps!
   public readonly created_at!: number;
-  public readonly fulfilled_at: number;
+  public fulfilled_at: number;
 }
 
 VerifyEmailRequest.init(

@@ -29,7 +29,7 @@ export class User
 
   // timestamps!
   public readonly created_at!: number;
-  public readonly verified_at!: number;
+  public verified_at!: number;
 }
 
 User.init(
