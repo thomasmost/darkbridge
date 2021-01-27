@@ -8,6 +8,7 @@ import { clientTokenStore } from '../clientTokenStore';
 import { AccountForm } from '../elements/AccountForm';
 import { FormFieldPair } from '../elements/FormFieldPair';
 import { FlexColumns } from '../elements/FlexColumns';
+import { IUserDto } from '../../shared/user.dto';
 
 const FormHeader = styled.h2`
   font-weight: 600;
@@ -20,7 +21,7 @@ async function registerUser(
   password: string,
   confirm_password: string,
 ) {
-  const result = await fetch('api/register', {
+  const result = await fetch('api/auth/register', {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ async function registerUser(
       confirm_password,
     }),
   });
-  const data = (await result.json()) as { token: string; user: any };
+  const data = (await result.json()) as { token: string; user: IUserDto };
   clientTokenStore.set(data.token);
   return data.user;
 }

@@ -13,7 +13,7 @@ export const Logout: React.FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     logout();
-    fetch('/api/logout');
+    fetch('/api/auth/logout');
   }, []);
 
   return (

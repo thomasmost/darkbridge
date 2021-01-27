@@ -27,7 +27,7 @@ export const Login: React.FC<RouteComponentProps> = () => {
 
   async function loginUser(email: string, password: string) {
     try {
-      const result = await fetch('/api/login', {
+      const result = await fetch('/api/auth/login', {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',

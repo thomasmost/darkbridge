@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { RouteComponentProps } from '@reach/router';
 import React, { useRef, useState } from 'react';
+import { theme } from '../theme';
 
 const Input = styled.input`
   margin: 20px 0 0;
@@ -15,7 +16,7 @@ const Section = styled.div`
   margin-top: 20px;
   span {
     font-weight: 600;
-    color: white;
+    color: ${theme.headerTextColor};
   }
 `;
 

@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import Koa from 'koa';
+import Router from 'koa-router';
 import validator from 'validator';
 import { AuthenticationError, ValidationError } from '../helpers/error.helper';
 import { AuthToken } from '../models/auth_token.model';
@@ -9,6 +10,8 @@ import { User } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
 import { sendEmail } from '../helpers/email.helper';
 import { ResetPasswordRequest } from '../models/reset_password_request.model';
+
+export const authAPI = new Router();
 
 const BCRYPT_WORK_FACTOR = parseInt(process.env.BCRYPT_WORK_FACTOR || '12', 10);
 
@@ -156,12 +159,12 @@ export async function register(ctx: Koa.ParameterizedContext) {
     html: `
 <div>
     To verify your email,
-    <a href="${process.env.HOST_DOMAIN}/api/verify_email?token=${verifyEmailRequest.verification_token}">
+    <a href="${process.env.HOST_DOMAIN}/api/auth/verify_email?token=${verifyEmailRequest.verification_token}">
       click here
     </a>.
 </div>
 `,
-    text: `To verify your email, visit ${process.env.HOST_DOMAIN}/api/verify_email?token=${verifyEmailRequest.verification_token}`,
+    text: `To verify your email, visit ${process.env.HOST_DOMAIN}/api/auth/verify_email?token=${verifyEmailRequest.verification_token}`,
     // 'v:host': '',
     // 'v:token': verifyEmailRequest.verification_token,
   };
@@ -201,10 +204,10 @@ export async function requestPasswordReset(ctx: Koa.ParameterizedContext) {
     subject: 'Reset your password',
     html: `
 <div>
-    To reset your password, <a href="${process.env.HOST_DOMAIN}/api/reset_password?token=${resetPasswordRequest.verification_token}">click here</a>.
+    To reset your password, <a href="${process.env.HOST_DOMAIN}/api/auth/reset_password?token=${resetPasswordRequest.verification_token}">click here</a>.
 </div>
 `,
-    text: `To reset your password, visit ${process.env.HOST_DOMAIN}/api/reset_password?token=${resetPasswordRequest.verification_token}`,
+    text: `To reset your password, visit ${process.env.HOST_DOMAIN}/api/auth/reset_password?token=${resetPasswordRequest.verification_token}`,
     // 'v:host': '',
     // 'v:token': resetPasswordRequest.verification_token,
   };
@@ -313,3 +316,8 @@ export async function verifyEmail(ctx: Koa.ParameterizedContext) {
 
   return ctx.redirect('/');
 }
+
+authAPI.post('/register', register);
+authAPI.get('/verify_email', verifyEmail);
+authAPI.post('/login', login);
+authAPI.get('/current_user', (ctx) => (ctx.body = (ctx as any).user));

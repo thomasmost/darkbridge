@@ -5,7 +5,7 @@ import { clientTokenStore } from './clientTokenStore';
 
 function getCurrentUser() {
   const token = clientTokenStore.get();
-  return fetch('/api/current_user', {
+  return fetch('/api/auth/current_user', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
