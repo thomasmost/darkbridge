@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
-type IconName = 'pencil' | 'home';
+type IconName = 'pencil' | 'home' | 'profile';
 
 interface IIconProps {
   name: IconName;
@@ -12,6 +12,7 @@ interface IIconProps {
 const iconUnicode: Record<IconName, string> = {
   home: '\\e903',
   pencil: '\\e905',
+  profile: '\\e971',
 };
 
 export const Icon: React.FC<IIconProps> = ({ name, color, onClick }) => {

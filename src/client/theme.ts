@@ -6,6 +6,7 @@ const red = '#F7655E';
 const green = '#23C38A';
 // const black = '#000';
 const white = '#fff';
+const paperWhite = '#f9f9f9';
 // const blueGray = '#496089';
 const lightGray = '#f2f2f2';
 // const eggshellGray = '#414168';
@@ -14,7 +15,7 @@ const darkGray = '#343434';
 export const theme = {
   activeLinkColor: teddyBlueDark,
   activePageColor: teddyBlueLight,
-  applicationBackgroundColor: white,
+  applicationBackgroundColor: paperWhite,
   applicationTextColor: darkGray,
   headerBackgroundColor: white,
   headerBorderColor: teddyBlueDark,
@@ -28,4 +29,5 @@ export const theme = {
   buttonColorActive: teddyBlueLight,
   buttonColorDisabled: lightGray,
   buttonTextColor: white,
+  cardHeaderColor: teddyBlueLight,
 };

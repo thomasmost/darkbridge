@@ -28,7 +28,7 @@ const Main = styled.main`
   height: calc(100vh - 80px);
   width: 100%;
   display: block;
-  padding: 20px;
+  padding: 25px;
 `;
 
 const App = () => {

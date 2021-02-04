@@ -14,11 +14,13 @@ const ClickTarget = styled.div`
 
 interface IPopdownProps {
   targetContent: string | JSX.Element;
+  right?: boolean;
 }
 
 export const Popdown: React.FC<IPopdownProps> = ({
   targetContent,
   children,
+  right,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const popdownRef = useRef<HTMLDivElement>(null);
@@ -28,7 +30,8 @@ export const Popdown: React.FC<IPopdownProps> = ({
     display: ${open ? 'block' : 'none'};
     position: absolute;
     top: 40px;
-    width: 100%;
+    width: 200px;
+    ${right && 'right: 0;'}
     background-color: ${theme.applicationBackgroundColor};
   `;
 

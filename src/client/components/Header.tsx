@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Link } from '@reach/router';
 import React from 'react';
 import { useAuth } from '../AuthProvider';
+import { Icon } from '../elements/Icon';
 import { theme } from '../theme';
 import { Popdown } from './Popdown';
 
@@ -15,6 +16,10 @@ const Logo = styled.span`
 const Right = styled.span`
   display: block;
   float: right;
+`;
+
+const PopdownWrapper = styled.div`
+  font-size: 0.8em;
 `;
 
 const LoggedInHeader = styled.span`
@@ -60,13 +65,21 @@ export const Header: React.FC = () => {
       {!user && <StyledLink to="/login">Log In</StyledLink>}
       <Right>
         {Boolean(user) && (
-          <Popdown
-            targetContent={
-              <LoggedInHeader>Logged in as {user?.given_name}</LoggedInHeader>
-            }
-          >
-            <StyledLink to="/logout">Logout</StyledLink>
-          </Popdown>
+          <PopdownWrapper>
+            <Popdown
+              right
+              targetContent={
+                <LoggedInHeader>
+                  <Icon name="profile" />
+                </LoggedInHeader>
+              }
+            >
+              <StyledLink to="/profile">
+                Logged in as {user?.given_name}
+              </StyledLink>
+              <StyledLink to="/logout">Logout</StyledLink>
+            </Popdown>
+          </PopdownWrapper>
         )}
       </Right>
     </StyledHeader>
