@@ -18,10 +18,6 @@ const Right = styled.span`
   float: right;
 `;
 
-const PopdownWrapper = styled.div`
-  font-size: 0.8em;
-`;
-
 const LoggedInHeader = styled.span`
   padding: 0 10px;
   margin-right: 10px;
@@ -39,11 +35,14 @@ const StyledHeader = styled.header`
   color: ${theme.headerTextColor};
   font-size: 1.2em;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const StyledLink = styled(Link)`
   color: ${theme.headerTextColor};
   display: inline-block;
+  font-size: 0.8em;
   text-decoration: none;
   padding: 0 10px;
   &[aria-current] {
@@ -65,21 +64,19 @@ export const Header: React.FC = () => {
       {!user && <StyledLink to="/login">Log In</StyledLink>}
       <Right>
         {Boolean(user) && (
-          <PopdownWrapper>
-            <Popdown
-              right
-              targetContent={
-                <LoggedInHeader>
-                  <Icon name="profile" />
-                </LoggedInHeader>
-              }
-            >
-              <StyledLink to="/profile">
-                Logged in as {user?.given_name}
-              </StyledLink>
-              <StyledLink to="/logout">Logout</StyledLink>
-            </Popdown>
-          </PopdownWrapper>
+          <Popdown
+            right
+            targetContent={
+              <LoggedInHeader>
+                <Icon name="profile" />
+              </LoggedInHeader>
+            }
+          >
+            <StyledLink to="/profile">
+              Logged in as {user?.given_name}
+            </StyledLink>
+            <StyledLink to="/logout">Logout</StyledLink>
+          </Popdown>
         )}
       </Right>
     </StyledHeader>
