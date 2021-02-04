@@ -5,6 +5,7 @@ import { theme } from '../theme';
 import { format } from 'date-fns';
 
 import { getDailyInfo } from '../services/appointment.svc';
+import { Icon } from '../elements/Icon';
 
 const HeadingText = styled.h1`
   padding-bottom: 10px;
@@ -61,9 +62,19 @@ export const Home: React.FC<RouteComponentProps> = () => {
         <>
           <NextAppointmentHeader>Next appointment</NextAppointmentHeader>
           <Card>
-            <CardHeading>Date and time</CardHeading>
+            <CardHeading>
+              <span style={{ display: 'inline-block', width: '50px' }}>
+                <Icon name="Calendar" />
+              </span>
+              Date and time
+            </CardHeading>
             <CardInfo>{format(new Date(), 'yyyy/MM/dd')}</CardInfo>
-            <CardHeading>Address</CardHeading>
+            <CardHeading>
+              <span style={{ display: 'inline-block', width: '50px' }}>
+                <Icon name="Location" />
+              </span>
+              Address
+            </CardHeading>
             <CardInfo>15 Main St</CardInfo>
             <CardInfo>East Hampton, NY 11930</CardInfo>
           </Card>

@@ -33,8 +33,13 @@
 
     @font-face {
       font-family: 'Teddy Icons';
-      src: url('/fonts/iconly_light.ttf');
-      src: url('/fonts/iconly_light.ttf') format('truetype');
+      /* font-style: normal; */
+      /* font-weight: 200; */
+      src: url('../fonts/Iconly-light.eot');
+      src: url('../fonts/Iconly-light.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+        url('../fonts/Iconly-light.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+        url('../fonts/Iconly-light.ttf') format('truetype'),
+        url('../fonts/Iconly-light.svg#Iconly-light') format('svg');;
     }
   </style>
 </head>
