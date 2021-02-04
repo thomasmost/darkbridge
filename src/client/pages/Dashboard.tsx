@@ -35,6 +35,7 @@ export const Dashboard: React.FC<RouteComponentProps> = () => {
   const yRef = useRef<HTMLInputElement>(null);
   const [result, setResult] = useState<string>('');
   const [sampleVariable, setSampleVariable] = useState<string>('');
+  const [icon, setIcon] = useState<string>('\\e000');
 
   const doMath = async () => {
     if (!xRef.current || !yRef.current) {
@@ -67,9 +68,35 @@ export const Dashboard: React.FC<RouteComponentProps> = () => {
     setSampleVariable(result.var);
   };
 
+  const onChange = (x: string) => {
+    while (x.length < 3) {
+      x = '0' + x;
+    }
+    console.log(x);
+    setIcon(`\\e${x}`);
+  };
+
+  const StyledIcon = styled.span`
+    &:before {
+      font-family: 'Teddy Icons';
+      content: '${icon}';
+      color: black;
+      font-size: 2em;
+      display: block;
+      padding: 20px;
+    }
+  `;
+
   return (
     <>
       <div>
+        <Input
+          style={{ padding: '20px', fontSize: '2em' }}
+          onChange={(e) => onChange(e.target.value)}
+          type="number"
+        />
+
+        <StyledIcon aria-hidden="true" data-icon={icon} />
         <Input ref={xRef} type="number" />
         <TimesSign>X</TimesSign>
         <Input ref={yRef} type="number" />
