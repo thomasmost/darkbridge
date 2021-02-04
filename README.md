@@ -9,14 +9,10 @@ The core api, server, and web client for the Teddy application
 ![Deploy to Staging](https://github.com/callteddy/web/workflows/Deploy%20to%20Staging/badge.svg)
 ![Deploy to Production](https://github.com/callteddy/web/workflows/Deploy%20to%20Production/badge.svg)
 
-# Resources
+# Dependencies
 
-Created in part with reference to the following guides:
-
-- https://aws.amazon.com/blogs/opensource/github-actions-aws-fargate/
-- https://itnext.io/run-your-containers-on-aws-fargate-c2d4f6a47fda
-- https://medium.com/@ariklevliber/aws-fargate-from-start-to-finish-for-a-nodejs-app-9a0e5fbf6361
-- https://docs.aws.amazon.com/AmazonECS/latest/userguide/create-application-load-balancer.html
+- node `12.16.3`
+- npm `7.5.2`
 
 # Why
 
