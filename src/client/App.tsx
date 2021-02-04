@@ -29,6 +29,8 @@ const Main = styled.main`
   width: 100%;
   display: block;
   padding: 25px;
+  max-width: 1000px;
+  margin: auto;
 `;
 
 const App = () => {

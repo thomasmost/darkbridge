@@ -35,6 +35,16 @@ const StyledHeader = styled.header`
   color: ${theme.headerTextColor};
   font-size: 1.2em;
   width: 100%;
+`;
+
+const HeaderContents = styled.div`
+  max-width: 1000px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const LeftNav = styled.div`
   display: flex;
   justify-content: space-between;
 `;
@@ -54,31 +64,35 @@ export const Header: React.FC = () => {
   const { user } = useAuth();
   return (
     <StyledHeader>
-      <StyledLink to="/">
-        <Logo>
-          <img height="40px" src="/logo.png" />
-        </Logo>
-      </StyledLink>
-      <StyledLink to="/dashboard">Dashboard</StyledLink>
-      {!user && <StyledLink to="/register">Register</StyledLink>}
-      {!user && <StyledLink to="/login">Log In</StyledLink>}
-      <Right>
-        {Boolean(user) && (
-          <Popdown
-            right
-            targetContent={
-              <LoggedInHeader>
-                <Icon name="profile" />
-              </LoggedInHeader>
-            }
-          >
-            <StyledLink to="/profile">
-              Logged in as {user?.given_name}
-            </StyledLink>
-            <StyledLink to="/logout">Logout</StyledLink>
-          </Popdown>
-        )}
-      </Right>
+      <HeaderContents>
+        <LeftNav>
+          <StyledLink to="/">
+            <Logo>
+              <img height="40px" src="/logo.png" />
+            </Logo>
+          </StyledLink>
+          {Boolean(user) && <StyledLink to="/dashboard">Dashboard</StyledLink>}
+          {!user && <StyledLink to="/register">Register</StyledLink>}
+          {!user && <StyledLink to="/login">Log In</StyledLink>}
+        </LeftNav>
+        <Right>
+          {Boolean(user) && (
+            <Popdown
+              right
+              targetContent={
+                <LoggedInHeader>
+                  <Icon name="Profile" />
+                </LoggedInHeader>
+              }
+            >
+              <StyledLink to="/profile">
+                Logged in as {user?.given_name}
+              </StyledLink>
+              <StyledLink to="/logout">Logout</StyledLink>
+            </Popdown>
+          )}
+        </Right>
+      </HeaderContents>
     </StyledHeader>
   );
 };
