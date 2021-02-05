@@ -14,15 +14,9 @@ The core api, server, and web client for the Teddy application
 - node `12.16.3`
 - npm `7.5.2`
 
-# Why
-
-This is kind of a big question. Fundamentally, though, I think that 90% of tutorials, templates, and 'get started' guides only ever take you about half the way there (if that!) and as a relative newcomer to scalable, production-quality infrastructure, I could have really benefited from a guide like this one.
-
-For a more detailed breakdown, see this [piece-by-piece rationale](/docs/Why.md).
-
 # Development
 
-Here's what to expect.
+An overview for new contributors; for the rationale behind some of the architecture choices [check out the 'Why' doc](/docs/Why.md).
 
 ## Tech Stack
 
