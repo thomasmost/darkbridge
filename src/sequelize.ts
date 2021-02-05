@@ -8,7 +8,7 @@ if (!MYSQL_HOST || !MYSQL_PORT || !MYSQL_USERNAME || !MYSQL_PASSWORD) {
 }
 
 export const sequelize = new Sequelize({
-  database: 'demodb',
+  database: 'teddy',
   dialect: 'mysql',
   host: MYSQL_HOST,
   port: parseInt(MYSQL_PORT),

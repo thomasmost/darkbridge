@@ -3,6 +3,12 @@ import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
 
+export const ClientType = {
+  web: 'web',
+  ios: 'ios',
+  android: 'android',
+};
+
 // These are all the attributes in the AuthToken model
 interface AuthTokenAttributes {
   id: string;
@@ -12,6 +18,8 @@ interface AuthTokenAttributes {
   auth_method: string;
   disabled_reason: string;
   user_id: string;
+  client_type: keyof typeof ClientType;
+  device_id: string;
 }
 
 // Some attributes are optional in `AuthToken.build` and `AuthToken.create` calls
@@ -27,6 +35,8 @@ export class AuthToken
   public disabled_reason: string;
   public id!: string;
   public user_id!: string;
+  public client_type!: keyof typeof ClientType;
+  public device_id!: string;
 
   // timestamps!
   public readonly created_at!: number;
@@ -72,6 +82,15 @@ AuthToken.init(
       allowNull: true,
     },
     user_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    client_type: {
+      type: DataTypes.ENUM,
+      values: Object.values(ClientType),
+      allowNull: false,
+    },
+    device_id: {
       type: DataTypes.STRING,
       allowNull: false,
     },
