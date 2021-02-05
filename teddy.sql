@@ -55,10 +55,10 @@ create table `appointment` (
   service_provider_user_id VARCHAR(255) NOT NULL,
   client_profile_id VARCHAR(255) NOT NULL,
   status VARCHAR(255) NOT NULL,
-  datetime_local: DATETIME NOT NULL,
-  datetime_utc: DATETIME NOT NULL,
-  timezone: VARCHAR(255) NOT NULL,
-  duration_minutes: SMALLINT NOT NULL
+  datetime_local DATETIME NOT NULL,
+  datetime_utc DATETIME NOT NULL,
+  timezone VARCHAR(255) NOT NULL,
+  duration_minutes SMALLINT NOT NULL
 );
 
 create table `appointment_activity` (
