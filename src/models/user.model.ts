@@ -18,7 +18,7 @@ interface UserAttributes {
 // Some attributes are optional in `User.build` and `User.create` calls
 type UserCreationAttributes = Optional<
   UserAttributes,
-  'id' | 'created_at' | 'verified_at'
+  'id' | 'created_at' | 'verified_at' | 'family_name' | 'given_name'
 >;
 
 export class User
@@ -64,11 +64,9 @@ User.init(
     },
     family_name: {
       type: DataTypes.STRING,
-      // allowNull defaults to true
     },
     given_name: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     password_hash: {
       type: DataTypes.STRING,

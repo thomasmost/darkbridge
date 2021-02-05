@@ -20,12 +20,6 @@ interface ContractorProfileAttributes {
   license_number: string;
   licensing_state: string;
   primary_work: keyof typeof PrimaryWork;
-
-  // user_id VARCHAR(255) NOT NULL,
-  // company_name VARCHAR(255) NULL,
-  // license_number VARCHAR(255) NULL,
-  // licensing_state VARCHAR(255) NULL,
-  // primary_work VARCHAR(255) NULL,
 }
 
 // Some attributes are optional in `ContractorProfile.build` and `ContractorProfile.create` calls
@@ -75,19 +69,15 @@ ContractorProfile.init(
     },
     company_name: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     license_number: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     licensing_state: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     primary_work: {
       type: DataTypes.ENUM,
-      allowNull: true,
       values: Object.values(PrimaryWork),
     },
   },

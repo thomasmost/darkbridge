@@ -60,6 +60,10 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const DropdownLink = styled(StyledLink)`
+  display: block;
+`;
+
 export const Header: React.FC = () => {
   const { user } = useAuth();
   return (
@@ -85,10 +89,10 @@ export const Header: React.FC = () => {
                 </LoggedInHeader>
               }
             >
-              <StyledLink to="/profile">
+              <DropdownLink to="/profile">
                 Logged in as {user?.given_name}
-              </StyledLink>
-              <StyledLink to="/logout">Logout</StyledLink>
+              </DropdownLink>
+              <DropdownLink to="/logout">Logout</DropdownLink>
             </Popdown>
           )}
         </Right>

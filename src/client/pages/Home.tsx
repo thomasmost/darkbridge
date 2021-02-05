@@ -27,9 +27,12 @@ const Card = styled.div`
   padding: 20px;
 `;
 const CardHeading = styled.div`
+  display: flex;
+  align-items: center;
   color: ${theme.cardHeaderColor};
 `;
 const CardInfo = styled.div`
+  margin-left: 40px;
   font-weight: 500;
 `;
 
@@ -62,21 +65,37 @@ export const Home: React.FC<RouteComponentProps> = () => {
         <>
           <NextAppointmentHeader>Next appointment</NextAppointmentHeader>
           <Card>
-            <CardHeading>
-              <span style={{ display: 'inline-block', width: '50px' }}>
-                <Icon name="Calendar" />
-              </span>
-              Date and time
-            </CardHeading>
-            <CardInfo>{format(new Date(), 'yyyy/MM/dd')}</CardInfo>
-            <CardHeading>
-              <span style={{ display: 'inline-block', width: '50px' }}>
-                <Icon name="Location" />
-              </span>
-              Address
-            </CardHeading>
-            <CardInfo>15 Main St</CardInfo>
-            <CardInfo>East Hampton, NY 11930</CardInfo>
+            <div style={{ marginBottom: '20px' }}>
+              <CardHeading>
+                <span
+                  style={{
+                    fontSize: '1.5em',
+                    display: 'inline-block',
+                    width: '40px',
+                  }}
+                >
+                  <Icon name="Calendar" />
+                </span>
+                Date and time
+              </CardHeading>
+              <CardInfo>{format(new Date(), 'yyyy/MM/dd')}</CardInfo>
+            </div>
+            <div>
+              <CardHeading>
+                <span
+                  style={{
+                    fontSize: '1.5em',
+                    display: 'inline-block',
+                    width: '40px',
+                  }}
+                >
+                  <Icon name="Location" />
+                </span>
+                Address
+              </CardHeading>
+              <CardInfo>15 Main St</CardInfo>
+              <CardInfo>East Hampton, NY 11930</CardInfo>
+            </div>
           </Card>
         </>
       )}

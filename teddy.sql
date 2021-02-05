@@ -10,8 +10,6 @@ create table `user` (
   family_name VARCHAR(255) NULL,
   password_hash varchar(255) NULL,
   password_salt varchar(255) NULL,
-  company_name varchar(255) NULL,
-  title varchar(255) NULL,
   PRIMARY KEY(id),
   UNIQUE KEY(email),
   UNIQUE KEY(recovery_email)

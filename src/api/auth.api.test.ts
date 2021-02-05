@@ -13,16 +13,12 @@ describe('Auth Api', () => {
     const email = 'jonathan@test.com';
     const password = 'password';
     const confirm_password = 'password';
-    const given_name = 'Jonathan';
-    const family_name = 'Strange';
     const ctx = {
       request: {
         body: {
           email,
           password,
           confirm_password,
-          given_name,
-          family_name,
         },
       },
     };
@@ -35,7 +31,7 @@ describe('Auth Api', () => {
     });
 
     expect(user?.id).toBeDefined();
-    expect(user?.given_name).toBe('Jonathan');
+    expect(user?.email).toBe(email);
     done();
   });
 });

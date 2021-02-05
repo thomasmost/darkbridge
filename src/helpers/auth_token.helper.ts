@@ -1,14 +1,21 @@
-import { AuthToken } from '../models/auth_token.model';
+import { AuthToken, ClientType } from '../models/auth_token.model';
 import { User } from '../models/user.model';
 import { IUserDto } from '../shared/user.dto';
 import { AuthenticationError } from './error.helper';
 
-export async function issueToken(user_id: string, auth_method: string) {
+export async function issueToken(
+  user_id: string,
+  auth_method: string,
+  client_type: ClientType,
+  device_id: string,
+) {
   // const requestId = store.requestId;
   // console.log(`Issuing a new auth token for user_id ${user_id}; requestId=${requestId}`);
   const token = await AuthToken.create({
     user_id,
     auth_method,
+    client_type,
+    device_id,
   });
 
   return token.id as string;

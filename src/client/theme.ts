@@ -2,6 +2,7 @@
 
 const teddyBlueLight = '#45A3F7';
 const teddyBlueDark = '#101042';
+const charcoal = '#060622';
 const red = '#F7655E';
 const green = '#23C38A';
 // const black = '#000';
@@ -21,7 +22,7 @@ export const theme = {
   headerBorderColor: teddyBlueDark,
   headerTextColor: teddyBlueDark,
   passiveLinkColor: teddyBlueLight,
-  textColor: lightGray,
+  textColor: charcoal,
   upvoteColor: green,
   warningColor: red,
   pageHeaderColor: darkGray,

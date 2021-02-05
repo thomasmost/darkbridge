@@ -61,11 +61,11 @@ export const Login: React.FC<RouteComponentProps> = () => {
 
   return (
     <AccountForm autoComplete="disabled" onSubmit={onSubmit}>
-      <FormHeader>Log In </FormHeader>
+      <FormHeader>Log In</FormHeader>
       <p>
         Don&apos;t have an account?{' '}
         <Link to="/register">
-          <b>Sign up!</b>
+          <b>Sign up</b>
         </Link>
       </p>
       <FormFieldPair>

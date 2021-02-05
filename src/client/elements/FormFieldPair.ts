@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { theme } from '../theme';
 
 export const FormFieldPair = styled.div`
   /* display: flex; */
@@ -6,7 +7,7 @@ export const FormFieldPair = styled.div`
   p {
     display: block;
     width: 100%;
-    color: white;
+    color: ${theme.textColor};
     margin: 5px 0;
   }
   input {

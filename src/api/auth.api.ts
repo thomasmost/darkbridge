@@ -95,19 +95,16 @@ export async function login(ctx: Koa.ParameterizedContext) {
     throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
   }
 
-  const token = await issueToken(user.id, 'email_password');
+  const client_type = 'web';
+  const ip = ctx.ip;
+
+  const token = await issueToken(user.id, 'email_password', client_type, ip);
 
   ctx.body = { token, user };
 }
 
 export async function register(ctx: Koa.ParameterizedContext) {
-  const {
-    email,
-    password,
-    confirm_password,
-    given_name,
-    family_name,
-  } = ctx.request.body;
+  const { email, password, confirm_password } = ctx.request.body;
 
   if (!email || !password || !confirm_password) {
     throw new Error(DEFAULT_BAD_REQUEST_MESSAGE);
@@ -133,14 +130,15 @@ export async function register(ctx: Koa.ParameterizedContext) {
     email,
     password_hash,
     password_salt,
-    given_name,
-    family_name,
   });
 
   const user_id = user.id;
   const email_type = 'primary';
 
-  const tokenPromise = issueToken(user_id, 'registration');
+  const client_type = 'web';
+  const ip = ctx.ip;
+
+  const tokenPromise = issueToken(user_id, 'registration', client_type, ip);
 
   const verifyEmailPromise = VerifyEmailRequest.create({
     email,
