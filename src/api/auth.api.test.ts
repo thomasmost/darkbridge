@@ -21,6 +21,7 @@ describe('Auth Api', () => {
           confirm_password,
         },
       },
+      ip: 'TEST::1',
     };
     await register(ctx as ParameterizedContext);
 
