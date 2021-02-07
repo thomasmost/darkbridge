@@ -67,21 +67,25 @@ aws ecr create-repository --repository-name darkbridge_registry --region us-east
 Register the task definition:
 
 ```bash
-aws ecs register-task-definition --region us-east-1 --cli-input-json file://$HOME/darkbridge/task-def-staging.json
+aws ecs register-task-definition --region us-east-1 --cli-input-json file://$HOME/teddy/task-def-staging.json
 ```
 
 ## Create an ECS cluster
 
 ```bash
-aws ecs create-cluster --region us-east-1 --cluster-name darkbridge-staging
+aws ecs create-cluster --region us-east-1 --cluster-name teddy-web-cluster-staging
 ```
 
 ## Create a Fargate service
 
-**Note that you have to associate the load balancer with the service at the time of the service creation**
+Make sure to specify the cluster for your service
+
+**Also note that you have to associate the load balancer with the service at the time of the service creation**
+
+E.g.
 
 ```bash
-aws ecs create-service --region us-east-1 --service-name darkbridge-service-staging --task-definition darkbridge-task-staging:1 --desired-count 2 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[ [[private-subnet1]],[[public-subnet1]],[[private-subnet2]],[[public-subnet2]] ],securityGroups=[ [[security-group]] ]}" --load-balancers "targetGroupArn=[[arn]], containerName=darkbridge-container, containerPort=80"
+aws ecs create-service --region us-east-1 --service-name teddy-web-service-staging --task-definition teddy-web-task-staging:1 --desired-count 2 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[ [[subnet]], [[subnet]] ],securityGroups=[ [[sg]] ]}" --load-balancers "targetGroupArn=[[arn]], containerName=teddy-web-container-staging, containerPort=80" --cluster teddy-web-cluster-staging --output json
 ```
 
 ## Working with Environment Variables

@@ -4,6 +4,7 @@
   "containerDefinitions": [
     {
       "name": "teddy-web-container-staging",
+      "image": "_tbd_",
       "memory": 200,
       "cpu": 10,
       "essential": true,
