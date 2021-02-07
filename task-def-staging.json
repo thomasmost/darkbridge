@@ -32,6 +32,14 @@
           "value": "web"
         },
         {
+          "name": "HOST_DOMAIN",
+          "value": "http://staging.callteddy.com"
+        },
+        {
+          "name": "NODE_ENV",
+          "value": "staging"
+        },
+        {
           "name": "EXAMPLE_PUBLIC_VARIABLE",
           "value": "Not sensitive"
         }
