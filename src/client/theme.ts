@@ -17,6 +17,7 @@ export const theme = {
   activeLinkColor: teddyBlueDark,
   activePageColor: teddyBlueLight,
   applicationBackgroundColor: paperWhite,
+  onboardingBackgroundColor: teddyBlueDark,
   applicationTextColor: darkGray,
   headerBackgroundColor: white,
   headerBorderColor: teddyBlueDark,
