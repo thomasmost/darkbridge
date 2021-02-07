@@ -1,9 +1,9 @@
 {
-  "family": "darkbridge-task-staging",
+  "family": "teddy-web-task-staging",
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "darkbridge",
+      "name": "teddy-web-container-staging",
       "memory": 200,
       "cpu": 10,
       "essential": true,
@@ -16,15 +16,19 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "awslogs-ecs-darkbridge-staging",
+          "awslogs-group": "awslogs-ecs-teddy-web-task-staging",
           "awslogs-region": "us-east-1",
-          "awslogs-stream-prefix": "awslogs-ecs-darkbridge-staging"
+          "awslogs-stream-prefix": "awslogs-ecs-teddy-web-task-staging"
         }
       },
       "environment": [
         {
           "name": "MYSQL_PORT",
           "value": "3306"
+        },
+        {
+          "name": "MYSQL_USERNAME",
+          "value": "web"
         },
         {
           "name": "EXAMPLE_PUBLIC_VARIABLE",
@@ -34,24 +38,20 @@
       "secrets": [
         {
           "name": "EXAMPLE_SECRET_VARIABLE",
-          "valueFrom": "[[arn]]"
-        },
-        {
-          "name": "MYSQL_USERNAME",
-          "valueFrom": "[[arn]]"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:EXAMPLE_SECRET_VARIABLE-j7woBv"
         },
         {
           "name": "MYSQL_HOST",
-          "valueFrom": "[[arn]]"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MYSQL_HOST-v01lbv"
         },
         {
           "name": "MYSQL_PASSWORD",
-          "valueFrom": "[[arn]]"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MYSQL_PASSWORD-5gMKpW"
         }
       ]
     }
   ],
-  "executionRoleArn": "arn:aws:iam::921538683536:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::786903541329:role/ecsTaskExecutionRole",
   "requiresCompatibilities": [
     "FARGATE"
   ],
