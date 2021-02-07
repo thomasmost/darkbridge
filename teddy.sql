@@ -60,7 +60,7 @@ create table `appointment` (
   datetime_utc DATETIME NOT NULL,
   timezone VARCHAR(255) NOT NULL,
   duration_minutes SMALLINT NOT NULL,
-  notes TEXT NOT NULL DEFAULT '',
+  notes TEXT NULL,
   summary VARCHAR(255) NOT NULL DEFAULT ''
 );
 
