@@ -66,6 +66,26 @@ Once you've verified that your manual deploys are working, I'd recommend changin
 
 You will need the aws command line tool installed to execute these steps.
 
+## GitHub Actions Setup
+
+1. Create a new IAM Group "DeployGroup" with the following policies:
+
+- AmazonEC2ContainerRegistryFullAccess
+- AmazonECS_FullAccess
+
+2. Add a new IAM User "GitHub" to the DeployGroup
+
+## (FOR PROD) Create a VPC and Security Group
+
+See [Tutorial: Creating a VPC with Public and Private Subnets for Your Clusters.](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-public-private-vpc.html)
+
+## Create Application Load Balancer
+
+1. Create a new security group for your fargate cluster (e.g. darkbridge-fargate-staging-sg)
+2. Ensure the security group is the same as Fargate's
+3. Create a new Application Load Balancer
+4. Set the target type to IP
+
 ## Create a Container Registry
 
 ```bash
@@ -74,7 +94,30 @@ aws ecr create-repository --repository-name darkbridge_registry --region us-east
 
 ## Set up a Fargate service
 
-Register the task definition:
+These first three steps are necessary for the GitHub Actions workflow to succeed.
+
+Ensure that the `ecsTaskExecutionRole` role is available and can be assumed by the GitHub workflow as [described here](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html).
+
+1. Create a role (if it does not already exist) called `ecsTaskExecutionRole` with the `AmazonECSTaskExecutionRolePolicy` policy
+2. Replace the trust relationship with the following:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+Now register the task definition:
 
 ```bash
 aws ecs register-task-definition --region us-east-1 --cli-input-json file://$HOME/darkbridge/task-def-staging.json
@@ -110,6 +153,7 @@ See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/specifying-sens
 - Similarly the app in the task definition file, the alb, and so on should be named better.
 - By default, Fargate containers are limited to 200 MiB of memory; running the server with ts-node for example creates an unstable service since ts-node compiles to memory -- it's much better to compile to disk for production.
 - RE: ENV VARIABLES, Fargate only supports secrets that are a single value, not the JSON or key value secrets. So choose OTHER when creating the secret and just put a single text value there.
+- If a cluster is expected but not provided, you'll occasionally see a confusing "missing cluster: default" error; this usually means a `--cluster` needs to be specified in the cli command
 
 ## Testing the Docker Image Locally
 
