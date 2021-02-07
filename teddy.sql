@@ -3,8 +3,9 @@ create table `user` (
   created_at BIGINT NOT NULL,
   verified_at BIGINT NULL,
   disabled_at BIGINT NULL,
+  avatar_url varchar(255) DEFAULT NULL,
   email varchar(255) DEFAULT NULL,
-  phone varchar(255) NULL,
+  phone varchar(255) DEFAULT NULL,
   recovery_email varchar(255) DEFAULT NULL,
   given_name VARCHAR(255) NULL,
   family_name VARCHAR(255) NULL,
@@ -58,7 +59,9 @@ create table `appointment` (
   datetime_local DATETIME NOT NULL,
   datetime_utc DATETIME NOT NULL,
   timezone VARCHAR(255) NOT NULL,
-  duration_minutes SMALLINT NOT NULL
+  duration_minutes SMALLINT NOT NULL,
+  notes TEXT NOT NULL DEFAULT '',
+  summary VARCHAR(255) NOT NULL DEFAULT ''
 );
 
 create table `appointment_activity` (
@@ -91,4 +94,13 @@ create table `contractor_profile` (
   license_number VARCHAR(255) NULL,
   licensing_state VARCHAR(255) NULL,
   primary_work VARCHAR(255) NULL
+);
+
+create table `work_image` (
+  id VARCHAR(255) NOT NULL,
+  created_at BIGINT NOT NULL,
+  user_id VARCHAR(255) NOT NULL,
+  appointment_id VARCHAR(255) NOT NULL,
+  url VARCHAR(255) NOT NULL,
+  thumb_url VARCHAR(255) DEFAULT NULL
 );
