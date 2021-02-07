@@ -64,7 +64,30 @@ aws ecr create-repository --repository-name darkbridge_registry --region us-east
 
 ## Set up a Fargate service
 
-Register the task definition:
+These first three steps are necessary for the GitHub Actions workflow to succeed.
+
+Ensure that the `ecsTaskExecutionRole` role is available and can be assumed by the GitHub workflow as [described here](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html).
+
+1. Create a role (if it does not already exist) called `ecsTaskExecutionRole` with the `AmazonECSTaskExecutionRolePolicy` policy
+2. Replace the trust relationship with the following:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+Now register the task definition:
 
 ```bash
 aws ecs register-task-definition --region us-east-1 --cli-input-json file://$HOME/teddy/task-def-staging.json
