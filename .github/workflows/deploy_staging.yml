@@ -54,7 +54,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: teddy_web_ecr
+          ECR_REPOSITORY: teddy-web-ecr
           IMAGE_TAG: teddy_web_image_${{ github.sha }}
         run: |
           # Build a docker container and
@@ -64,12 +64,6 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-      - name: Log Image output
-        id: log-image
-        run: |
-          echo Neato!
-          echo ${{ steps.build-image.outputs.image }}
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
