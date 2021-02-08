@@ -3,7 +3,7 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { Router } from '@reach/router';
 
-import { Dashboard } from './pages/Dashboard';
+import { ApiSandbox } from './pages/ApiSandbox';
 import { Header } from './components/Header';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
@@ -52,7 +52,7 @@ const App = () => {
         <Main>
           <Router>
             <Home path="/" />
-            <Dashboard path="dashboard" />
+            <ApiSandbox path="sandbox" />
             <Login path="login" />
             <Logout path="logout" />
             <Register path="register" />

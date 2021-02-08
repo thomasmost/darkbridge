@@ -75,7 +75,7 @@ export const Header: React.FC = () => {
               <img height="40px" src="/logo.png" />
             </Logo>
           </StyledLink>
-          {Boolean(user) && <StyledLink to="/dashboard">Dashboard</StyledLink>}
+          {Boolean(user) && <StyledLink to="/sandbox">API Sandbox</StyledLink>}
           {!user && <StyledLink to="/register">Register</StyledLink>}
           {!user && <StyledLink to="/login">Log In</StyledLink>}
         </LeftNav>
