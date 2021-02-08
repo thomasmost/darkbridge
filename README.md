@@ -69,7 +69,8 @@ These first three steps are necessary for the GitHub Actions workflow to succeed
 Ensure that the `ecsTaskExecutionRole` role is available and can be assumed by the GitHub workflow as [described here](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html).
 
 1. Create a role (if it does not already exist) called `ecsTaskExecutionRole` with the `AmazonECSTaskExecutionRolePolicy` policy
-2. Replace the trust relationship with the following:
+2. Also add the `SecretsManagerReadWrite` policy
+3. Replace the trust relationship with the following:
 
 ```json
 {
