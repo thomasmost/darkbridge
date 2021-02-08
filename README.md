@@ -109,7 +109,7 @@ Make sure to specify the cluster for your service
 E.g.
 
 ```bash
-aws ecs create-service --region us-east-1 --service-name teddy-web-service-staging --task-definition teddy-web-task-staging:1 --desired-count 2 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[ [[subnet]], [[subnet]] ],securityGroups=[ [[sg]] ]}" --load-balancers "targetGroupArn=[[arn]], containerName=teddy-web-container-staging, containerPort=80" --cluster teddy-web-cluster-staging --output json
+aws ecs create-service --region us-east-1 --service-name teddy-web-service-staging --task-definition teddy-web-task-staging:1 --desired-count 2 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[ [[subnet-publicid1]], [[subnet-publicid2]] ],securityGroups=[ [[sg]] ]}" --load-balancers "targetGroupArn=[[arn]], containerName=teddy-web-container-staging, containerPort=80" --cluster teddy-web-cluster-staging --output json
 ```
 
 ## Working with Environment Variables
