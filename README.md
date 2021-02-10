@@ -11,8 +11,11 @@ The core api, server, and web client for the Teddy application
 
 # Dependencies
 
+This repository is known to work with the following:
+
 - node `12.16.3`
 - npm `7.5.2`
+- mysql `8.0.20`
 
 # Development
 
@@ -24,7 +27,7 @@ An overview for new contributors; for the rationale behind some of the architect
 - Rendered by React
 - Styled with Emotion
 - Tested with Jest
-- Linted, prettified, and written in highly safe and readable TypeScript
+- Linted, Prettified, and written in TypeScript
 - Packaged into a Docker image on deploy
 
 **Note that you do not need Docker installed to run the application in development,** but you will likely want to have it eventually to customize your containers.
@@ -41,7 +44,7 @@ An overview for new contributors; for the rationale behind some of the architect
 
 One of the most critical pieces of development is easily being able to step through code. There are two ways to step through the server code:
 
-1. Attach to the currently running process, by running the `Attach to Server` configuration from VS Code's debug menu.
+1. Attach to the currently running process, by running the `Attach to Server` configuration from VS Code's debug menu. _This doesn't seem to work reliably; see Todos._
 2. Stop the server (`pm2 stop server`) and then run the `Launch Debug Server` configuration from VS Code's debug menu (configured in the [launch.json](/.vscode/launch.json) file) in order to step through the server code.
 
 ## Next Steps
@@ -59,7 +62,7 @@ You will need the aws command line tool installed to execute these steps.
 ## Create a Container Registry
 
 ```bash
-aws ecr create-repository --repository-name darkbridge_registry --region us-east-1
+aws ecr create-repository --repository-name teddy-web-ecr --region us-east-1
 ```
 
 ## Set up a Fargate service
@@ -160,3 +163,4 @@ See [Database Management](/docs/DatabaseManagement.md)
 - [x] ~Use the image output from the staging deploy for the prod deploy~
 - [ ] Connecting to S3
 - [ ] Sourcemaps for production error monitoring
+- [ ] Debugging by attaching to the existing process needs to be more reliable
