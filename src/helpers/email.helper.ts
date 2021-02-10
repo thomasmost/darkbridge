@@ -2,6 +2,7 @@ import mailgun from 'mailgun-js';
 
 const DOMAIN = process.env.MAILGUN_DOMAIN;
 const API_KEY = process.env.MAILGUN_API_KEY;
+const NODE_ENV = process.env.NODE_ENV;
 
 type SendEmailPayload = {
   to: string;
@@ -16,6 +17,11 @@ export const sendEmail = async (data: SendEmailPayload) => {
     console.log(`Missing Mailgun Config:
 Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email integration
     `);
+    return;
+  }
+
+  if (NODE_ENV === 'test') {
+    console.log(`Skip emails in tests`);
     return;
   }
 

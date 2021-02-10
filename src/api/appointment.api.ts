@@ -1,6 +1,8 @@
 import Koa from 'koa';
 import Router from 'koa-router';
 import { format } from 'date-fns';
+import { Appointment } from '../models/appointment.model';
+import { getById } from './base.api';
 
 // import { WhereAttributeHash } from 'sequelize/types';
 // import {
@@ -89,6 +91,8 @@ export async function getAppointments(ctx: Koa.ParameterizedContext) {
 }
 
 appointmentAPI.get('/', getAppointments);
+
+appointmentAPI.get('/:id', getById(Appointment));
 
 export async function createAppointment(ctx: Koa.ParameterizedContext) {
   throw Error('Not Yet Implemented');
