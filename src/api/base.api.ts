@@ -4,6 +4,7 @@ import { Model } from 'sequelize';
 export function getById<TModel extends Model>(model: {
   findByPk(pk: string): Promise<TModel>;
 }) {
+  // todo(thomas) we need to introduce model-field permissioning middleware for something like this to be safe
   return async function (ctx: Koa.ParameterizedContext) {
     const id = ctx.params.id;
     const instance = await model.findByPk(id);

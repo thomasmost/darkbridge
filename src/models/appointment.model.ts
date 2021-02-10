@@ -29,9 +29,9 @@ interface AppointmentAttributes {
 }
 
 // Some attributes are optional in `Appointment.build` and `Appointment.create` calls
-type AppointmentCreationAttributes = Optional<
+export type AppointmentCreationAttributes = Optional<
   AppointmentAttributes,
-  'id' | 'created_at'
+  'id' | 'created_at' | 'status'
 >;
 
 export class Appointment
