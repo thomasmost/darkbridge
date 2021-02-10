@@ -32,10 +32,10 @@ name: Deploy to Staging
 
 jobs:
   cancel-previous:
-    name: Cancel In-Progress Deploys
+    name: Cancel Prior Pending Deploys
     runs-on: ubuntu-latest
     steps:
-      - name: cancel
+      - name: Cancel workflow action
         uses: styfle/cancel-workflow-action@0.7.0
         with:
           access_token: ${{ github.token }}
