@@ -128,6 +128,8 @@ See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/specifying-sens
 - Similarly the app in the task definition file, the alb, and so on should be named better.
 - By default, Fargate containers are limited to 200 MiB of memory; running the server with ts-node for example creates an unstable service since ts-node compiles to memory -- it's much better to compile to disk for production.
 - RE: ENV VARIABLES, Fargate only supports secrets that are a single value, not the JSON or key value secrets. So choose OTHER when creating the secret and just put a single text value there.
+- Fargate **services** (see (creating the service)(#Create_a_Fargate_service)) deployed to public subnets need to explicitly be told to expose a public IP address in order to connect to the internet and pull their container images from the registry. This can result in a `CannotPullContainerError`. **WARNING: this is a poor security practice in any case and should not be used for production setups** (see below).
+- Fargate services deployed to _private_ subnets don't need the assignPublicIp property to be included, but they will need a NAT gateway to allow for outbound traffic and an Application Load Balancer for inbound traffic. **This is the recommended practice for production-security setups.**
 
 ## Testing the Docker Image Locally
 
@@ -155,6 +157,6 @@ See [Database Management](/docs/DatabaseManagement.md)
 - [x] ~Allow attaching to the server process for debugging~
 - [x] ~Optional connecting to Mailgun~
 - [x] ~Continuous integration tests run on push~
+- [x] ~Use the image output from the staging deploy for the prod deploy~
 - [ ] Connecting to S3
 - [ ] Sourcemaps for production error monitoring
-- [ ] Use the image output from the staging deploy for the prod deploy
