@@ -1,5 +1,5 @@
 create table `user` (
-  id VARCHAR(255) NOT NULL,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   verified_at BIGINT NULL,
   disabled_at BIGINT NULL,
@@ -11,34 +11,31 @@ create table `user` (
   family_name VARCHAR(255) NULL,
   password_hash varchar(255) NULL,
   password_salt varchar(255) NULL,
-  PRIMARY KEY(id),
   UNIQUE KEY(email),
   UNIQUE KEY(recovery_email)
 );
 
 create table `verify_email_request` (
-  verification_token varchar(255) NOT NULL,
+  verification_token varchar(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   fulfilled_at BIGINT NULL,
   email varchar(255) NOT NULL,
   email_type varchar(255) NOT NULL,
   user_id VARCHAR(255) NOT NULL,
-  PRIMARY KEY(verification_token),
   INDEX(user_id)
 );
 
 create table `reset_password_request` (
-  verification_token varchar(255) NOT NULL,
+  verification_token varchar(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   fulfilled_at BIGINT NULL,
   email_sent_to varchar(255) NOT NULL,
   user_id VARCHAR(255) NOT NULL,
-  PRIMARY KEY(verification_token),
   INDEX(user_id)
 );
 
 create table `auth_token` (
-  id VARCHAR(255) NOT NULL,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   last_used_at BIGINT NOT NULL,
   disabled_at BIGINT NULL,
@@ -46,12 +43,11 @@ create table `auth_token` (
   user_id VARCHAR(255) NOT NULL,
   auth_method VARCHAR(255) NOT NULL,
   client_type VARCHAR(255) NOT NULL,
-  device_id VARCHAR(255) NOT NULL,
-  PRIMARY KEY(id)
+  device_id VARCHAR(255) NOT NULL
 );
 
 create table `appointment` (
-  id VARCHAR(255) NOT NULL,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   service_provider_user_id VARCHAR(255) NOT NULL,
   client_profile_id VARCHAR(255) NOT NULL,
@@ -61,11 +57,13 @@ create table `appointment` (
   timezone VARCHAR(255) NOT NULL,
   duration_minutes SMALLINT NOT NULL,
   notes TEXT NULL,
-  summary VARCHAR(255) NOT NULL DEFAULT ''
+  summary VARCHAR(255) NOT NULL DEFAULT '',
+  rating_of_service TINYINT NULL,
+  rating_of_client TINYINT NULL
 );
 
 create table `appointment_activity` (
-  id VARCHAR(255) NOT NULL,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   acting_user_id VARCHAR(255) NOT NULL,
   appointment_id VARCHAR(255) NOT NULL,
@@ -73,7 +71,7 @@ create table `appointment_activity` (
 );
 
 create table `client_profile` (
-  id VARCHAR(255) NOT NULL,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   user_id VARCHAR(255) NULL,
   created_by_user_id VARCHAR(255) NOT NULL,
@@ -87,7 +85,7 @@ create table `client_profile` (
 );
 
 create table `contractor_profile` (
-  id VARCHAR(255) NOT NULL,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   user_id VARCHAR(255) NOT NULL,
   company_name VARCHAR(255) NULL,
@@ -97,7 +95,7 @@ create table `contractor_profile` (
 );
 
 create table `work_image` (
-  id VARCHAR(255) NOT NULL,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   user_id VARCHAR(255) NOT NULL,
   appointment_id VARCHAR(255) NOT NULL,
