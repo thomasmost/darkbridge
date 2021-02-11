@@ -19,30 +19,13 @@ const DEFAULT_BAD_REQUEST_MESSAGE = 'Must include a valid email and password';
 const DEFAULT_FAILED_LOGIN_MESSAGE =
   'The provided email and password were not a match.';
 
-export function tokenFromAuthorizationHeader(authHeader: string) {
-  if (!authHeader) {
-    throw new AuthenticationError('Missing Authorization Header');
-  }
-  const bearerParts = authHeader.split(' ');
-  if (
-    !bearerParts ||
-    bearerParts.length != 2 ||
-    bearerParts[0].toLowerCase() !== 'bearer' ||
-    !bearerParts[1]
-  ) {
-    throw new AuthenticationError(
-      'Authorization Header is expected to comply with rfc6750 and rfc2617',
-    );
-  }
-  return bearerParts[1];
+export function tokenFromCookies(ctx: Koa.ParameterizedContext) {
+  return ctx.cookies.get('teddy_web_token');
 }
 
 export async function logout(ctx: Koa.ParameterizedContext) {
-  const { headers } = ctx.request;
-  const authHeader = headers['authorization'];
-  if (authHeader) {
-    const tokenId = tokenFromAuthorizationHeader(authHeader);
-
+  const tokenId = ctx.cookies.get('teddy_web_token');
+  if (tokenId) {
     const token = await AuthToken.findOne({
       where: {
         id: tokenId,
@@ -52,6 +35,8 @@ export async function logout(ctx: Koa.ParameterizedContext) {
       throw Error('Missing token');
     }
     console.log('FOUND TOKEN AND LOGGING OUT');
+
+    ctx.cookies.set('teddy_web_token', null);
 
     // if !token log a warning
 
@@ -100,6 +85,11 @@ export async function login(ctx: Koa.ParameterizedContext) {
 
   const token = await issueToken(user.id, 'email_password', client_type, ip);
 
+  const cookie_options = {
+    overwrite: true,
+  };
+
+  ctx.cookies.set('teddy_web_token', token, cookie_options);
   ctx.body = { token, user };
 }
 
@@ -168,6 +158,11 @@ export async function register(ctx: Koa.ParameterizedContext) {
   };
   await sendEmail(data);
 
+  const cookie_options = {
+    overwrite: true,
+  };
+
+  ctx.cookies.set('teddy_web_token', token, cookie_options);
   ctx.body = { token, user };
 }
 
@@ -318,4 +313,5 @@ export async function verifyEmail(ctx: Koa.ParameterizedContext) {
 authAPI.post('/register', register);
 authAPI.get('/verify_email', verifyEmail);
 authAPI.post('/login', login);
+authAPI.get('/logout', logout);
 authAPI.get('/current_user', (ctx) => (ctx.body = (ctx as any).user));

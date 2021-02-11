@@ -1,11 +1,9 @@
 import styled from '@emotion/styled';
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
-import { Router } from '@reach/router';
+import { Redirect, Router } from '@reach/router';
 
-import { ApiSandbox } from './pages/ApiSandbox';
 import { Header } from './components/Header';
-import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { theme } from './theme';
@@ -33,7 +31,7 @@ const Main = styled.main`
   margin: auto;
 `;
 
-const App = () => {
+const UnauthorizedApp = () => {
   return (
     <AuthProvider>
       <AppContainer>
@@ -51,9 +49,10 @@ const App = () => {
         <Header />
         <Main>
           <Router>
-            <Home path="/" />
-            <ApiSandbox path="sandbox" />
+            <Redirect from="/" to="register" />
+            <Login path="login" />
             <Logout path="logout" />
+            <Register path="register" />
           </Router>
         </Main>
       </AppContainer>
@@ -61,4 +60,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default UnauthorizedApp;

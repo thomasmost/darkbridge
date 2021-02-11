@@ -4,11 +4,11 @@ import { IUserDto } from '../shared/user.dto';
 import { clientTokenStore } from './clientTokenStore';
 
 function getCurrentUser() {
-  const token = clientTokenStore.get();
+  // const token = clientTokenStore.get();
   return fetch('/api/auth/current_user', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    // headers: {
+    //   Authorization: `Bearer ${token}`,
+    // },
   }).then(function (response) {
     if (response.status === 401) {
       clientTokenStore.clear();

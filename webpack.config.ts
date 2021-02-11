@@ -7,6 +7,7 @@ const config: webpack.Configuration = {
   devtool: 'source-map',
   entry: {
     app: './src/client/index.tsx',
+    unauthorized_app: './src/client/index_unauthorized.tsx',
   },
   module: {
     rules: [

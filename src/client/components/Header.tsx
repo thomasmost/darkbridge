@@ -60,12 +60,31 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const StyledAnchor = styled.a`
+  color: ${theme.headerTextColor};
+  display: block;
+  font-size: 0.8em;
+  text-decoration: none;
+  padding: 0 10px;
+  &[aria-current] {
+    color: ${theme.activePageColor};
+  }
+  cursor: pointer;
+`;
+
 const DropdownLink = styled(StyledLink)`
   display: block;
 `;
 
 export const Header: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+
+  async function handleLogout() {
+    await fetch('/api/auth/logout');
+    logout();
+    location.assign('/');
+  }
+
   return (
     <StyledHeader>
       <HeaderContents>
@@ -76,8 +95,6 @@ export const Header: React.FC = () => {
             </Logo>
           </StyledLink>
           {Boolean(user) && <StyledLink to="/sandbox">API Sandbox</StyledLink>}
-          {!user && <StyledLink to="/register">Register</StyledLink>}
-          {!user && <StyledLink to="/login">Log In</StyledLink>}
         </LeftNav>
         <Right>
           {Boolean(user) && (
@@ -92,7 +109,7 @@ export const Header: React.FC = () => {
               <DropdownLink to="/profile">
                 Logged in as {user?.given_name}
               </DropdownLink>
-              <DropdownLink to="/logout">Logout</DropdownLink>
+              <StyledAnchor onClick={() => handleLogout()}>Logout</StyledAnchor>
             </Popdown>
           )}
         </Right>

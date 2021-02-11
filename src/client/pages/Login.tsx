@@ -21,7 +21,8 @@ export const Login: React.FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/');
+      // navigate('/');
+      location.assign('/');
     }
   });
 
@@ -42,7 +43,6 @@ export const Login: React.FC<RouteComponentProps> = () => {
       const data = (await result.json()) as { token: string; user: IUserDto };
       login(data.user);
       clientTokenStore.set(data.token);
-      navigate('/');
     } catch (err) {
       toast.error('Login failed');
     }

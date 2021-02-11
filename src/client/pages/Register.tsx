@@ -48,7 +48,8 @@ export const Register: React.FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/');
+      // navigate('/');
+      location.assign('/');
     }
   });
 

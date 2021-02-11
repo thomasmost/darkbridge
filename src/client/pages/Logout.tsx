@@ -8,12 +8,17 @@ const FormHeader = styled.h2`
   font-weight: 600;
 `;
 
+async function handleLogout(logout: () => void) {
+  await fetch('/api/auth/logout');
+  logout();
+  location.assign('/');
+}
+
 export const Logout: React.FC<RouteComponentProps> = () => {
   const { user, logout } = useAuth();
 
   useEffect(() => {
-    logout();
-    fetch('/api/auth/logout');
+    handleLogout(logout);
   }, []);
 
   return (

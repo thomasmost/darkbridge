@@ -11,7 +11,7 @@ import Router from 'koa-router';
 import serveStatic from 'koa-static';
 import { createHttpTerminator } from 'http-terminator';
 
-import { ServerLocation } from '@reach/router';
+import { isRedirect, ServerLocation } from '@reach/router';
 
 import request from 'request';
 
@@ -23,28 +23,30 @@ const NODE_ENV = process.env.NODE_ENV;
 console.log(`NODE_ENV: ${NODE_ENV}`);
 
 import App from './client/App';
-import { tokenFromAuthorizationHeader } from './api/auth.api';
+import { tokenFromCookies } from './api/auth.api';
 import { consumeToken } from './helpers/auth_token.helper';
+import UnauthorizedApp from './client/UnauthorizedApp';
+import { TeddyRequestContext } from './api/types';
 
 const app = new Koa();
 const router = new Router();
 
 // this route needs to precede our wildcard route so that we can correctly get the application bundle
 if (NODE_ENV === 'development') {
-  // This rule is necessary to route requests for the application bundle
-  // to our webpack-dev-server
-  router.get('/build/app.js', async function (ctx) {
+  async function pipeRequestToDevServer(ctx: Koa.ParameterizedContext) {
     console.log(ctx.req.url);
     const stream = request('http://localhost:8080' + ctx.req.url);
     ctx.body = ctx.req.pipe(stream);
-  });
+  }
+  // These rules are necessary to route requests for the application bundle
+  // to our webpack-dev-server
+  router.get('/build/app.js', pipeRequestToDevServer);
+  router.get('/build/unauthorized_app.js', pipeRequestToDevServer);
 }
 
 app.use(async (ctx, next) => {
-  const { headers } = ctx.request;
-  const authHeader = headers['authorization'];
-  if (authHeader) {
-    const tokenId = tokenFromAuthorizationHeader(authHeader);
+  const tokenId = tokenFromCookies(ctx);
+  if (tokenId) {
     ctx.user = await consumeToken(tokenId);
   }
   await next();
@@ -53,10 +55,39 @@ app.use(async (ctx, next) => {
 router.use('/api', api.routes(), api.allowedMethods());
 
 // Wildcard Route
-router.get(/\//, async (ctx) => {
+router.get(/\//, async (ctx: TeddyRequestContext) => {
+  // ctx.cookies.set('teddy_web_token', null);
+  if (ctx.req.url && ctx.req.url.split('.').length > 1) {
+    // file request
+    return;
+  }
   if (!ctx.req.url) {
     ctx.status = 400;
     return;
+  }
+  if (!ctx.user) {
+    try {
+      const app = ReactDOMServer.renderToString(
+        <ServerLocation url={ctx.req.url}>
+          <UnauthorizedApp />
+        </ServerLocation>,
+      );
+      console.log(path.resolve('./views/index_unauthorized.html'));
+      const indexFile = path.resolve('./views/index_unauthorized.html');
+      const data = await util.promisify(fs.readFile)(indexFile, 'utf8');
+
+      return (ctx.body = data.replace(
+        '<div id="root"></div>',
+        `<div id="root">${app}</div>
+  <script src="/build/unauthorized_app.js"></script>`,
+      ));
+    } catch (error) {
+      if (isRedirect(error)) {
+        ctx.redirect(error.uri);
+      } else {
+        // carry on as usual
+      }
+    }
   }
   const app = ReactDOMServer.renderToString(
     <ServerLocation url={ctx.req.url}>
