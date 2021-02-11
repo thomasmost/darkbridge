@@ -18,6 +18,9 @@ describe('Base Api', () => {
       params: {
         id: 'foo',
       },
+      cookies: {
+        set: () => null,
+      },
     } as unknown) as ParameterizedContext;
 
     await getActivityById(ctx);

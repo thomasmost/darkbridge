@@ -13,7 +13,7 @@ describe('Auth Api', () => {
     const email = 'jonathan@test.com';
     const password = 'password';
     const confirm_password = 'password';
-    const ctx = {
+    const ctx = ({
       request: {
         body: {
           email,
@@ -21,9 +21,12 @@ describe('Auth Api', () => {
           confirm_password,
         },
       },
+      cookies: {
+        set: () => null,
+      },
       ip: 'TEST::1',
-    };
-    await register(ctx as ParameterizedContext);
+    } as unknown) as ParameterizedContext;
+    await register(ctx);
 
     const user = await User.findOne({
       where: {
