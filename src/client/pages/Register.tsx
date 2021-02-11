@@ -8,9 +8,19 @@ import { clientTokenStore } from '../clientTokenStore';
 import { AccountForm } from '../elements/AccountForm';
 import { FormFieldPair } from '../elements/FormFieldPair';
 import { IUserDto } from '../../shared/user.dto';
+import { theme } from '../theme';
 
 const FormHeader = styled.h2`
   font-weight: 600;
+  color: white;
+`;
+
+const Instruction = styled.p`
+  color: ${theme.darkModeTextColor};
+`;
+
+const Input = styled.input`
+  font-size: 1em;
 `;
 
 async function registerUser(
@@ -43,7 +53,7 @@ export const Register: React.FC<RouteComponentProps> = () => {
   const userEmail = useRef<HTMLInputElement>(null);
   const userPassword = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { login, user } = useAuth();
 
   useEffect(() => {
@@ -71,43 +81,43 @@ export const Register: React.FC<RouteComponentProps> = () => {
   return (
     <AccountForm autoComplete="disabled" onSubmit={onSubmit}>
       <FormHeader>Register</FormHeader>
-      <p>
+      <Instruction>
         Already have an account?{' '}
         <Link to="/login">
           <b>Log in</b>
         </Link>
-      </p>{' '}
+      </Instruction>{' '}
       <FormFieldPair>
         <p>Email</p>
-        <input
+        <Input
           type="email"
           name="userEmail"
-          placeholder="Please enter login email"
+          placeholder="teddy@callteddy.com"
           required
           ref={userEmail}
         />
       </FormFieldPair>
       <FormFieldPair>
         <p>Password</p>
-        <input
+        <Input
           type="password"
           name="userPassword"
-          placeholder="Password"
+          placeholder="••••••••"
           required
           ref={userPassword}
         />
       </FormFieldPair>
       <FormFieldPair>
         <p>Confirm Password</p>
-        <input
+        <Input
           type="password"
           name="confirmPassword"
-          placeholder="Confirm Password"
+          placeholder="••••••••"
           required
           ref={confirmPasswordRef}
         />
       </FormFieldPair>
-      <input type="submit" value="Register" />
+      <Input type="submit" value="Register" />
     </AccountForm>
   );
 };

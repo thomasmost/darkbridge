@@ -8,9 +8,19 @@ import { clientTokenStore } from '../clientTokenStore';
 import { AccountForm } from '../elements/AccountForm';
 import { FormFieldPair } from '../elements/FormFieldPair';
 import { IUserDto } from '../../shared/user.dto';
+import { theme } from '../theme';
 
 const FormHeader = styled.h2`
   font-weight: 600;
+  color: white;
+`;
+
+const Instruction = styled.p`
+  color: ${theme.darkModeTextColor};
+`;
+
+const Input = styled.input`
+  font-size: 1em;
 `;
 
 export const Login: React.FC<RouteComponentProps> = () => {
@@ -62,36 +72,36 @@ export const Login: React.FC<RouteComponentProps> = () => {
   return (
     <AccountForm autoComplete="disabled" onSubmit={onSubmit}>
       <FormHeader>Log In</FormHeader>
-      <p>
+      <Instruction>
         Don&apos;t have an account?{' '}
         <Link to="/register">
           <b>Sign up</b>
         </Link>
-      </p>
+      </Instruction>
       <FormFieldPair>
         <p>Email</p>
-        <input
+        <Input
           type="email"
           name="userEmail"
           autoComplete="off"
-          placeholder="Please enter login email"
+          placeholder="teddy@callteddy.com"
           required
           ref={userEmail}
         />
       </FormFieldPair>
       <FormFieldPair>
         <p>Password</p>
-        <input
+        <Input
           type="password"
           name="userPassword"
           autoComplete="off"
-          placeholder="Password"
+          placeholder="••••••••"
           required
           ref={userPassword}
         />
       </FormFieldPair>
       <p />
-      <input type="submit" value="Log In" />
+      <Input type="submit" value="Log In" />
       <p>
         <Link to="/resetpassword">
           Click here to <b>reset password.</b>

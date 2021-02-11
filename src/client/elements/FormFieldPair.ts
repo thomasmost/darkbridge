@@ -7,7 +7,7 @@ export const FormFieldPair = styled.div`
   p {
     display: block;
     width: 100%;
-    color: ${theme.textColor};
+    color: ${theme.darkModeTextColor};
     margin: 5px 0;
   }
   input {

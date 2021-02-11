@@ -6,8 +6,6 @@ import { Router } from '@reach/router';
 import { ApiSandbox } from './pages/ApiSandbox';
 import { Header } from './components/Header';
 import { Home } from './pages/Home';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
 import { theme } from './theme';
 import { AuthProvider } from './AuthProvider';
 import { Logout } from './pages/Logout';

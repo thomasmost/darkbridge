@@ -22,7 +22,7 @@ const AppContainer = styled.div`
 
 const Main = styled.main`
   color: ${theme.applicationTextColor};
-  background-color: ${theme.applicationBackgroundColor};
+  background-color: ${theme.onboardingBackgroundColor};
   height: calc(100vh - 80px);
   width: 100%;
   display: block;

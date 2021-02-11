@@ -19,6 +19,7 @@ export const theme = {
   applicationBackgroundColor: paperWhite,
   onboardingBackgroundColor: teddyBlueDark,
   applicationTextColor: darkGray,
+  darkModeTextColor: paperWhite,
   headerBackgroundColor: white,
   headerBorderColor: teddyBlueDark,
   headerTextColor: teddyBlueDark,
