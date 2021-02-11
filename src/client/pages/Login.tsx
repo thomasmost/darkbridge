@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../AuthProvider';
 
-import { Link, RouteComponentProps, useNavigate } from '@reach/router';
+import { Link, RouteComponentProps } from '@reach/router';
 import styled from '@emotion/styled';
 import { toast } from 'react-toastify';
 import { clientTokenStore } from '../clientTokenStore';
@@ -26,7 +26,6 @@ const Input = styled.input`
 export const Login: React.FC<RouteComponentProps> = () => {
   const userEmail = useRef<HTMLInputElement>(null);
   const userPassword = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
   const { login, user } = useAuth();
 
   useEffect(() => {

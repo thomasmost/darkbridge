@@ -1,4 +1,3 @@
-import { clientTokenStore } from '../clientTokenStore';
 import { authorizedFetch } from './api.svc';
 
 export function getAppointments() {

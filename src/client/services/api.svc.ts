@@ -13,7 +13,7 @@ export function authorizedFetch(path: string, request?: RequestInit) {
   return fetch(apiEndpoint, requestInfo).then(function (response) {
     if (response.status === 401) {
       clientTokenStore.clear();
-      window.location.replace('/login');
+      location.assign('/login');
       return;
     }
     return response.json();

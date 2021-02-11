@@ -10,6 +10,7 @@ import { User } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
 import { sendEmail } from '../helpers/email.helper';
 import { ResetPasswordRequest } from '../models/reset_password_request.model';
+import { TeddyRequestContext } from './types';
 
 export const authAPI = new Router();
 
@@ -314,4 +315,7 @@ authAPI.post('/register', register);
 authAPI.get('/verify_email', verifyEmail);
 authAPI.post('/login', login);
 authAPI.get('/logout', logout);
-authAPI.get('/current_user', (ctx) => (ctx.body = (ctx as any).user));
+authAPI.get(
+  '/current_user',
+  (ctx: TeddyRequestContext) => (ctx.body = ctx.user),
+);
