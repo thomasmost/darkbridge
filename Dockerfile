@@ -41,3 +41,4 @@ RUN npm ci
 COPY --from=build /application/dist /application/dist 
 COPY --from=build /application/public /application/public 
 COPY --from=build /application/views/index.html /application/views/index.html
+COPY --from=build /application/views/index_unauthorized.html /application/views/index_unauthorized.html
