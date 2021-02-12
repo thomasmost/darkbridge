@@ -55,6 +55,12 @@ Test the deploy by going to your GitHub repository and navigating to **Actions**
 
 Once you've verified that your manual deploys are working, I'd recommend changing the run condition in `.github/workflow/deploy_staging.yml` to run the staging deploy on every push to the `main` branch. **The production deploy trigger should always be manual.**
 
+# Deploys
+
+Currently, every push to the `main` branch triggers a deploymen to the Fargate staging environment, while production deploys are manually triggered. For much more detailed guidance on deploys, see [Deploys.md](/docs/Deploys.md).
+
+For a more detailed breakdown of the AWS resources required to make this work, see below:
+
 # Infrastructure
 
 You will need the aws command line tool installed to execute these steps.
