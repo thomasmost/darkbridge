@@ -22,10 +22,10 @@ const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
 const NODE_ENV = process.env.NODE_ENV;
 console.log(`NODE_ENV: ${NODE_ENV}`);
 
-import App from './client/App';
+import App from './client/apps/App';
 import { tokenFromCookies } from './api/auth.api';
 import { consumeToken } from './helpers/auth_token.helper';
-import UnauthorizedApp from './client/UnauthorizedApp';
+import UnauthorizedApp from './client/apps/UnauthorizedApp';
 import { TeddyRequestContext } from './api/types';
 import { AuthToken } from './models/auth_token.model';
 import { AuthenticationError } from './helpers/error.helper';
@@ -89,9 +89,20 @@ async function ssr(
     );
     console.log(`Rendering to: ${path.resolve(viewPath)}`);
     const indexFile = path.resolve(viewPath);
-    const data = await util.promisify(fs.readFile)(indexFile, 'utf8');
+    let indexHtml = await util.promisify(fs.readFile)(indexFile, 'utf8');
 
-    return (ctx.body = data.replace(
+    // This is a pretty silly special-case; probably the HTML view should be made an ejs or handlebars file
+    if (
+      bundleFilename === 'unauthorized_app.js' ||
+      bundleFilename === 'onboarding_app.js'
+    ) {
+      indexHtml = indexHtml.replace(
+        'background-color: #f9f9f9;',
+        'background-color: #101042;',
+      );
+    }
+
+    return (ctx.body = indexHtml.replace(
       '<div id="root"></div>',
       `<div id="root">${app}</div>
   <script src="/build/${bundleFilename}"></script>`,

@@ -3,12 +3,12 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { Router } from '@reach/router';
 
-import { ApiSandbox } from './pages/ApiSandbox';
-import { Header } from './components/Header';
-import { Home } from './pages/Home';
-import { theme } from './theme';
-import { AuthProvider } from './AuthProvider';
-import { Logout } from './pages/Logout';
+import { ApiSandbox } from '../pages/ApiSandbox';
+import { Header } from '../components/Header';
+import { Home } from '../pages/Home';
+import { theme } from '../theme';
+import { AuthProvider } from '../AuthProvider';
+import { Logout } from '../pages/Logout';
 
 if (typeof window !== 'undefined') {
   require('react-toastify/dist/ReactToastify.css');

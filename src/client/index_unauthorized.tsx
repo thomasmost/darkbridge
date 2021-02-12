@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import UnauthorizedApp from './UnauthorizedApp';
+import UnauthorizedApp from './apps/UnauthorizedApp';
 
 interface IModule {
   hot?: boolean;
