@@ -52,6 +52,10 @@ app.use(async (ctx, next) => {
   await next();
 });
 
+router.get('/healthz', async (ctx) => {
+  ctx.status = 200;
+});
+
 router.use('/api', api.routes(), api.allowedMethods());
 
 // Wildcard Route
