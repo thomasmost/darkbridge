@@ -64,6 +64,7 @@ app.use(async (ctx, next) => {
 router.get('/healthz', async (ctx) => {
   await AuthToken.findOne({
     order: ['created_at'],
+    logging: false,
   });
   ctx.status = 200;
 });
