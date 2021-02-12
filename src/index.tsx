@@ -48,6 +48,7 @@ app.use(async (ctx, next) => {
   const tokenId = tokenFromCookies(ctx);
   if (tokenId) {
     ctx.user = await consumeToken(tokenId);
+    console.log('found token');
   }
   await next();
 });
@@ -57,6 +58,40 @@ router.get('/healthz', async (ctx) => {
 });
 
 router.use('/api', api.routes(), api.allowedMethods());
+
+async function ssr(
+  ctx: TeddyRequestContext,
+  ApplicationRoot: () => JSX.Element,
+  viewPath: string,
+  bundleFilename: string,
+) {
+  if (!ctx.req.url) {
+    ctx.status = 400;
+    return;
+  }
+  try {
+    const app = ReactDOMServer.renderToString(
+      <ServerLocation url={ctx.req.url}>
+        <ApplicationRoot />
+      </ServerLocation>,
+    );
+    console.log(`Rendering to: ${path.resolve(viewPath)}`);
+    const indexFile = path.resolve(viewPath);
+    const data = await util.promisify(fs.readFile)(indexFile, 'utf8');
+
+    return (ctx.body = data.replace(
+      '<div id="root"></div>',
+      `<div id="root">${app}</div>
+  <script src="/build/${bundleFilename}"></script>`,
+    ));
+  } catch (error) {
+    if (isRedirect(error)) {
+      ctx.redirect(error.uri);
+    } else {
+      throw error;
+    }
+  }
+}
 
 // Wildcard Route
 router.get(/\//, async (ctx: TeddyRequestContext) => {
@@ -69,44 +104,15 @@ router.get(/\//, async (ctx: TeddyRequestContext) => {
     return;
   }
   if (!ctx.user) {
-    try {
-      const app = ReactDOMServer.renderToString(
-        <ServerLocation url={ctx.req.url}>
-          <UnauthorizedApp />
-        </ServerLocation>,
-      );
-      console.log(path.resolve('./views/index_unauthorized.html'));
-      const indexFile = path.resolve('./views/index_unauthorized.html');
-      const data = await util.promisify(fs.readFile)(indexFile, 'utf8');
-
-      return (ctx.body = data.replace(
-        '<div id="root"></div>',
-        `<div id="root">${app}</div>
-  <script src="/build/unauthorized_app.js"></script>`,
-      ));
-    } catch (error) {
-      if (isRedirect(error)) {
-        ctx.redirect(error.uri);
-      } else {
-        // carry on as usual
-      }
-    }
+    await ssr(
+      ctx,
+      UnauthorizedApp,
+      './views/index_unauthorized.html',
+      'unauthorized_app.js',
+    );
+    return;
   }
-  const app = ReactDOMServer.renderToString(
-    <ServerLocation url={ctx.req.url}>
-      <App />
-    </ServerLocation>,
-  );
-
-  console.log(path.resolve('./views/index.html'));
-  const indexFile = path.resolve('./views/index.html');
-  const data = await util.promisify(fs.readFile)(indexFile, 'utf8');
-
-  return (ctx.body = data.replace(
-    '<div id="root"></div>',
-    `<div id="root">${app}</div>
-<script src="/build/app.js"></script>`,
-  ));
+  await ssr(ctx, App, './views/index.html', 'app.js');
 });
 
 app.use(serveStatic(path.resolve('./public')));

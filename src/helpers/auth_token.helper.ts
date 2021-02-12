@@ -71,7 +71,7 @@ export async function consumeToken(tokenId: string): Promise<IUserDto> {
     verified_at: user.verified_at,
   };
 
-  console.log(`RETURNING USER ${permissionedUser.given_name}`);
+  console.log(`USER ID: ${permissionedUser.id}`);
 
   return permissionedUser;
 }
