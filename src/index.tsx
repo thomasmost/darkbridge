@@ -60,11 +60,10 @@ router.use('/api', api.routes(), api.allowedMethods());
 
 // Wildcard Route
 router.get(/\//, async (ctx: TeddyRequestContext) => {
-  // ctx.cookies.set('teddy_web_token', null);
-  // if (ctx.req.url && ctx.req.url.split('.').length > 1) {
-  //   // file request
-  //   return;
-  // }
+  if (ctx.req.url && ctx.req.url.split('.').length > 1) {
+    // file request
+    return;
+  }
   if (!ctx.req.url) {
     ctx.status = 400;
     return;
