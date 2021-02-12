@@ -27,6 +27,8 @@ import { tokenFromCookies } from './api/auth.api';
 import { consumeToken } from './helpers/auth_token.helper';
 import UnauthorizedApp from './client/UnauthorizedApp';
 import { TeddyRequestContext } from './api/types';
+import { AuthToken } from './models/auth_token.model';
+import { AuthenticationError } from './helpers/error.helper';
 
 const app = new Koa();
 const router = new Router();
@@ -47,13 +49,22 @@ if (NODE_ENV === 'development') {
 app.use(async (ctx, next) => {
   const tokenId = tokenFromCookies(ctx);
   if (tokenId) {
-    ctx.user = await consumeToken(tokenId);
+    try {
+      ctx.user = await consumeToken(tokenId);
+    } catch (err) {
+      if (err instanceof AuthenticationError) {
+        ctx.cookies.set('teddy_web_token', null);
+      }
+    }
     console.log('found token');
   }
   await next();
 });
 
 router.get('/healthz', async (ctx) => {
+  await AuthToken.findOne({
+    order: ['created_at'],
+  });
   ctx.status = 200;
 });
 
