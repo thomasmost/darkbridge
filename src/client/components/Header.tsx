@@ -6,7 +6,7 @@ import { Icon } from '../elements/Icon';
 import { theme } from '../theme';
 import { Popdown } from './Popdown';
 
-const Logo = styled.span`
+const Logo = styled.img`
   display: inline-block;
   margin-right: 10px;
   position: relative;
@@ -90,9 +90,7 @@ export const Header: React.FC = () => {
       <HeaderContents>
         <LeftNav>
           <StyledLink to="/">
-            <Logo>
-              <img height="40px" src="/logo.png" />
-            </Logo>
+            <Logo height="40px" src="/logo.png" />
           </StyledLink>
           {Boolean(user) && <StyledLink to="/sandbox">API Sandbox</StyledLink>}
         </LeftNav>

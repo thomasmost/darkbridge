@@ -1,6 +1,5 @@
 import path from 'path';
 import webpack from 'webpack';
-// import nodeExternals from 'webpack-node-externals';
 
 const config: webpack.Configuration = {
   mode: 'production',
@@ -8,6 +7,7 @@ const config: webpack.Configuration = {
   entry: {
     app: './src/client/index.tsx',
     unauthorized_app: './src/client/index_unauthorized.tsx',
+    onboarding_app: './src/client/index_onboarding.tsx',
   },
   module: {
     rules: [

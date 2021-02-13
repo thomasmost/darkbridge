@@ -29,6 +29,7 @@ import UnauthorizedApp from './client/apps/UnauthorizedApp';
 import { TeddyRequestContext } from './api/types';
 import { AuthToken } from './models/auth_token.model';
 import { AuthenticationError } from './helpers/error.helper';
+import OnboardingApp from './client/apps/OnboardingApp';
 
 const app = new Koa();
 const router = new Router();
@@ -44,6 +45,7 @@ if (NODE_ENV === 'development') {
   // to our webpack-dev-server
   router.get('/build/app.js', pipeRequestToDevServer);
   router.get('/build/unauthorized_app.js', pipeRequestToDevServer);
+  router.get('/build/onboarding_app.js', pipeRequestToDevServer);
 }
 
 app.use(async (ctx, next) => {
@@ -74,7 +76,6 @@ router.use('/api', api.routes(), api.allowedMethods());
 async function ssr(
   ctx: TeddyRequestContext,
   ApplicationRoot: () => JSX.Element,
-  viewPath: string,
   bundleFilename: string,
 ) {
   if (!ctx.req.url) {
@@ -87,8 +88,8 @@ async function ssr(
         <ApplicationRoot />
       </ServerLocation>,
     );
-    console.log(`Rendering to: ${path.resolve(viewPath)}`);
-    const indexFile = path.resolve(viewPath);
+    console.log(`Rendering to: ${path.resolve('./views/index.html')}`);
+    const indexFile = path.resolve('./views/index.html');
     let indexHtml = await util.promisify(fs.readFile)(indexFile, 'utf8');
 
     // This is a pretty silly special-case; probably the HTML view should be made an ejs or handlebars file
@@ -96,6 +97,7 @@ async function ssr(
       bundleFilename === 'unauthorized_app.js' ||
       bundleFilename === 'onboarding_app.js'
     ) {
+      // login/registration/onboarding has the dark-mode background
       indexHtml = indexHtml.replace(
         'background-color: #f9f9f9;',
         'background-color: #101042;',
@@ -116,6 +118,13 @@ async function ssr(
   }
 }
 
+router.get(/\/onboarding/, async (ctx: TeddyRequestContext) => {
+  if (!ctx.user) {
+    ctx.redirect('/login');
+  }
+  await ssr(ctx, OnboardingApp, 'onboarding_app.js');
+});
+
 // Wildcard Route
 router.get(/\//, async (ctx: TeddyRequestContext) => {
   if (ctx.req.url && ctx.req.url.split('.').length > 1) {
@@ -127,15 +136,10 @@ router.get(/\//, async (ctx: TeddyRequestContext) => {
     return;
   }
   if (!ctx.user) {
-    await ssr(
-      ctx,
-      UnauthorizedApp,
-      './views/index_unauthorized.html',
-      'unauthorized_app.js',
-    );
+    await ssr(ctx, UnauthorizedApp, 'unauthorized_app.js');
     return;
   }
-  await ssr(ctx, App, './views/index.html', 'app.js');
+  await ssr(ctx, App, 'app.js');
 });
 
 app.use(serveStatic(path.resolve('./public')));
