@@ -26,12 +26,14 @@ interface AppointmentAttributes {
   datetime_utc: string;
   timezone: string;
   duration_minutes: number;
+  rating_of_service: number;
+  rating_of_client: number;
 }
 
 // Some attributes are optional in `Appointment.build` and `Appointment.create` calls
 export type AppointmentCreationAttributes = Optional<
   AppointmentAttributes,
-  'id' | 'created_at' | 'status'
+  'id' | 'created_at' | 'status' | 'rating_of_client' | 'rating_of_service'
 >;
 
 export class Appointment
@@ -45,6 +47,8 @@ export class Appointment
   public datetime_utc!: string;
   public timezone!: string;
   public duration_minutes!: number;
+  public rating_of_service: number;
+  public rating_of_client: number;
 
   // timestamps!
   public readonly created_at!: number;
@@ -96,6 +100,12 @@ Appointment.init(
     duration_minutes: {
       type: DataTypes.NUMBER,
       allowNull: false,
+    },
+    rating_of_client: {
+      type: DataTypes.NUMBER,
+    },
+    rating_of_service: {
+      type: DataTypes.NUMBER,
     },
   },
   {

@@ -151,3 +151,47 @@ export async function cancelAppointment(ctx: TeddyRequestContext) {
 }
 
 appointmentAPI.put('/:id/cancel', cancelAppointment);
+
+export async function rateServiceOnAppointment(ctx: TeddyRequestContext) {
+  const { rating } = ctx.request.body as { rating: number };
+
+  const id = ctx.params.id;
+  const appointment = await Appointment.findByPk(id);
+
+  // If the appointment doesn't exist, 404
+  if (!appointment) {
+    ctx.status = 404;
+    return;
+  }
+  if (appointment.rating_of_service) {
+    throw Error('appointment service has already been rated');
+  }
+  appointment.rating_of_service = rating;
+  await appointment.save();
+  ctx.status = 204;
+}
+
+appointmentAPI.put('/:id/rate_service', rateServiceOnAppointment);
+
+export async function rateClientOnAppointment(ctx: TeddyRequestContext) {
+  if (!ctx.user) {
+    ctx.status = 401;
+    return;
+  }
+  const { rating } = ctx.request.body as { rating: number };
+  const user = ctx.user;
+
+  const id = ctx.params.id;
+  const appointment = await Appointment.findByPk(id);
+
+  // If either the appointment doesn't exist or doesn't belong to the logged in user, 404
+  if (!appointment || appointment.service_provider_user_id !== user.id) {
+    ctx.status = 404;
+    return;
+  }
+  appointment.rating_of_client = rating;
+  await appointment.save();
+  ctx.status = 204;
+}
+
+appointmentAPI.put('/:id/rate_client', rateClientOnAppointment);
