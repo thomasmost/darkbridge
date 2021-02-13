@@ -48,7 +48,7 @@ if (NODE_ENV === 'development') {
   router.get('/build/onboarding_app.js', pipeRequestToDevServer);
 }
 
-app.use(async (ctx, next) => {
+app.use(async (ctx: TeddyRequestContext, next) => {
   const tokenId = tokenFromCookies(ctx);
   if (tokenId) {
     try {

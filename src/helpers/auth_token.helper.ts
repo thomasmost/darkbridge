@@ -21,7 +21,7 @@ export async function issueToken(
   return token.id as string;
 }
 
-export async function consumeToken(tokenId: string): Promise<IUserDto> {
+export async function consumeToken(tokenId: string): Promise<User> {
   const token = await AuthToken.findOne({
     where: {
       id: tokenId,
@@ -62,16 +62,5 @@ export async function consumeToken(tokenId: string): Promise<IUserDto> {
     throw Error('Missing user');
   }
 
-  const permissionedUser = {
-    id: user.id,
-    email: user.email,
-    given_name: user.given_name,
-    family_name: user.family_name,
-    created_at: user.created_at,
-    verified_at: user.verified_at,
-  };
-
-  console.log(`USER ID: ${permissionedUser.id}`);
-
-  return permissionedUser;
+  return user;
 }

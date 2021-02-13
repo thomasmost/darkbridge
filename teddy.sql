@@ -91,7 +91,8 @@ create table `contractor_profile` (
   company_name VARCHAR(255) NULL,
   license_number VARCHAR(255) NULL,
   licensing_state VARCHAR(255) NULL,
-  primary_work VARCHAR(255) NULL
+  primary_work VARCHAR(255) NULL,
+  UNIQUE KEY(user_id)
 );
 
 create table `work_image` (

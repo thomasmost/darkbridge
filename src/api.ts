@@ -2,6 +2,8 @@ import Router from 'koa-router';
 import { authAPI } from './api/auth.api';
 import { appointmentAPI } from './api/appointment.api';
 import { doMath } from './api/do_math';
+import { contractorProfileAPI } from './api/contractor_profile.api';
+import { userAPI } from './api/user.api';
 
 export const api = new Router();
 
@@ -10,6 +12,12 @@ api.use(
   appointmentAPI.routes(),
   appointmentAPI.allowedMethods(),
 );
+api.use(
+  '/contractor_profile',
+  contractorProfileAPI.routes(),
+  contractorProfileAPI.allowedMethods(),
+);
+api.use('/user', userAPI.routes(), userAPI.allowedMethods());
 api.use('/auth', authAPI.routes(), authAPI.allowedMethods());
 
 api.get('/test_crash', () => {

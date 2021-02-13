@@ -12,7 +12,7 @@ const PrimaryWork = {
 };
 
 // These are all the attributes in the ContractorProfile model
-interface ContractorProfileAttributes {
+export interface ContractorProfileAttributes {
   id: string;
   created_at: number;
   user_id: string;

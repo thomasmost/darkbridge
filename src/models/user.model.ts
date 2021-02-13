@@ -4,12 +4,13 @@ import { v4 } from 'uuid';
 import { sequelize } from '../sequelize';
 
 // These are all the attributes in the User model
-interface UserAttributes {
+export interface UserAttributes {
   id: string;
   created_at: number;
   family_name: string;
   given_name: string | null;
   email: string;
+  phone: string;
   password_hash: string;
   password_salt: string;
   verified_at: number;
@@ -18,7 +19,7 @@ interface UserAttributes {
 // Some attributes are optional in `User.build` and `User.create` calls
 type UserCreationAttributes = Optional<
   UserAttributes,
-  'id' | 'created_at' | 'verified_at' | 'family_name' | 'given_name'
+  'id' | 'created_at' | 'verified_at' | 'family_name' | 'given_name' | 'phone'
 >;
 
 export class User
@@ -27,6 +28,7 @@ export class User
   public password_hash!: string;
   public password_salt!: string;
   public email!: string;
+  public phone: string;
   public id!: string; // Note that the `null assertion` `!` is required in strict mode.
   public family_name!: string;
   public given_name!: string; // for nullable fields
@@ -62,6 +64,9 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    phone: {
+      type: DataTypes.STRING,
+    },
     family_name: {
       type: DataTypes.STRING,
     },
@@ -85,3 +90,18 @@ User.init(
     timestamps: false,
   },
 );
+
+export function permissionUser(user: User) {
+  const permissionedUser = {
+    id: user.id,
+    email: user.email,
+    given_name: user.given_name,
+    family_name: user.family_name,
+    created_at: user.created_at,
+    verified_at: user.verified_at,
+  };
+
+  console.log(`USER ID: ${permissionedUser.id}`);
+
+  return permissionedUser;
+}

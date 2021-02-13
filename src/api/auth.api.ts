@@ -6,7 +6,7 @@ import validator from 'validator';
 import { AuthenticationError, ValidationError } from '../helpers/error.helper';
 import { AuthToken } from '../models/auth_token.model';
 import { issueToken } from '../helpers/auth_token.helper';
-import { User } from '../models/user.model';
+import { permissionUser, User } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
 import { sendEmail } from '../helpers/email.helper';
 import { ResetPasswordRequest } from '../models/reset_password_request.model';
@@ -319,7 +319,9 @@ authAPI.post('/register', register);
 authAPI.get('/verify_email', verifyEmail);
 authAPI.post('/login', login);
 authAPI.get('/logout', logout);
-authAPI.get(
-  '/current_user',
-  (ctx: TeddyRequestContext) => (ctx.body = ctx.user),
-);
+authAPI.get('/current_user', (ctx: TeddyRequestContext) => {
+  if (!ctx.user) {
+    return (ctx.status = 401);
+  }
+  ctx.body = permissionUser(ctx.user);
+});
