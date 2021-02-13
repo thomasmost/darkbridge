@@ -82,12 +82,43 @@ const OnboardingNav = styled.div`
   align-items: center;
 `;
 
+type BasicFormFields = {
+  full_name: string;
+  phone: string;
+  company_name: string;
+};
+
 export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
-  const { register, handleSubmit, watch, errors } = useForm();
+  const { register, handleSubmit, watch, errors } = useForm<BasicFormFields>();
   const navigate = useNavigate();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: BasicFormFields) => {
+    const { full_name, phone, company_name } = data;
+    const nameParts = full_name.split(' ');
+    const family_name = nameParts.pop();
+    const given_name = nameParts.join(' ');
+    await fetch('/api/user/self', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'PUT',
+      body: JSON.stringify({
+        family_name,
+        given_name,
+        phone,
+      }),
+    });
+    if (company_name) {
+      await fetch('/api/contractor_profile', {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'PUT',
+        body: JSON.stringify({
+          company_name,
+        }),
+      });
+    }
     navigate('work');
   };
 
@@ -106,7 +137,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
         <Input
           name="full_name"
           placeholder="Jonathan Appleseed"
-          ref={register}
+          ref={register({ required: true })}
         />
 
         {/* include validation with required or other standard HTML validation rules */}
@@ -117,7 +148,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
           ref={register({ required: true })}
         />
         {/* errors will return when field validation fails  */}
-        {errors.exampleRequired && <span>This field is required</span>}
+        {/* {errors.phone && <span>This field is required</span>} */}
 
         <Label>Company name</Label>
         <Input

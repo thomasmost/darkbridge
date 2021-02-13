@@ -11,8 +11,12 @@ import { IUserDto } from '../../shared/user.dto';
 import { theme } from '../theme';
 
 const FormHeader = styled.h2`
-  font-weight: 600;
   color: white;
+  display: block;
+  font-size: 1.6em;
+  font-weight: 600;
+  margin-bottom: 30px;
+  margin-top: 20px;
 `;
 
 const Instruction = styled.p`
