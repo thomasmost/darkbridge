@@ -1,76 +1,49 @@
-import React, { useEffect } from 'react';
-import { useAuth } from '../AuthProvider';
+import React from 'react';
 
 import { RouteComponentProps } from '@reach/router';
 import styled from '@emotion/styled';
-import { toast } from 'react-toastify';
-import { clientTokenStore } from '../clientTokenStore';
-import { IUserDto } from '../../shared/user.dto';
 import { theme } from '../theme';
-import { useForm } from 'react-hook-form';
+import { Dots } from '../components/Dots';
 
-const FormHeader = styled.h2`
-  font-weight: 600;
-  color: white;
+const Logo = styled.img`
+  display: block;
+  margin: auto;
+  margin-top: 40px;
+  margin-bottom: 60px;
 `;
 
-const Instruction = styled.p`
+const OnboardingNav = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const H3 = styled.h3`
   color: ${theme.darkModeTextColor};
+  display: block;
+  font-size: 1.4em;
+  margin: 50px 0 30px;
+  text-align: center;
 `;
 
-const Input = styled.input`
-  font-size: 1em;
+const Button = styled.button`
+  height: 50px;
+  line-height: 50px;
+  color: white;
+  border-radius: 25px;
+  width: 100%;
+  margin-bottom: 100px;
 `;
-
-// async function updateUser(
-//   name: string,
-//   phoneNumber: string,
-//   comapnyName: string,
-// ) {
-//   try {
-//     const result = await fetch('api/user/register', {
-//       headers: {
-//         Accept: 'application/json',
-//         'Content-Type': 'application/json',
-//       },
-//       method: 'POST',
-//       body: JSON.stringify({
-//         email,
-//         password,
-//         confirm_password,
-//       }),
-//     });
-//     const data = (await result.json()) as { token: string; user: IUserDto };
-//     clientTokenStore.set(data.token);
-//     return data.user;
-//   } catch (err) {
-//     toast.error('Registration failed');
-//   }
-// }
 
 export const OnboardingComplete: React.FC<RouteComponentProps> = () => {
-  const { user } = useAuth();
-  const { register, handleSubmit, watch, errors } = useForm();
-  const onSubmit = (data: any) => console.log(data);
-
-  useEffect(() => {
-    if (!user) {
-      // navigate('/');
-      location.assign('/');
-    }
-  });
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {/* register your input into the hook by invoking the "register" function */}
-      <input name="example" defaultValue="test" ref={register} />
-
-      {/* include validation with required or other standard HTML validation rules */}
-      <input name="exampleRequired" ref={register({ required: true })} />
-      {/* errors will return when field validation fails  */}
-      {errors.exampleRequired && <span>This field is required</span>}
-
-      <input type="submit" />
-    </form>
+    <div>
+      <Logo height="64px" src="/logo_light.png" />
+      <H3>You&apos;re all set!</H3>
+      <Button onClick={() => location.assign('/')}>Go to my Dashboard</Button>
+      <OnboardingNav>
+        <Dots count={5} checked={5} />
+      </OnboardingNav>
+    </div>
   );
 };

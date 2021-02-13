@@ -58,7 +58,6 @@ app.use(async (ctx, next) => {
         ctx.cookies.set('teddy_web_token', null);
       }
     }
-    console.log('found token');
   }
   await next();
 });

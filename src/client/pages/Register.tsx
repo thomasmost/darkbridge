@@ -58,7 +58,7 @@ export const Register: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     if (user) {
       // navigate('/');
-      location.assign('/');
+      location.assign('/onboarding');
     }
   });
 

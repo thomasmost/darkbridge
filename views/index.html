@@ -85,8 +85,18 @@
       cursor: pointer;
     }
 
-    button:focus, input:focus {
+    input:focus {
       box-shadow: 4px 4px #23C38A;
+    }
+
+    button, input[type=button], input[type=submit] {
+      background-color: #45A3F7;
+      border-radius: 10px;
+    }
+
+
+    button:focus, input[type=button]:focus, input[type=submit]:focus {
+      background-color: #23C38A;
     }
 
     p {

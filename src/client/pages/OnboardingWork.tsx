@@ -7,17 +7,6 @@ import { useForm } from 'react-hook-form';
 import { Dots } from '../components/Dots';
 import { Icon } from '../elements/Icon';
 
-const Logo = styled.img`
-  display: block;
-  margin: auto;
-  margin-top: 40px;
-  margin-bottom: 60px;
-`;
-
-const P = styled.p`
-  color: ${theme.darkModeTextColor};
-`;
-
 const H3 = styled.h3`
   color: ${theme.darkModeTextColor};
   display: block;
@@ -61,7 +50,7 @@ export const OnboardingWork: React.FC<RouteComponentProps> = () => {
 
   const onSubmit = (data: any) => {
     console.log(data);
-    navigate('work');
+    navigate('finances');
   };
 
   return (

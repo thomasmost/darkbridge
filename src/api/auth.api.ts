@@ -157,7 +157,11 @@ export async function register(ctx: Koa.ParameterizedContext) {
     // 'v:host': '',
     // 'v:token': verifyEmailRequest.verification_token,
   };
-  await sendEmail(data);
+  try {
+    await sendEmail(data);
+  } catch (err) {
+    console.log(`Failed to send verification email; err=${err}`);
+  }
 
   const cookie_options = {
     overwrite: true,

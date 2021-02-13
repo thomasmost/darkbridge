@@ -1,11 +1,7 @@
-import React, { useEffect } from 'react';
-import { useAuth } from '../AuthProvider';
+import React from 'react';
 
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import styled from '@emotion/styled';
-import { toast } from 'react-toastify';
-import { clientTokenStore } from '../clientTokenStore';
-import { IUserDto } from '../../shared/user.dto';
 import { theme } from '../theme';
 import { useForm } from 'react-hook-form';
 import { Icon } from '../elements/Icon';
