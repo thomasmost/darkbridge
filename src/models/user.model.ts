@@ -95,6 +95,7 @@ export function permissionUser(user: User) {
   const permissionedUser = {
     id: user.id,
     email: user.email,
+    phone: user.phone,
     given_name: user.given_name,
     family_name: user.family_name,
     created_at: user.created_at,

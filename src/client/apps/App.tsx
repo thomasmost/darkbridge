@@ -9,6 +9,7 @@ import { Home } from '../pages/Home';
 import { theme } from '../theme';
 import { AuthProvider } from '../AuthProvider';
 import { Logout } from '../pages/Logout';
+import { Profile } from '../pages/Profile';
 
 if (typeof window !== 'undefined') {
   require('react-toastify/dist/ReactToastify.css');
@@ -51,6 +52,7 @@ const App = () => {
           <Router>
             <Home path="/" />
             <ApiSandbox path="sandbox" />
+            <Profile path="profile" />
             <Logout path="logout" />
           </Router>
         </Main>
