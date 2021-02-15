@@ -27,6 +27,7 @@ export const theme = {
   darkModeTextColor: paperWhite,
   dotColorActive: teddyBlueLight,
   dotColorPassive: eggshellGray,
+  dropdownContainerColor: eggshellGray,
   headerBackgroundColor: white,
   headerBorderColor: teddyBlueDark,
   headerTextColor: teddyBlueDark,

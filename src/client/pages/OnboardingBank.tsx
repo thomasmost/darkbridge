@@ -5,6 +5,13 @@ import { theme } from '../theme';
 import { Dots } from '../components/Dots';
 import { Icon } from '../elements/Icon';
 
+const H3 = styled.h3`
+  color: ${theme.darkModeTextColor};
+  display: block;
+  font-size: 1.4em;
+  margin: 50px 0 30px;
+`;
+
 const OnboardingNav = styled.div`
   display: flex;
   justify-content: space-between;
@@ -30,6 +37,7 @@ export const OnboardingBank: React.FC<RouteComponentProps> = () => {
 
   return (
     <div>
+      <H3>Bank Connection coming soon...</H3>
       <OnboardingNav>
         <Dots count={5} checked={4} />
         <SubmitButton type="submit" onClick={onSubmit}>

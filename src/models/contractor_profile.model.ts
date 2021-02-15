@@ -20,6 +20,11 @@ export interface ContractorProfileAttributes {
   license_number: string;
   licensing_state: string;
   primary_work: keyof typeof PrimaryWork;
+  appointment_fee: number;
+  hourly_rate: number;
+  daily_rate: number;
+  estimated_yearly_income: number;
+  estimated_yearly_expenses: number;
 }
 
 // Some attributes are optional in `ContractorProfile.build` and `ContractorProfile.create` calls
@@ -40,6 +45,12 @@ export class ContractorProfile
   public license_number!: string;
   public licensing_state!: string;
   public primary_work!: keyof typeof PrimaryWork;
+
+  public appointment_fee: number;
+  public hourly_rate: number;
+  public daily_rate: number;
+  public estimated_yearly_income: number;
+  public estimated_yearly_expenses: number;
 
   // timestamps!
   public readonly created_at!: number;
@@ -79,6 +90,21 @@ ContractorProfile.init(
     primary_work: {
       type: DataTypes.ENUM,
       values: Object.values(PrimaryWork),
+    },
+    appointment_fee: {
+      type: DataTypes.NUMBER,
+    },
+    hourly_rate: {
+      type: DataTypes.NUMBER,
+    },
+    daily_rate: {
+      type: DataTypes.NUMBER,
+    },
+    estimated_yearly_income: {
+      type: DataTypes.NUMBER,
+    },
+    estimated_yearly_expenses: {
+      type: DataTypes.NUMBER,
     },
   },
   {

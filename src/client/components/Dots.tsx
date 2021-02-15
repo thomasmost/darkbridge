@@ -27,7 +27,7 @@ export const Dots: React.FC<IDotsProps> = ({ count, checked, diameter }) => {
       margin-right: ${dotDiameter}px;
       border-radius: 5px;
     `;
-    dots.push(<Dot />);
+    dots.push(<Dot key={i} />);
   }
 
   return <Container>{dots}</Container>;

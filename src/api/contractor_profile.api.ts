@@ -7,6 +7,7 @@ import { TeddyRequestContext } from './types';
 
 export const contractorProfileAPI = new Router();
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 export async function updateContractorProfile(ctx: TeddyRequestContext) {
   if (!ctx.user) {
     ctx.status = 401;
@@ -14,8 +15,17 @@ export async function updateContractorProfile(ctx: TeddyRequestContext) {
   }
   const user_id = ctx.user.id;
 
-  const { company_name, license_number, licensing_state, primary_work } = ctx
-    .request.body as Partial<ContractorProfileAttributes>;
+  const {
+    company_name,
+    license_number,
+    licensing_state,
+    primary_work,
+    appointment_fee,
+    daily_rate,
+    hourly_rate,
+    estimated_yearly_income,
+    estimated_yearly_expenses,
+  } = ctx.request.body as Partial<ContractorProfileAttributes>;
 
   const [profile] = await ContractorProfile.findOrCreate({
     where: {
@@ -34,6 +44,21 @@ export async function updateContractorProfile(ctx: TeddyRequestContext) {
   }
   if (primary_work) {
     profile.primary_work = primary_work;
+  }
+  if (appointment_fee) {
+    profile.appointment_fee = appointment_fee;
+  }
+  if (hourly_rate) {
+    profile.hourly_rate = hourly_rate;
+  }
+  if (daily_rate) {
+    profile.daily_rate = daily_rate;
+  }
+  if (estimated_yearly_expenses) {
+    profile.estimated_yearly_expenses = estimated_yearly_expenses;
+  }
+  if (estimated_yearly_income) {
+    profile.estimated_yearly_income = estimated_yearly_income;
   }
 
   await profile.save();
