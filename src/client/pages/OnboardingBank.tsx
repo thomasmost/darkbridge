@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteComponentProps, useNavigate } from '@reach/router';
+import { RouteComponentProps } from '@reach/router';
 import styled from '@emotion/styled';
 import { theme } from '../theme';
 import { OnboardingNav } from '../elements/OnboardingElements';
@@ -12,12 +12,6 @@ const H3 = styled.h3`
 `;
 
 export const OnboardingBank: React.FC<RouteComponentProps> = () => {
-  const navigate = useNavigate();
-
-  const onSubmit = () => {
-    navigate('complete');
-  };
-
   return (
     <div>
       <H3>Bank Connection coming soon...</H3>

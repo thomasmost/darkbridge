@@ -2,67 +2,20 @@ import React from 'react';
 
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import styled from '@emotion/styled';
-import { theme } from '../theme';
 import { useForm } from 'react-hook-form';
-import { OnboardingNav } from '../elements/OnboardingElements';
-
-// async function updateUser(
-//   name: string,
-//   phoneNumber: string,
-//   comapnyName: string,
-// ) {
-//   try {
-//     const result = await fetch('api/user/register', {
-//       headers: {
-//         Accept: 'application/json',
-//         'Content-Type': 'application/json',
-//       },
-//       method: 'POST',
-//       body: JSON.stringify({
-//         email,
-//         password,
-//         confirm_password,
-//       }),
-//     });
-//     const data = (await result.json()) as { token: string; user: IUserDto };
-//     clientTokenStore.set(data.token);
-//     return data.user;
-//   } catch (err) {
-//     toast.error('Registration failed');
-//   }
-// }
+import {
+  H3,
+  Input,
+  Label,
+  OnboardingNav,
+  P,
+} from '../elements/OnboardingElements';
 
 const Logo = styled.img`
   display: block;
   margin: auto;
   margin-top: 40px;
   margin-bottom: 60px;
-`;
-
-const P = styled.p`
-  color: ${theme.darkModeTextColor};
-`;
-
-const H3 = styled.h3`
-  color: ${theme.darkModeTextColor};
-  display: block;
-  font-size: 1.4em;
-  margin: 50px 0 30px;
-`;
-
-const Label = styled.label`
-  color: ${theme.subheaderTextColor};
-  display: block;
-  margin-bottom: 10px;
-`;
-
-const Input = styled.input`
-  border-radius: 10px;
-  box-sizing: border-box;
-  display: block;
-  margin-bottom: 30px;
-  padding: 10px 20px;
-  width: 100%;
 `;
 
 type BasicFormFields = {
@@ -72,7 +25,7 @@ type BasicFormFields = {
 };
 
 export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
-  const { register, handleSubmit, watch, errors } = useForm<BasicFormFields>();
+  const { register, handleSubmit } = useForm<BasicFormFields>();
   const navigate = useNavigate();
 
   const onSubmit = async (data: BasicFormFields) => {

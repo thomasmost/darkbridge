@@ -1,37 +1,14 @@
 import React from 'react';
 import { RouteComponentProps, useNavigate } from '@reach/router';
-import styled from '@emotion/styled';
-import { theme } from '../theme';
 import { FlexColumns } from '../elements/FlexColumns';
 import { useForm } from 'react-hook-form';
-import { OnboardingNav } from '../elements/OnboardingElements';
-
-const H3 = styled.h3`
-  color: ${theme.darkModeTextColor};
-  display: block;
-  font-size: 1.4em;
-  margin: 50px 0 10px;
-`;
-
-const Label = styled.label`
-  color: ${theme.subheaderTextColor};
-  display: block;
-  margin-bottom: 10px;
-  margin-top: 20px;
-`;
-
-const Instruction = styled(Label)`
-  font-style: italic;
-`;
-
-const Input = styled.input`
-  border-radius: 10px;
-  box-sizing: border-box;
-  display: block;
-  margin-bottom: 30px;
-  padding: 10px 20px;
-  width: 100%;
-`;
+import {
+  H3,
+  Input,
+  Label,
+  Instruction,
+  OnboardingNav,
+} from '../elements/OnboardingElements';
 
 type FinancesFormFields = {
   appointment_fee: number;

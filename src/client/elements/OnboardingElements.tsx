@@ -5,6 +5,43 @@ import { Dots } from '../components/Dots';
 import { theme } from '../theme';
 import { Icon } from './Icon';
 
+export const P = styled.p`
+  color: ${theme.darkModeTextColor};
+`;
+
+export const H3 = styled.h3`
+  color: ${theme.darkModeTextColor};
+  display: block;
+  font-size: 1.4em;
+  margin: 50px 0 30px;
+`;
+
+export const Label = styled.label`
+  color: ${theme.subheaderTextColor};
+  display: block;
+  margin-bottom: 10px;
+`;
+
+export const Logo = styled.img`
+  display: block;
+  margin: auto;
+  margin-top: 40px;
+  margin-bottom: 60px;
+`;
+
+export const Instruction = styled(Label)`
+  font-style: italic;
+`;
+
+export const Input = styled.input`
+  border-radius: 10px;
+  box-sizing: border-box;
+  display: block;
+  margin-bottom: 30px;
+  padding: 10px 20px;
+  width: 100%;
+`;
+
 const NavContainer = styled.div`
   display: flex;
   justify-content: space-between;
