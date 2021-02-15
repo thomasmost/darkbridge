@@ -10,9 +10,15 @@ interface IDotsProps {
   count: number;
   checked: number;
   diameter?: number;
+  navigations?: (() => void)[];
 }
 
-export const Dots: React.FC<IDotsProps> = ({ count, checked, diameter }) => {
+export const Dots: React.FC<IDotsProps> = ({
+  navigations,
+  count,
+  checked,
+  diameter,
+}) => {
   const dotDiameter = diameter || 10;
   const dots = [];
 
@@ -26,8 +32,13 @@ export const Dots: React.FC<IDotsProps> = ({ count, checked, diameter }) => {
       display: inline-block;
       margin-right: ${dotDiameter}px;
       border-radius: 5px;
+      cursor: pointer;
     `;
-    dots.push(<Dot key={i} />);
+    if (navigations && navigations[i]) {
+      dots.push(<Dot key={i} onClick={navigations[i]} />);
+    } else {
+      dots.push(<Dot key={i} />);
+    }
   }
 
   return <Container>{dots}</Container>;

@@ -4,18 +4,13 @@ import { RouteComponentProps } from '@reach/router';
 import styled from '@emotion/styled';
 import { theme } from '../theme';
 import { Dots } from '../components/Dots';
+import { OnboardingNav } from '../elements/OnboardingElements';
 
 const Logo = styled.img`
   display: block;
   margin: auto;
   margin-top: 40px;
   margin-bottom: 60px;
-`;
-
-const OnboardingNav = styled.div`
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
 `;
 
 const H3 = styled.h3`
@@ -41,9 +36,7 @@ export const OnboardingComplete: React.FC<RouteComponentProps> = () => {
       <Logo height="64px" src="/logo_light.png" />
       <H3>You&apos;re all set!</H3>
       <Button onClick={() => location.assign('/')}>Go to my Dashboard</Button>
-      <OnboardingNav>
-        <Dots count={5} checked={5} />
-      </OnboardingNav>
+      <OnboardingNav slideNumber={5} hideContinueButton />
     </div>
   );
 };

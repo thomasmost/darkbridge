@@ -4,8 +4,7 @@ import { RouteComponentProps, useNavigate } from '@reach/router';
 import styled from '@emotion/styled';
 import { theme } from '../theme';
 import { useForm } from 'react-hook-form';
-import { Icon } from '../elements/Icon';
-import { Dots } from '../components/Dots';
+import { OnboardingNav } from '../elements/OnboardingElements';
 
 // async function updateUser(
 //   name: string,
@@ -64,22 +63,6 @@ const Input = styled.input`
   margin-bottom: 30px;
   padding: 10px 20px;
   width: 100%;
-`;
-
-const SubmitButton = styled.button`
-  color: ${theme.darkModeTextColor};
-  background-color: ${theme.buttonColorActive};
-  border-radius: 50%;
-  height: 50px;
-  width: 50px;
-  font-size: 1.8em;
-  line-height: 50px;
-`;
-
-const OnboardingNav = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 type BasicFormFields = {
@@ -156,12 +139,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
           placeholder="Apples to Apples Plumbing Co."
           ref={register({ required: false })}
         />
-        <OnboardingNav>
-          <Dots count={5} checked={1} />
-          <SubmitButton type="submit">
-            <Icon name="Arrow-Right" />
-          </SubmitButton>
-        </OnboardingNav>
+        <OnboardingNav slideNumber={1} />
       </form>
     </div>
   );
