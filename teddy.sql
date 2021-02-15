@@ -81,7 +81,8 @@ create table `client_profile` (
   address_city VARCHAR(255) NOT NULL,
   address_state VARCHAR(255) NOT NULL,
   address_postal_code VARCHAR(255) NOT NULL,
-  timezone VARCHAR(255) NOT NULL
+  timezone VARCHAR(255) NOT NULL,
+  UNIQUE KEY(user_id)
 );
 
 create table `contractor_profile` (
@@ -92,6 +93,11 @@ create table `contractor_profile` (
   license_number VARCHAR(255) NULL,
   licensing_state VARCHAR(255) NULL,
   primary_work VARCHAR(255) NULL,
+  appointment_fee INT NULL,
+  hourly_rate INT NULL,
+  daily_rate INT NULL,
+  estimated_yearly_income INT NULL,
+  estimated_yearly_expenses INT NULL,
   UNIQUE KEY(user_id)
 );
 
