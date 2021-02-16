@@ -47,7 +47,7 @@ export const ApiSandbox: React.FC<RouteComponentProps> = () => {
       <div>
         <Section>
           <Button onClick={getSecretVar}>Get Secret Variable</Button>
-          <Button onClick={getPublicVar}>Get Public Variable</Button>
+          <Button onClick={getPublicVar}>Get Node Env</Button>
         </Section>
       </div>
       <Section>

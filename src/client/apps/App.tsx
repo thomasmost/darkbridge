@@ -10,6 +10,8 @@ import { theme } from '../theme';
 import { AuthProvider } from '../AuthProvider';
 import { Logout } from '../pages/Logout';
 import { Profile } from '../pages/Profile';
+import { Calendar } from '../pages/Calendar';
+import { AddAppointment } from '../pages/AddAppointment';
 
 if (typeof window !== 'undefined') {
   require('react-toastify/dist/ReactToastify.css');
@@ -51,7 +53,9 @@ const App = () => {
         <Main>
           <Router>
             <Home path="/" />
+            <AddAppointment path="calendar/add-appointment" />
             <ApiSandbox path="sandbox" />
+            <Calendar path="calendar" />
             <Profile path="profile" />
             <Logout path="logout" />
           </Router>

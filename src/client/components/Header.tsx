@@ -78,6 +78,11 @@ const DropdownLink = styled(StyledLink)`
 
 export const Header: React.FC = () => {
   const { user, logout } = useAuth();
+  if (!user) {
+    // This is an internal application header;
+    // we should always ahve a user
+    return null;
+  }
 
   async function handleLogout() {
     await fetch('/api/auth/logout');
@@ -92,24 +97,23 @@ export const Header: React.FC = () => {
           <StyledLink to="/">
             <Logo height="40px" src="/logo.png" />
           </StyledLink>
-          {Boolean(user) && <StyledLink to="/sandbox">API Sandbox</StyledLink>}
+          <StyledLink to="/sandbox">API Sandbox</StyledLink>
+          <StyledLink to="/calendar">Calendar</StyledLink>
         </LeftNav>
         <Right>
-          {Boolean(user) && (
-            <Popdown
-              right
-              targetContent={
-                <LoggedInHeader>
-                  <Icon name="Profile" />
-                </LoggedInHeader>
-              }
-            >
-              <DropdownLink to="/profile">
-                Logged in as {user?.given_name}
-              </DropdownLink>
-              <StyledAnchor onClick={() => handleLogout()}>Logout</StyledAnchor>
-            </Popdown>
-          )}
+          <Popdown
+            right
+            targetContent={
+              <LoggedInHeader>
+                <Icon name="Profile" />
+              </LoggedInHeader>
+            }
+          >
+            <DropdownLink to="/profile">
+              Logged in as {user?.given_name}
+            </DropdownLink>
+            <StyledAnchor onClick={() => handleLogout()}>Logout</StyledAnchor>
+          </Popdown>
         </Right>
       </HeaderContents>
     </StyledHeader>

@@ -3,13 +3,8 @@ import React from 'react';
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
-import {
-  H3,
-  Input,
-  Label,
-  OnboardingNav,
-  P,
-} from '../elements/OnboardingElements';
+import { H3, Label, OnboardingNav, P } from '../elements/OnboardingElements';
+import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
 
 const Logo = styled.img`
@@ -26,12 +21,12 @@ type BasicFormFields = {
 };
 
 export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
-  const { register, handleSubmit } = useForm<BasicFormFields>();
-  const navigate = useNavigate();
   const { user, updateUser } = useAuth();
   if (!user) {
     return null;
   }
+  const { register, handleSubmit } = useForm<BasicFormFields>();
+  const navigate = useNavigate();
 
   const onSubmit = async (data: BasicFormFields) => {
     const { full_name, phone, company_name } = data;

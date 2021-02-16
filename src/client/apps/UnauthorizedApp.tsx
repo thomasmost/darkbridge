@@ -46,7 +46,6 @@ const UnauthorizedApp = () => {
           draggable
           pauseOnHover
         />
-        <Header />
         <Main>
           <Router>
             <Redirect from="/" to="register" />

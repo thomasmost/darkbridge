@@ -6,11 +6,11 @@ import { useForm } from 'react-hook-form';
 import { Select, IGenericOption } from '../components/Select';
 import {
   H3,
-  Input,
   Label,
   Instruction,
   OnboardingNav,
 } from '../elements/OnboardingElements';
+import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
 
 const workOptions = [
@@ -54,9 +54,12 @@ type WorkFormFields = {
 };
 
 export const OnboardingWork: React.FC<RouteComponentProps> = () => {
+  const { user } = useAuth();
+  if (!user) {
+    return null;
+  }
   const { register, handleSubmit, setValue } = useForm<WorkFormFields>();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   useEffect(() => {
     register('primary_work'); // custom register Antd input

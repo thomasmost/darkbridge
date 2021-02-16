@@ -37,6 +37,6 @@ api.get('/get_secret_var', (ctx) => {
 
 api.get('/get_public_var', (ctx) => {
   ctx.body = {
-    var: process.env.EXAMPLE_PUBLIC_VARIABLE || 'None Found',
+    var: process.env.NODE_ENV || 'None Found',
   };
 });

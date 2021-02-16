@@ -4,11 +4,11 @@ import { FlexColumns } from '../elements/FlexColumns';
 import { useForm } from 'react-hook-form';
 import {
   H3,
-  Input,
   Label,
   Instruction,
   OnboardingNav,
 } from '../elements/OnboardingElements';
+import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
 
 type FinancesFormFields = {
@@ -20,9 +20,12 @@ type FinancesFormFields = {
 };
 
 export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
+  const { user } = useAuth();
+  if (!user) {
+    return null;
+  }
   const { register, handleSubmit } = useForm<FinancesFormFields>();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const onSubmit = async (data: FinancesFormFields) => {
     console.log(data);
