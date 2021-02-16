@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 import React from 'react';
-import { IUserDto } from '../shared/user.dto';
+import { IUserDto, UserUpdateFields } from '../shared/user.dto';
 
 export interface IAuthContext {
   user: IUserDto | null;
   login: (user: IUserDto) => void;
   logout: () => void;
-  // updateUser: (updates: IUserUpdateFields) => void;
+  updateUser: (updates: Partial<UserUpdateFields>) => void;
 }
 
 const throwError = () => {

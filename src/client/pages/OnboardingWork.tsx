@@ -11,6 +11,7 @@ import {
   Instruction,
   OnboardingNav,
 } from '../elements/OnboardingElements';
+import { useAuth } from '../AuthProvider';
 
 const workOptions = [
   { value: 'carpentry', label: 'Carpentry' },
@@ -55,6 +56,7 @@ type WorkFormFields = {
 export const OnboardingWork: React.FC<RouteComponentProps> = () => {
   const { register, handleSubmit, setValue } = useForm<WorkFormFields>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     register('primary_work'); // custom register Antd input
@@ -83,6 +85,9 @@ export const OnboardingWork: React.FC<RouteComponentProps> = () => {
         <Label>What kind of work do you do?</Label>
         <Select
           onChange={handleChange}
+          defaultValue={workOptions.find(
+            (item) => item.value === user?.contractor_profile?.primary_work,
+          )}
           styles={selectStyles}
           options={workOptions}
         />
@@ -92,6 +97,7 @@ export const OnboardingWork: React.FC<RouteComponentProps> = () => {
         <Input
           name="license_number"
           placeholder="123-456789"
+          defaultValue={user?.contractor_profile?.license_number}
           ref={register({ required: false })}
         />
 
@@ -99,6 +105,7 @@ export const OnboardingWork: React.FC<RouteComponentProps> = () => {
         <Input
           name="licensing_state"
           placeholder="Delaware"
+          defaultValue={user?.contractor_profile?.licensing_state}
           ref={register({ required: false })}
         />
         <OnboardingNav slideNumber={2} />

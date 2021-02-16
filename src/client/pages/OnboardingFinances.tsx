@@ -9,6 +9,7 @@ import {
   Instruction,
   OnboardingNav,
 } from '../elements/OnboardingElements';
+import { useAuth } from '../AuthProvider';
 
 type FinancesFormFields = {
   appointment_fee: number;
@@ -21,6 +22,7 @@ type FinancesFormFields = {
 export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
   const { register, handleSubmit } = useForm<FinancesFormFields>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const onSubmit = async (data: FinancesFormFields) => {
     console.log(data);
@@ -42,6 +44,7 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
         <Input
           name="appointment_fee"
           placeholder="$"
+          defaultValue={user?.contractor_profile?.appointment_fee}
           type="number"
           ref={register({ required: false })}
         />
@@ -51,6 +54,7 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
             <Input
               name="hourly_rate"
               placeholder="$"
+              defaultValue={user?.contractor_profile?.hourly_rate}
               step="5"
               type="number"
               ref={register({ required: false })}
@@ -61,6 +65,7 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
             <Input
               name="daily_rate"
               placeholder="$"
+              defaultValue={user?.contractor_profile?.daily_rate}
               step="5"
               type="number"
               ref={register({ required: false })}
@@ -77,6 +82,7 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
               step="5000"
               max="2000000"
               placeholder="$"
+              defaultValue={user?.contractor_profile?.estimated_yearly_income}
               type="number"
               ref={register({ required: false })}
             />
@@ -88,6 +94,7 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
               step="5000"
               max="1000000"
               placeholder="$"
+              defaultValue={user?.contractor_profile?.estimated_yearly_expenses}
               type="number"
               ref={register({ required: false })}
             />

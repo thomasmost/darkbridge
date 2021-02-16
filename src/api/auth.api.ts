@@ -11,6 +11,7 @@ import { VerifyEmailRequest } from '../models/verify_email_request.model';
 import { sendEmail } from '../helpers/email.helper';
 import { ResetPasswordRequest } from '../models/reset_password_request.model';
 import { TeddyRequestContext } from './types';
+import { ContractorProfile } from '../models/contractor_profile.model';
 
 export const authAPI = new Router();
 
@@ -319,9 +320,18 @@ authAPI.post('/register', register);
 authAPI.get('/verify_email', verifyEmail);
 authAPI.post('/login', login);
 authAPI.get('/logout', logout);
-authAPI.get('/current_user', (ctx: TeddyRequestContext) => {
-  if (!ctx.user) {
+authAPI.get('/current_user', async (ctx: TeddyRequestContext) => {
+  const user = ctx.user;
+  if (!user) {
     return (ctx.status = 401);
   }
-  ctx.body = permissionUser(ctx.user);
+  const contractor_profile = await ContractorProfile.findOne({
+    where: {
+      user_id: user.id,
+    },
+  });
+  if (contractor_profile) {
+    user.contractor_profile = contractor_profile;
+  }
+  ctx.body = permissionUser(user);
 });

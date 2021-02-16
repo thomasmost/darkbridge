@@ -10,6 +10,7 @@ import {
   OnboardingNav,
   P,
 } from '../elements/OnboardingElements';
+import { useAuth } from '../AuthProvider';
 
 const Logo = styled.img`
   display: block;
@@ -27,23 +28,29 @@ type BasicFormFields = {
 export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
   const { register, handleSubmit } = useForm<BasicFormFields>();
   const navigate = useNavigate();
+  const { user, updateUser } = useAuth();
+  if (!user) {
+    return null;
+  }
 
   const onSubmit = async (data: BasicFormFields) => {
     const { full_name, phone, company_name } = data;
     const nameParts = full_name.split(' ');
     const family_name = nameParts.pop();
     const given_name = nameParts.join(' ');
+    const userUpdates = {
+      family_name,
+      given_name,
+      phone,
+    };
     await fetch('/api/user/self', {
       headers: {
         'Content-Type': 'application/json',
       },
       method: 'PUT',
-      body: JSON.stringify({
-        family_name,
-        given_name,
-        phone,
-      }),
+      body: JSON.stringify(userUpdates),
     });
+    updateUser(userUpdates);
     if (company_name) {
       await fetch('/api/contractor_profile', {
         headers: {
@@ -72,6 +79,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
         <Label>Full name</Label>
         <Input
           name="full_name"
+          defaultValue={`${user.given_name} ${user.family_name}`}
           placeholder="Jonathan Appleseed"
           ref={register({ required: true })}
         />
@@ -80,6 +88,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
         <Label>Phone number</Label>
         <Input
           name="phone"
+          defaultValue={user.phone}
           placeholder="555-222-1010"
           ref={register({ required: true })}
         />
@@ -89,6 +98,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
         <Label>Company name</Label>
         <Input
           name="company_name"
+          defaultValue={user.contractor_profile?.company_name}
           placeholder="Apples to Apples Plumbing Co."
           ref={register({ required: false })}
         />

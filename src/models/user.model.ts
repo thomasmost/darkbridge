@@ -2,6 +2,7 @@ import { Model, Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
+import { ContractorProfile } from './contractor_profile.model';
 
 // These are all the attributes in the User model
 export interface UserAttributes {
@@ -14,6 +15,7 @@ export interface UserAttributes {
   password_hash: string;
   password_salt: string;
   verified_at: number;
+  contractor_profile?: ContractorProfile;
 }
 
 // Some attributes are optional in `User.build` and `User.create` calls
@@ -33,9 +35,12 @@ export class User
   public family_name!: string;
   public given_name!: string; // for nullable fields
 
-  // timestamps!
+  // timestamps
   public readonly created_at!: number;
   public verified_at!: number;
+
+  // relations
+  public contractor_profile?: ContractorProfile;
 }
 
 User.init(
@@ -81,6 +86,9 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    contractor_profile: {
+      type: DataTypes.VIRTUAL,
+    },
   },
   {
     // Other model options go here
@@ -100,6 +108,7 @@ export function permissionUser(user: User) {
     family_name: user.family_name,
     created_at: user.created_at,
     verified_at: user.verified_at,
+    contractor_profile: user.contractor_profile,
   };
 
   console.log(`USER ID: ${permissionedUser.id}`);

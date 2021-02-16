@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuthFactory, IAuthContext } from './useAuth';
-import { IUserDto } from '../shared/user.dto';
+import { IUserDto, UserUpdateFields } from '../shared/user.dto';
 import { clientTokenStore } from './clientTokenStore';
 
 function getCurrentUser() {
@@ -23,7 +23,7 @@ const AuthContext = React.createContext<IAuthContext>({
   user: null,
   login: () => null,
   logout: () => null,
-  // updateUser: () => null,
+  updateUser: () => null,
 });
 
 export const useAuth = useAuthFactory<IAuthContext>(AuthContext);
@@ -50,11 +50,20 @@ export const AuthProvider: React.FC = ({ children }) => {
     clientTokenStore.clear();
   };
 
+  const updateUser = (updates: Partial<UserUpdateFields>) => {
+    if (user) {
+      setUser({
+        ...user,
+        ...updates,
+      });
+    }
+  };
+
   const value = useMemo(() => {
     return {
       login,
       logout,
-      // updateUser,
+      updateUser,
       user,
     };
   }, [user]);
