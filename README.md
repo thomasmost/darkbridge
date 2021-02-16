@@ -47,6 +47,21 @@ One of the most critical pieces of development is easily being able to step thro
 1. Attach to the currently running process, by running the `Attach to Server` configuration from VS Code's debug menu. _This doesn't seem to work reliably; see Todos._
 2. Stop the server (`pm2 stop server`) and then run the `Launch Debug Server` configuration from VS Code's debug menu (configured in the [launch.json](/.vscode/launch.json) file) in order to step through the server code.
 
+## Development Conventions
+
+A brief list of development conventions for new contributors.
+
+1. **Avoid Merges** We strongly prefer to pull and rebase, as this makes for a cleaner commit history. If it's helpful, consiser **aliasing the pull --rebase** comand like so: `git config --global alias.pr 'pull --rebase'`... to the same end, feature branches should be **squashed.**
+2. **Tag your Commits** The emoji tags at the beginning of each commit message aren't just frivolous; it's also helpful to think about categorizing your commits clearly. We don't need to be _too_ strict about this just yet, but here are some good exmaples:
+
+- :memo: _memo_ documentation
+- :shirt: _shirt_ commits dedicated to delinting
+- :beetle: _beetle_ bug fixes
+- :pancakes: _pancakes_ for SQL schema changes
+- :calendar: _calendar_ relating to the calendar feature of the application
+- :hammer: _hammer_ I typically use this for configuration/build changes, erego...
+- :wrench: _wrench_ let's use the wrench emoji for job flow commits
+
 ## Next Steps
 
 When you're ready to deploy your application to a 'production-like' staging environment, follow the steps below ([Infrastructure](#Infrastructure)) to set up AWS resources for that environment (you will need to repeat these steps for your production environment). Once the resources are available, configure the necessary environment variables as secrets in the AWS Secrets Manager and replace the `[[arn]]` fields in your `task-def-staging.json` file.
