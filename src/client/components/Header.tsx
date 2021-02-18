@@ -87,7 +87,7 @@ export const Header: React.FC = () => {
   async function handleLogout() {
     await fetch('/api/auth/logout');
     logout();
-    location.assign('/');
+    location.assign('/login');
   }
 
   return (

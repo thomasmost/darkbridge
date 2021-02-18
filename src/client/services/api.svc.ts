@@ -1,11 +1,4 @@
 import { toast } from 'react-toastify';
-import { clientTokenStore } from '../clientTokenStore';
-
-// export interface TeddyApiResult<TData> {
-//   data?: TData;
-//   error?: Error;
-// }
-
 export interface ApiResultSuccess<TData> {
   data: TData;
   error?: null;
@@ -27,7 +20,6 @@ export async function apiRequest<TData = any>(
   try {
     const response = await fetch(apiEndpoint, requestInfo);
     if (response.status === 401) {
-      clientTokenStore.clear();
       toast.error('Please log in again...');
       location.assign('/login');
       return {

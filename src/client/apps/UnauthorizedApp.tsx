@@ -3,7 +3,6 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { Redirect, Router } from '@reach/router';
 
-import { Header } from '../components/Header';
 import { Login } from '../pages/Login';
 import { Register } from '../pages/Register';
 import { theme } from '../theme';

@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuthFactory, IAuthContext } from './useAuth';
 import { IUserDto, UserUpdateFields } from '../shared/user.dto';
-import { clientTokenStore } from './clientTokenStore';
+
+const unauthorizedRoutes = ['/', '/login', '/register'];
 
 function getCurrentUser() {
-  // const token = clientTokenStore.get();
-  return fetch('/api/auth/current_user', {
-    // headers: {
-    //   Authorization: `Bearer ${token}`,
-    // },
-  }).then(function (response) {
-    if (response.status === 401) {
-      clientTokenStore.clear();
+  return fetch('/api/auth/current_user', {}).then(function (response) {
+    if (
+      response.status === 401 &&
+      !unauthorizedRoutes.includes(window.location.pathname)
+    ) {
       window.location.replace('/login');
       return;
     }
@@ -31,15 +29,9 @@ export const useAuth = useAuthFactory<IAuthContext>(AuthContext);
 export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<IUserDto | null>(null);
 
-  const token = clientTokenStore.get();
-
   useEffect(() => {
-    if (token) {
-      getCurrentUser().then(login);
-    } else if (window.location.pathname === '/') {
-      window.location.replace('/login');
-    }
-  }, [token]);
+    getCurrentUser().then(login);
+  }, []);
 
   const login = async (user: IUserDto) => {
     setUser(user);
@@ -47,7 +39,6 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const logout = async () => {
     setUser(null);
-    clientTokenStore.clear();
   };
 
   const updateUser = (updates: Partial<UserUpdateFields>) => {

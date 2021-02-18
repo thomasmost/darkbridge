@@ -4,7 +4,6 @@ import { useAuth } from '../AuthProvider';
 import { Link, RouteComponentProps } from '@reach/router';
 import styled from '@emotion/styled';
 import { toast } from 'react-toastify';
-import { clientTokenStore } from '../clientTokenStore';
 import { AccountForm } from '../elements/AccountForm';
 import { FormFieldPair } from '../elements/FormFieldPair';
 import { IUserDto } from '../../shared/user.dto';
@@ -46,7 +45,6 @@ async function registerUser(
       }),
     });
     const data = (await result.json()) as { token: string; user: IUserDto };
-    clientTokenStore.set(data.token);
     return data.user;
   } catch (err) {
     toast.error('Registration failed');
