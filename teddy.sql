@@ -52,12 +52,17 @@ create table `appointment` (
   service_provider_user_id VARCHAR(255) NOT NULL,
   client_profile_id VARCHAR(255) NOT NULL,
   status VARCHAR(255) NOT NULL,
+  priority VARCHAR(16) NOT NULL,
   datetime_local DATETIME NOT NULL,
   datetime_utc DATETIME NOT NULL,
-  timezone VARCHAR(255) NOT NULL,
   duration_minutes SMALLINT NOT NULL,
   notes TEXT NULL,
   summary VARCHAR(255) NOT NULL DEFAULT '',
+  address_street VARCHAR(255) NOT NULL,
+  address_city VARCHAR(255) NOT NULL,
+  address_state VARCHAR(255) NOT NULL,
+  address_postal_code VARCHAR(255) NOT NULL,
+  timezone VARCHAR(255) NOT NULL,
   rating_of_service TINYINT NULL,
   rating_of_client TINYINT NULL
 );
