@@ -52,7 +52,7 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
       },
     );
     if (!result.error) {
-      toast.success('ClientProfile Created');
+      toast.success('Client Created');
       navigate('/calendar/add-appointment');
     }
   };

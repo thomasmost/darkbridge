@@ -10,6 +10,13 @@ export const AppointmentStatus = {
   completed: 'completed',
 };
 
+export const AppointmentPriority = {
+  p0_emergency: 'P0',
+  p1_urgent: 'P1',
+  p2_earliest_convenience: 'P2',
+  p3_discretionary: 'P3',
+};
+
 // These are all the attributes in the Appointment model
 export interface AppointmentAttributes {
   id: string;
@@ -17,15 +24,22 @@ export interface AppointmentAttributes {
   // (future) in the future appointment requests might also be stored in this table;
   // we might then want a separate 'created_by_user_id' field
   service_provider_user_id: string;
-  // (future) in the future we may want to separate addresses from the client profile
+  // (future) in the future we may want to separate addresses from the client profile and the appointment and have them be first class entities
   // since a client could move or there might be multiple addresses belonging to a client
   // address_id: string;
   client_profile_id: string;
   status: keyof typeof AppointmentStatus;
+  priority: keyof typeof AppointmentPriority;
   summary: string;
   notes: string;
   datetime_local: string;
   datetime_utc: string;
+  // Address fields will be copied from the client_profile
+  // since the client could move, but the appointment's address should remain the same
+  address_street: string;
+  address_city: string;
+  address_state: string;
+  address_postal_code: string;
   timezone: string;
   duration_minutes: number;
   rating_of_service: number;
@@ -50,8 +64,13 @@ export class Appointment
   public service_provider_user_id!: string;
   public client_profile_id!: string;
   public status!: keyof typeof AppointmentStatus;
+  public priority!: keyof typeof AppointmentPriority;
   public datetime_local!: string;
   public datetime_utc!: string;
+  public address_street!: string;
+  public address_city!: string;
+  public address_state!: string;
+  public address_postal_code!: string;
   public timezone!: string;
   public summary!: string;
   public notes: string;
@@ -93,6 +112,11 @@ Appointment.init(
         return AppointmentStatus.scheduled;
       },
     },
+    priority: {
+      type: DataTypes.ENUM,
+      allowNull: false,
+      values: Object.values(AppointmentPriority),
+    },
     client_profile_id: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -103,6 +127,22 @@ Appointment.init(
     },
     datetime_utc: {
       type: DataTypes.DATE,
+      allowNull: false,
+    },
+    address_street: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    address_city: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    address_state: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    address_postal_code: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     timezone: {

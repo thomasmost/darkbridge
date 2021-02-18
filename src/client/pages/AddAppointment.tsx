@@ -17,6 +17,7 @@ import { DateTimePicker } from '@material-ui/pickers';
 import { Styles } from 'react-select';
 import { ClientProfileAttributes } from '../../models/client_profile.model';
 import { apiRequest } from '../services/api.svc';
+import { Select } from '../components/Select';
 
 const Label = styled.label`
   color: ${theme.subheaderTextColor};
@@ -33,8 +34,31 @@ const Button = styled.button`
 
 type AppointmentFormValues = Pick<
   AppointmentCreationAttributes,
-  'client_profile_id' | 'datetime_local' | 'duration_minutes' | 'summary'
+  | 'client_profile_id'
+  | 'datetime_local'
+  | 'duration_minutes'
+  | 'summary'
+  | 'priority'
 >;
+
+const priorityOptions = [
+  {
+    label: 'Emergency (P0)',
+    value: 'P0',
+  },
+  {
+    label: 'Urgent (P1)',
+    value: 'P1',
+  },
+  {
+    label: 'Earliest Convenience (P2)',
+    value: 'P2',
+  },
+  {
+    label: 'Discretionary (P3)',
+    value: 'P3',
+  },
+];
 
 const StyledPicker = styled(DateTimePicker)`
   div {
@@ -53,7 +77,8 @@ const StyledPicker = styled(DateTimePicker)`
   font-weight: 600 !important;
 `;
 
-const selectStyles: Styles<ClientProfileAttributes, false> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const selectStyles: Styles<any, false> = {
   container: (provided) => ({
     ...provided,
     cursor: 'pointer',
@@ -102,10 +127,10 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
   const [selectedDate, setDate] = useState(new Date());
   const navigate = useNavigate();
   const { register, handleSubmit, setValue } = useForm<AppointmentFormValues>();
-
   useEffect(() => {
-    register('client_profile_id'); // custom register Antd input
-    register('datetime_local'); // custom register Antd input
+    register('client_profile_id');
+    register('datetime_local');
+    register('priority');
   }, [register]);
 
   const { user } = useAuth();
@@ -133,6 +158,7 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
     );
     if (!result.error) {
       toast.success('Appointment Created');
+      navigate('/');
     }
   };
   return (
@@ -186,6 +212,11 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
             />
           </div>
         </FlexColumns>
+        <Select
+          options={priorityOptions}
+          styles={selectStyles}
+          onChange={(selection) => setValue('priority', selection?.value)}
+        />
         <Button>Add Appointment</Button>
         <Button>Cancel</Button>
       </form>
