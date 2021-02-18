@@ -22,6 +22,8 @@ interface AppointmentAttributes {
   // address_id: string;
   client_profile_id: string;
   status: keyof typeof AppointmentStatus;
+  summary: string;
+  notes: string;
   datetime_local: string;
   datetime_utc: string;
   timezone: string;
@@ -33,7 +35,12 @@ interface AppointmentAttributes {
 // Some attributes are optional in `Appointment.build` and `Appointment.create` calls
 export type AppointmentCreationAttributes = Optional<
   AppointmentAttributes,
-  'id' | 'created_at' | 'status' | 'rating_of_client' | 'rating_of_service'
+  | 'id'
+  | 'created_at'
+  | 'status'
+  | 'rating_of_client'
+  | 'rating_of_service'
+  | 'notes'
 >;
 
 export class Appointment
@@ -46,6 +53,8 @@ export class Appointment
   public datetime_local!: string;
   public datetime_utc!: string;
   public timezone!: string;
+  public summary!: string;
+  public notes: string;
   public duration_minutes!: number;
   public rating_of_service: number;
   public rating_of_client: number;
@@ -80,6 +89,9 @@ Appointment.init(
       type: DataTypes.ENUM,
       allowNull: false,
       values: Object.values(AppointmentStatus),
+      defaultValue: function () {
+        return AppointmentStatus.scheduled;
+      },
     },
     client_profile_id: {
       type: DataTypes.STRING,
@@ -96,6 +108,14 @@ Appointment.init(
     timezone: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    summary: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    notes: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     duration_minutes: {
       type: DataTypes.NUMBER,

@@ -12,6 +12,19 @@ import { Logout } from '../pages/Logout';
 import { Profile } from '../pages/Profile';
 import { Calendar } from '../pages/Calendar';
 import { AddAppointment } from '../pages/AddAppointment';
+import { AddClientProfile } from '../pages/AddClientProfile';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+
+const muiTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: theme.onboardingBackgroundColor,
+    },
+  },
+});
 
 if (typeof window !== 'undefined') {
   require('react-toastify/dist/ReactToastify.css');
@@ -37,30 +50,35 @@ const Main = styled.main`
 const App = () => {
   return (
     <AuthProvider>
-      <AppContainer>
-        <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-        <Header />
-        <Main>
-          <Router>
-            <Home path="/" />
-            <AddAppointment path="calendar/add-appointment" />
-            <ApiSandbox path="sandbox" />
-            <Calendar path="calendar" />
-            <Profile path="profile" />
-            <Logout path="logout" />
-          </Router>
-        </Main>
-      </AppContainer>
+      <ThemeProvider theme={muiTheme}>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <AppContainer>
+            <ToastContainer
+              position="top-center"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
+            <Header />
+            <Main>
+              <Router>
+                <Home path="/" />
+                <AddAppointment path="calendar/add-appointment" />
+                <AddClientProfile path="add-client" />
+                <ApiSandbox path="sandbox" />
+                <Calendar path="calendar" />
+                <Profile path="profile" />
+                <Logout path="logout" />
+              </Router>
+            </Main>
+          </AppContainer>
+        </MuiPickersUtilsProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 };

@@ -27,19 +27,16 @@ type ClientProfileFormValues = Pick<
 >;
 
 export const AddClientProfile: React.FC<RouteComponentProps> = () => {
+  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm<ClientProfileFormValues>();
   const { user } = useAuth();
   if (!user) {
     return null;
   }
-  const {
-    register,
-    handleSubmit,
-    setValue,
-  } = useForm<ClientProfileFormValues>();
 
   const onSubmit = async (data: ClientProfileFormValues) => {
     console.log(data);
-    await fetch('/api/appointment', {
+    await fetch('/api/client_profile', {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -47,11 +44,12 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
       body: JSON.stringify(data),
     });
     toast.success('ClientProfile Created');
+    navigate('/calendar/add-appointment');
   };
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Label>Full name</Label>
+        <Label>Name</Label>
         <Input
           name="full_name"
           // defaultValue={}
@@ -86,6 +84,24 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
             <Label>Postal Code</Label>
             <Input
               name="address_postal_code"
+              // defaultValue={profile.email}
+              ref={register()}
+            />
+          </div>
+        </FlexColumns>
+        <FlexColumns>
+          <div>
+            <Label>Email</Label>
+            <Input
+              name="email"
+              // defaultValue={profile.email}
+              ref={register()}
+            />
+          </div>
+          <div>
+            <Label>Phone</Label>
+            <Input
+              name="phone"
               // defaultValue={profile.email}
               ref={register()}
             />

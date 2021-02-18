@@ -23,6 +23,11 @@ const standardRequestHeaders = {
   'Content-Type': 'application/json',
 };
 
+const Label = styled.label`
+  margin-top: 20px;
+  display: block;
+`;
+
 type CityStateFormValues = {
   city: string;
   state: string;
@@ -36,10 +41,16 @@ export const ApiSandbox: React.FC<RouteComponentProps> = () => {
   async function getTimezone(values: CityStateFormValues) {
     const response = await fetch(
       `/api/timezone?city=${values.city}&state=${values.state}`,
+      {
+        headers: {
+          Accept: 'application/text',
+          'Content-Type': 'application/text',
+        },
+      },
     );
 
-    const result = await response.json();
-    setTimezone(result.timezone);
+    const result = await response.text();
+    setTimezone(result);
   }
 
   const getSecretVar = async () => {
@@ -76,15 +87,18 @@ export const ApiSandbox: React.FC<RouteComponentProps> = () => {
         <form onSubmit={handleSubmit(getTimezone)}>
           <FlexColumns>
             <div>
-              <label>City</label>
+              <Label>City</Label>
               <input name="city" ref={register()} />
             </div>
             <div>
-              <label>State</label>
+              <Label>State</Label>
               <input name="state" ref={register()} />
             </div>
           </FlexColumns>
           <button type="submit">Submit</button>
+          <Section>
+            <span>{timezone}</span>
+          </Section>
         </form>
       </Section>
     </>
