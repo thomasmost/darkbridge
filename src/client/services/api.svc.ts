@@ -1,21 +1,50 @@
+import { toast } from 'react-toastify';
 import { clientTokenStore } from '../clientTokenStore';
 
-export function authorizedFetch(path: string, request?: RequestInit) {
-  // const token = clientTokenStore.get();
+// export interface TeddyApiResult<TData> {
+//   data?: TData;
+//   error?: Error;
+// }
+
+export interface ApiResultSuccess<TData> {
+  data: TData;
+  error?: null;
+}
+export interface ApiResultFailure {
+  data?: null;
+  error: Error;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function apiRequest<TData = any>(
+  path: string,
+  request?: RequestInit,
+): Promise<ApiResultSuccess<TData> | ApiResultFailure> {
   const apiEndpoint = `/api/${path}`;
   const requestInfo: RequestInit = {
     ...(request || {}),
-    // headers: {
-    //   ...(request?.headers || {}),
-    //   Authorization: `Bearer ${token}`,
-    // },
   };
-  return fetch(apiEndpoint, requestInfo).then(function (response) {
+  try {
+    const response = await fetch(apiEndpoint, requestInfo);
     if (response.status === 401) {
       clientTokenStore.clear();
+      toast.error('Please log in again...');
       location.assign('/login');
-      return;
+      return {
+        error: new Error('Session Expired'),
+      };
     }
-    return response.json();
-  });
+    if (response.status === 500) {
+      throw new Error('Unexpected');
+    }
+    const data = (await response.json()) as TData;
+    return {
+      data,
+    };
+  } catch (error) {
+    toast.error(`Request Failed with ${error}`);
+    return {
+      error,
+    };
+  }
 }

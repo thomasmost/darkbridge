@@ -11,7 +11,7 @@ export const AppointmentStatus = {
 };
 
 // These are all the attributes in the Appointment model
-interface AppointmentAttributes {
+export interface AppointmentAttributes {
   id: string;
   created_at: number;
   // (future) in the future appointment requests might also be stored in this table;

@@ -1,9 +1,13 @@
-import { authorizedFetch } from './api.svc';
+import { AppointmentAttributes } from '../../models/appointment.model';
+import { apiRequest } from './api.svc';
 
 export function getAppointments() {
-  return authorizedFetch('appointment');
+  return apiRequest('appointment');
 }
 
 export function getDailyInfo() {
-  return authorizedFetch('appointment/daily');
+  return apiRequest<{
+    summary: string;
+    nextAppointment: AppointmentAttributes;
+  }>('appointment/daily');
 }

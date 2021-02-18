@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 
 import { getDailyInfo } from '../services/appointment.svc';
 import { Icon } from '../elements/Icon';
+import { AppointmentAttributes } from '../../models/appointment.model';
 
 const HeadingText = styled.h1`
   padding-bottom: 10px;
@@ -37,13 +38,19 @@ const CardInfo = styled.div`
 `;
 
 export const Home: React.FC<RouteComponentProps> = () => {
-  const [summary, setSummary] = useState(null);
-  const [nextAppointment, setNextAppointment] = useState(null);
+  const [summary, setSummary] = useState<string | null>(null);
+  const [
+    nextAppointment,
+    setNextAppointment,
+  ] = useState<AppointmentAttributes | null>(null);
 
   useEffect(() => {
-    getDailyInfo().then((results) => {
-      setSummary(results.summary);
-      setNextAppointment(results.nextAppointment);
+    getDailyInfo().then((result) => {
+      if (result.error) {
+        return;
+      }
+      setSummary(result.data.summary);
+      setNextAppointment(result.data.nextAppointment);
     });
   }, []);
 
