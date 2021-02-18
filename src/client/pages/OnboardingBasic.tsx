@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { H3, Label, OnboardingNav, P } from '../elements/OnboardingElements';
 import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
+import { apiRequest } from '../services/api.svc';
 
 const Logo = styled.img`
   display: block;
@@ -38,7 +39,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
       given_name,
       phone,
     };
-    await fetch('/api/user/self', {
+    await apiRequest('user/self', 'text', {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -47,7 +48,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
     });
     updateUser(userUpdates);
     if (company_name) {
-      await fetch('/api/contractor_profile', {
+      await apiRequest('contractor_profile', 'text', {
         headers: {
           'Content-Type': 'application/json',
         },

@@ -10,6 +10,7 @@ import {
 } from '../elements/OnboardingElements';
 import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
+import { apiRequest } from '../services/api.svc';
 
 type FinancesFormFields = {
   appointment_fee: number;
@@ -29,7 +30,7 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
 
   const onSubmit = async (data: FinancesFormFields) => {
     console.log(data);
-    await fetch('/api/contractor_profile', {
+    await apiRequest('contractor_profile', 'text', {
       headers: {
         'Content-Type': 'application/json',
       },

@@ -11,6 +11,7 @@ export interface ApiResultFailure {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function apiRequest<TData = any>(
   path: string,
+  accept: 'text' | 'json',
   request?: RequestInit,
 ): Promise<ApiResultSuccess<TData> | ApiResultFailure> {
   const apiEndpoint = `/api/${path}`;
@@ -29,7 +30,9 @@ export async function apiRequest<TData = any>(
     if (response.status === 500) {
       throw new Error('Unexpected');
     }
-    const data = (await response.json()) as TData;
+    const data = (await (accept === 'json'
+      ? response.json()
+      : response.text())) as TData;
     return {
       data,
     };

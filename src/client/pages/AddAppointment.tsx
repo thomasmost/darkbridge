@@ -3,7 +3,10 @@ import { RouteComponentProps, useNavigate } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { AppointmentCreationAttributes } from '../../models/appointment.model';
+import {
+  AppointmentAttributes,
+  AppointmentCreationAttributes,
+} from '../../models/appointment.model';
 import { useAuth } from '../AuthProvider';
 import { FlexColumns } from '../elements/FlexColumns';
 import { Input } from '../elements/Input';
@@ -13,6 +16,7 @@ import AsyncSelect from 'react-select/async';
 import { DateTimePicker } from '@material-ui/pickers';
 import { Styles } from 'react-select';
 import { ClientProfileAttributes } from '../../models/client_profile.model';
+import { apiRequest } from '../services/api.svc';
 
 const Label = styled.label`
   color: ${theme.subheaderTextColor};
@@ -74,16 +78,23 @@ const selectStyles: Styles<ClientProfileAttributes, false> = {
 };
 
 const loadOptions = async (name: string) => {
-  const response = await fetch(`/api/client_profile?name=${name}`, {
-    headers: {
-      'Content-Type': 'application/json',
+  const response = await apiRequest<ClientProfileAttributes[]>(
+    `client_profile?name=${name}`,
+    'json',
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-  });
-  const results = await response.json();
+  );
+  if (response.error) {
+    return [];
+  }
+  const results = response.data;
   results.push({
     full_name: 'Add a New Client',
-    id: null,
-  });
+    id: '',
+  } as ClientProfileAttributes);
   return results;
 };
 
@@ -109,14 +120,20 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
 
   const onSubmit = async (data: AppointmentFormValues) => {
     console.log(data);
-    await fetch('/api/appointment', {
-      headers: {
-        'Content-Type': 'application/json',
+    const result = await apiRequest<AppointmentAttributes>(
+      'appointment',
+      'json',
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify(data),
       },
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-    toast.success('Appointment Created');
+    );
+    if (!result.error) {
+      toast.success('Appointment Created');
+    }
   };
   return (
     <div>
@@ -130,7 +147,7 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
           loadOptions={loadOptions}
           styles={selectStyles}
           onChange={(selection) => {
-            if (selection && selection.id === null) {
+            if (selection && selection.id === '') {
               navigate('/add-client');
               return;
             }

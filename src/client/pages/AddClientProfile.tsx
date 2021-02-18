@@ -3,10 +3,14 @@ import { RouteComponentProps, useNavigate } from '@reach/router';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { ClientProfileCreationAttributes } from '../../models/client_profile.model';
+import {
+  ClientProfileAttributes,
+  ClientProfileCreationAttributes,
+} from '../../models/client_profile.model';
 import { useAuth } from '../AuthProvider';
 import { FlexColumns } from '../elements/FlexColumns';
 import { Input } from '../elements/Input';
+import { apiRequest } from '../services/api.svc';
 import { theme } from '../theme';
 
 const Label = styled.label`
@@ -36,15 +40,21 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
 
   const onSubmit = async (data: ClientProfileFormValues) => {
     console.log(data);
-    await fetch('/api/client_profile', {
-      headers: {
-        'Content-Type': 'application/json',
+    const result = await apiRequest<ClientProfileAttributes>(
+      'client_profile',
+      'json',
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify(data),
       },
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-    toast.success('ClientProfile Created');
-    navigate('/calendar/add-appointment');
+    );
+    if (!result.error) {
+      toast.success('ClientProfile Created');
+      navigate('/calendar/add-appointment');
+    }
   };
   return (
     <div>
