@@ -4,6 +4,8 @@ import { appointmentAPI } from './api/appointment.api';
 import { doMath } from './api/do_math';
 import { contractorProfileAPI } from './api/contractor_profile.api';
 import { userAPI } from './api/user.api';
+import { clientProfileAPI } from './api/client_profile.api';
+import { getTimeZone } from './helpers/timezone.helper';
 
 export const api = new Router();
 
@@ -17,6 +19,11 @@ api.use(
   contractorProfileAPI.routes(),
   contractorProfileAPI.allowedMethods(),
 );
+api.use(
+  '/client_profile',
+  clientProfileAPI.routes(),
+  clientProfileAPI.allowedMethods(),
+);
 api.use('/user', userAPI.routes(), userAPI.allowedMethods());
 api.use('/auth', authAPI.routes(), authAPI.allowedMethods());
 
@@ -24,9 +31,9 @@ api.get('/test_crash', () => {
   process.exit(1);
 });
 
-api.get('/do_math', (ctx) => {
-  const { x, y } = ctx.request.query;
-  ctx.body = doMath(x, y);
+api.get('/timezone', async (ctx) => {
+  const { city, state } = ctx.request.query;
+  ctx.body = await getTimeZone(city, state);
 });
 
 api.get('/get_secret_var', (ctx) => {

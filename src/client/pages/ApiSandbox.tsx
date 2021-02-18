@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { RouteComponentProps } from '@reach/router';
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { FlexColumns } from '../elements/FlexColumns';
 import { theme } from '../theme';
 
 const Section = styled.div`
@@ -21,8 +23,24 @@ const standardRequestHeaders = {
   'Content-Type': 'application/json',
 };
 
+type CityStateFormValues = {
+  city: string;
+  state: string;
+};
+
 export const ApiSandbox: React.FC<RouteComponentProps> = () => {
   const [sampleVariable, setSampleVariable] = useState<string>('');
+  const [timezone, setTimezone] = useState<string>('');
+  const { handleSubmit, register } = useForm<CityStateFormValues>();
+
+  async function getTimezone(values: CityStateFormValues) {
+    const response = await fetch(
+      `/api/timezone?city=${values.city}&state=${values.state}`,
+    );
+
+    const result = await response.json();
+    setTimezone(result.timezone);
+  }
 
   const getSecretVar = async () => {
     const response = await fetch(`/api/get_secret_var`, {
@@ -52,6 +70,22 @@ export const ApiSandbox: React.FC<RouteComponentProps> = () => {
       </div>
       <Section>
         Example Environment Variable: <span>{sampleVariable}</span>
+      </Section>
+      <Section>
+        <h2>Test the Timezone API</h2>
+        <form onSubmit={handleSubmit(getTimezone)}>
+          <FlexColumns>
+            <div>
+              <label>City</label>
+              <input name="city" ref={register()} />
+            </div>
+            <div>
+              <label>State</label>
+              <input name="state" ref={register()} />
+            </div>
+          </FlexColumns>
+          <button type="submit">Submit</button>
+        </form>
       </Section>
     </>
   );

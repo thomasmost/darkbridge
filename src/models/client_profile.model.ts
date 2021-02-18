@@ -4,11 +4,12 @@ import { v4 } from 'uuid';
 import { sequelize } from '../sequelize';
 
 // These are all the attributes in the ClientProfile model
-interface ClientProfileAttributes {
+export interface ClientProfileAttributes {
   id: string;
   created_at: number;
   created_by_user_id: string;
   email: string;
+  full_name: string;
   phone: string;
   address_street: string;
   address_city: string;
@@ -18,7 +19,7 @@ interface ClientProfileAttributes {
 }
 
 // Some attributes are optional in `ClientProfile.build` and `ClientProfile.create` calls
-type ClientProfileCreationAttributes = Optional<
+export type ClientProfileCreationAttributes = Optional<
   ClientProfileAttributes,
   'id' | 'created_at'
 >;
@@ -29,6 +30,7 @@ export class ClientProfile
   public id!: string;
   public created_by_user_id!: string;
   public email!: string;
+  public full_name: string;
   public phone!: string;
   public address_street!: string;
   public address_city!: string;
@@ -63,6 +65,10 @@ ClientProfile.init(
       allowNull: false,
     },
     email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    full_name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
