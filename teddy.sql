@@ -79,7 +79,7 @@ create table `invoice` (
   cost_time INT NULL,
   cost_materials INT NULL,
   cost_taxes INT NULL,
-  cost_processing_fee INT NULL,
+  cost_processing_fee INT NULL
 );
 
 create table `invoice_item` (
