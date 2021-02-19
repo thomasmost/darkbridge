@@ -56,6 +56,7 @@ create table `appointment` (
   datetime_local DATETIME NOT NULL,
   datetime_utc DATETIME NOT NULL,
   duration_minutes SMALLINT NOT NULL,
+  logged_minutes SMALLINT NULL,
   notes TEXT NULL,
   summary VARCHAR(255) NOT NULL DEFAULT '',
   address_street VARCHAR(255) NOT NULL,
@@ -65,6 +66,32 @@ create table `appointment` (
   timezone VARCHAR(255) NOT NULL,
   rating_of_service TINYINT NULL,
   rating_of_client TINYINT NULL
+);
+
+create table `invoice` (
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
+  created_at BIGINT NOT NULL,
+  service_provider_user_id VARCHAR(255) NOT NULL,
+  client_profile_id VARCHAR(255) NOT NULL,
+  appointment_id VARCHAR(255) NOT NULL,
+  status VARCHAR(255) NOT NULL,
+  cost_flat_rate INT NULL,
+  cost_time INT NULL,
+  cost_materials INT NULL,
+  cost_taxes INT NULL,
+  cost_processing_fee INT NULL,
+);
+
+create table `invoice_item` (
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
+  created_at BIGINT NOT NULL,
+  invoice_id VARCHAR(255) NOT NULL,
+  appointment_id VARCHAR(255) NOT NULL,
+  type VARCHAR(255) NOT NULL,
+  description VARCHAR(255) NOT NULL,
+  amount_in_minor_units INT NOT NULL,
+  currency_code VARCHAR(10) NOT NULL DEFAULT 'USD',
+  quantity INT NOT NULL DEFAULT 1
 );
 
 create table `appointment_activity` (
