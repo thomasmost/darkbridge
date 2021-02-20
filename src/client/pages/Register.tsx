@@ -9,6 +9,13 @@ import { FormFieldPair } from '../elements/FormFieldPair';
 import { IUserDto } from '../../shared/user.dto';
 import { theme } from '../theme';
 
+const Logo = styled.img`
+  display: block;
+  margin: auto;
+  margin-top: 40px;
+  margin-bottom: 60px;
+`;
+
 const FormHeader = styled.h2`
   color: white;
   display: block;
@@ -81,6 +88,7 @@ export const Register: React.FC<RouteComponentProps> = () => {
 
   return (
     <AccountForm autoComplete="disabled" onSubmit={onSubmit}>
+      <Logo height="64px" src="/logo_light.png" />
       <FormHeader>Register</FormHeader>
       <Instruction>
         Already have an account?{' '}
