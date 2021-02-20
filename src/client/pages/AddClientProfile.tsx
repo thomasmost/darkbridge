@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { RouteComponentProps, useNavigate } from '@reach/router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import {
@@ -16,6 +16,7 @@ import { theme } from '../theme';
 const Label = styled.label`
   color: ${theme.subheaderTextColor};
   display: block;
+  margin-bottom: 10px;
 `;
 
 const Button = styled.button`

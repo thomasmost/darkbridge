@@ -17,7 +17,7 @@ const darkGray = '#343434';
 export const theme = {
   activeLinkColor: teddyBlueDark,
   activePageColor: teddyBlueLight,
-  applicationBackgroundColor: paperWhite,
+  applicationBackgroundColor: white,
   applicationTextColor: darkGray,
   buttonColorActive: teddyBlueLight,
   buttonColorDisabled: lightGray,
@@ -31,6 +31,7 @@ export const theme = {
   headerBackgroundColor: white,
   headerBorderColor: teddyBlueDark,
   headerTextColor: teddyBlueDark,
+  inputBackgroundColor: lightGray,
   onboardingBackgroundColor: teddyBlueDark,
   pageHeaderColor: darkGray,
   passiveLinkColor: teddyBlueLight,

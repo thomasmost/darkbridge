@@ -68,13 +68,11 @@ const StyledPicker = styled(DateTimePicker)`
       display: block;
       padding: 22px 20px 23px;
       width: 100%;
-      background-color: white;
-      font-weight: 600;
+      background-color: ${theme.inputBackgroundColor};
+      font-family: 'Poppins', Helvetica, sans-serif;
     }
     min-width: 300px;
-    font-weight: 600;
   }
-  font-weight: 600 !important;
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,6 +88,7 @@ const selectStyles: Styles<any, false> = {
     cursor: 'pointer',
     padding: '5px 10px',
     marginBottom: '20px',
+    backgroundColor: theme.inputBackgroundColor,
   }),
   indicatorSeparator: (provided) => ({
     ...provided,
@@ -132,12 +131,10 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
     register('datetime_local');
     register('priority');
   }, [register]);
-
   const { user } = useAuth();
   if (!user) {
     return null;
   }
-
   const handleDateChange = (date: Date) => {
     setValue('datetime_local', date.toString());
     setDate(date);
@@ -211,7 +208,8 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
               min="0"
             />
           </div>
-        </FlexColumns>
+        </FlexColumns>{' '}
+        <Label>Priority</Label>
         <Select
           options={priorityOptions}
           styles={selectStyles}
