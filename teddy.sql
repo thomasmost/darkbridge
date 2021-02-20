@@ -65,7 +65,8 @@ create table `appointment` (
   address_postal_code VARCHAR(255) NOT NULL,
   timezone VARCHAR(255) NOT NULL,
   rating_of_service TINYINT NULL,
-  rating_of_client TINYINT NULL
+  rating_of_client TINYINT NULL,
+  INDEX(service_provider_user_id)
 );
 
 create table `invoice` (
@@ -79,7 +80,8 @@ create table `invoice` (
   cost_time INT NULL,
   cost_materials INT NULL,
   cost_taxes INT NULL,
-  cost_processing_fee INT NULL
+  cost_processing_fee INT NULL,
+  INDEX(appointment_id)
 );
 
 create table `invoice_item` (
@@ -91,7 +93,9 @@ create table `invoice_item` (
   description VARCHAR(255) NOT NULL,
   amount_in_minor_units INT NOT NULL,
   currency_code VARCHAR(10) NOT NULL DEFAULT 'USD',
-  quantity INT NOT NULL DEFAULT 1
+  quantity INT NOT NULL DEFAULT 1,
+  INDEX(invoice_id),
+  INDEX(appointment_id)
 );
 
 create table `appointment_activity` (
@@ -115,6 +119,7 @@ create table `client_profile` (
   address_state VARCHAR(255) NOT NULL,
   address_postal_code VARCHAR(255) NOT NULL,
   timezone VARCHAR(255) NOT NULL,
+  stripe_customer_id VARCHAR(255) NOT NULL,
   UNIQUE KEY(user_id)
 );
 
