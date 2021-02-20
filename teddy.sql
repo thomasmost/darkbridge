@@ -119,7 +119,7 @@ create table `client_profile` (
   address_state VARCHAR(255) NOT NULL,
   address_postal_code VARCHAR(255) NOT NULL,
   timezone VARCHAR(255) NOT NULL,
-  stripe_customer_id VARCHAR(255) NOT NULL,
+  stripe_customer_id VARCHAR(255) NULL,
   UNIQUE KEY(user_id)
 );
 
