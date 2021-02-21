@@ -199,7 +199,7 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
             />
           </div>
           <div>
-            <Label>Duration (minutes)</Label>
+            <Label>Duration</Label>
             <Input
               name="duration_minutes"
               ref={register}
