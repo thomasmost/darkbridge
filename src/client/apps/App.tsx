@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
-import { Router } from '@reach/router';
+import { Router, Location } from '@reach/router';
 
 import { ApiSandbox } from '../pages/ApiSandbox';
 import { Header } from '../components/Header';
@@ -18,6 +18,9 @@ import DateFnsUtils from '@date-io/date-fns';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import { NextAppointment } from '../pages/NextAppointment';
+import { useWindowDimensions } from '../useWindowDimensions';
+import { FooterPWA } from '../components/FooterPWA';
+import { HeaderPWA } from '../components/HeaderPWA';
 
 const muiTheme = createMuiTheme({
   palette: {
@@ -37,18 +40,23 @@ const AppContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-const Main = styled.main`
-  color: ${theme.applicationTextColor};
-  background-color: ${theme.applicationBackgroundColor};
-  height: calc(100vh - 80px);
-  width: 100%;
-  display: block;
-  padding: 25px;
-  max-width: 1000px;
-  margin: auto;
-`;
-
 const App = () => {
+  const { height, width } = useWindowDimensions();
+  const shouldRenderPWA = width < 600 && height > 400;
+
+  const Main = styled.main`
+    color: ${theme.applicationTextColor};
+    background-color: ${theme.applicationBackgroundColor};
+    height: calc(100vh - 80px);
+    width: 100%;
+    display: block;
+    padding: 25px 25px 0;
+    max-width: 1000px;
+    margin: auto;
+    padding-bottom: ${shouldRenderPWA
+      ? `${theme.pwa_footer_height + 40}px`
+      : '0px'};
+  `;
   return (
     <AuthProvider>
       <ThemeProvider theme={muiTheme}>
@@ -65,7 +73,13 @@ const App = () => {
               draggable
               pauseOnHover
             />
-            <Header />
+            {shouldRenderPWA ? (
+              <Location>
+                {({ location }) => <HeaderPWA location={location} />}
+              </Location>
+            ) : (
+              <Header />
+            )}
             <Main>
               <Router>
                 <Home path="/" />
@@ -78,6 +92,7 @@ const App = () => {
                 <Logout path="logout" />
               </Router>
             </Main>
+            {shouldRenderPWA && <FooterPWA />}
           </AppContainer>
         </MuiPickersUtilsProvider>
       </ThemeProvider>

@@ -12,7 +12,8 @@ import { ClientCard } from '../components/ClientCard';
 
 const HeadingText = styled.h1`
   padding-bottom: 10px;
-  font-size: 2em;
+  font-size: 1.6em;
+  font-weight: 600;
   color: ${theme.pageHeaderColor};
 `;
 

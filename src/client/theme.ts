@@ -40,4 +40,6 @@ export const theme = {
   textColor: charcoal,
   upvoteColor: green,
   warningColor: red,
+  // Other variables
+  pwa_footer_height: 80,
 };
