@@ -37,10 +37,6 @@
         {
           "name": "NODE_ENV",
           "value": "staging"
-        },
-        {
-          "name": "EXAMPLE_PUBLIC_VARIABLE",
-          "value": "Not sensitive"
         }
       ],
       "secrets": [
@@ -55,6 +51,10 @@
         {
           "name": "MYSQL_PASSWORD",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MYSQL_PASSWORD-5gMKpW"
+        },
+        {
+          "name": "IPGEOLOCATION_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_IPGEOLOCATION_API_KEY-F3rxGf"
         }
       ]
     }
