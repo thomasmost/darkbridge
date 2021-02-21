@@ -31,7 +31,7 @@ export async function getDailyInfo(ctx: TeddyRequestContext) {
   const appointments = await Appointment.findAll({
     where: {
       service_provider_user_id: ctx.user.id,
-      datetime_local: {
+      datetime_utc: {
         [Op.gte]: new Date(),
       },
     },
