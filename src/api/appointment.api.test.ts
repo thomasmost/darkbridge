@@ -72,7 +72,8 @@ describe('Appointment Api', () => {
     done();
   });
 
-  test('creating an appointment that conflicts with an existing appoitnment should throw a 405', async (done) => {
+  test('creating an appointment that conflicts with an existing appointment should throw a 405', async (done) => {
+    expect.assertions(2);
     const user = {
       id: testUserId,
     };
@@ -118,7 +119,7 @@ describe('Appointment Api', () => {
     } as unknown) as ParameterizedContext;
 
     await expect(createAppointment(ctx2)).rejects.toThrow(
-      'Existing appointments conflict with this one',
+      'An existing appointment conflicts',
     );
 
     const appointment = await Appointment.findOne({

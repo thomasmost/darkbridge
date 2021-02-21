@@ -6,16 +6,19 @@ import { sequelize } from '../sequelize';
 import { register } from './auth.api';
 
 describe('Auth Api', () => {
+  const email = `jonathan@test.com`;
+
   afterAll(() => {
     sequelize.close();
   });
   beforeAll(async () => {
     await User.destroy({
-      truncate: true,
+      where: {
+        email,
+      },
     });
   });
   test('registration should create a user', async (done) => {
-    const email = `jonathan@test.com`;
     const password = 'password';
     const confirm_password = 'password';
     const ctx = ({

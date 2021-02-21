@@ -28,7 +28,7 @@ import { consumeToken } from './helpers/auth_token.helper';
 import UnauthorizedApp from './client/apps/UnauthorizedApp';
 import { TeddyRequestContext } from './api/types';
 import { AuthToken } from './models/auth_token.model';
-import { AuthenticationError } from './helpers/error.helper';
+import { AuthenticationError, ValidationError } from './helpers/error.helper';
 import OnboardingApp from './client/apps/OnboardingApp';
 
 const app = new Koa();
@@ -47,6 +47,20 @@ if (NODE_ENV === 'development') {
   router.get('/build/unauthorized_app.js', pipeRequestToDevServer);
   router.get('/build/onboarding_app.js', pipeRequestToDevServer);
 }
+
+// Error Handler
+app.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      ctx.status = 400;
+      ctx.body = err.message;
+      return;
+    }
+    throw err;
+  }
+});
 
 app.use(async (ctx: TeddyRequestContext, next) => {
   const tokenId = tokenFromCookies(ctx);

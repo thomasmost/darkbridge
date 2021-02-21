@@ -8,6 +8,8 @@ export interface ApiResultFailure {
   error: Error;
 }
 
+const routineErrorCodes = [400, 405];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function apiRequest<TData = any>(
   path: string,
@@ -29,6 +31,12 @@ export async function apiRequest<TData = any>(
     }
     if (response.status === 500) {
       throw new Error('Unexpected');
+    } else if (routineErrorCodes.includes(response.status)) {
+      const errorMessage = await response.text();
+      toast.error(errorMessage);
+      return {
+        error: new Error('errorMessage'),
+      };
     }
     const data = (await (accept === 'json'
       ? response.json()

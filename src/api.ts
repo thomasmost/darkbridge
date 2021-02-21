@@ -1,7 +1,6 @@
 import Router from 'koa-router';
 import { authAPI } from './api/auth.api';
 import { appointmentAPI } from './api/appointment.api';
-import { doMath } from './api/do_math';
 import { contractorProfileAPI } from './api/contractor_profile.api';
 import { userAPI } from './api/user.api';
 import { clientProfileAPI } from './api/client_profile.api';
