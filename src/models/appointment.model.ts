@@ -1,3 +1,4 @@
+import { differenceInMinutes } from 'date-fns';
 import { Model, Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
@@ -34,6 +35,8 @@ export interface AppointmentAttributes {
   notes: string;
   datetime_local: string;
   datetime_utc: string;
+  datetime_end_local: string;
+  datetime_end_utc: string;
   // Address fields will be copied from the client_profile
   // since the client could move, but the appointment's address should remain the same
   address_street: string;
@@ -48,13 +51,16 @@ export interface AppointmentAttributes {
 
 // Some attributes are optional in `Appointment.build` and `Appointment.create` calls
 export type AppointmentCreationAttributes = Optional<
-  AppointmentAttributes,
-  | 'id'
-  | 'created_at'
-  | 'status'
-  | 'rating_of_client'
-  | 'rating_of_service'
-  | 'notes'
+  Omit<
+    AppointmentAttributes,
+    | 'id'
+    | 'created_at'
+    | 'status'
+    | 'rating_of_client'
+    | 'rating_of_service'
+    | 'notes'
+  >,
+  'duration_minutes'
 >;
 
 export class Appointment
@@ -67,14 +73,16 @@ export class Appointment
   public priority!: keyof typeof AppointmentPriority;
   public datetime_local!: string;
   public datetime_utc!: string;
+  public datetime_end_local!: string;
+  public datetime_end_utc!: string;
   public address_street!: string;
   public address_city!: string;
   public address_state!: string;
+  public duration_minutes!: number;
   public address_postal_code!: string;
   public timezone!: string;
   public summary!: string;
   public notes: string;
-  public duration_minutes!: number;
   public rating_of_service: number;
   public rating_of_client: number;
 
@@ -129,6 +137,14 @@ Appointment.init(
       type: DataTypes.DATE,
       allowNull: false,
     },
+    datetime_end_local: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    datetime_end_utc: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
     address_street: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -158,8 +174,12 @@ Appointment.init(
       allowNull: true,
     },
     duration_minutes: {
-      type: DataTypes.NUMBER,
-      allowNull: false,
+      type: DataTypes.VIRTUAL,
+      get: function () {
+        const startDate = new Date(this.getDataValue('datetime_utc'));
+        const endDate = new Date(this.getDataValue('datetime_end_utc'));
+        return differenceInMinutes(endDate, startDate);
+      },
     },
     rating_of_client: {
       type: DataTypes.NUMBER,

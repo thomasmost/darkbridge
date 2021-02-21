@@ -21,7 +21,7 @@ Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email 
   }
 
   if (NODE_ENV === 'test') {
-    console.log(`Skip emails in tests`);
+    // console.log(`Skip emails in tests`);
     return;
   }
 

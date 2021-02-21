@@ -9,8 +9,13 @@ describe('Auth Api', () => {
   afterAll(() => {
     sequelize.close();
   });
+  beforeAll(async () => {
+    await User.destroy({
+      truncate: true,
+    });
+  });
   test('registration should create a user', async (done) => {
-    const email = 'jonathan@test.com';
+    const email = `jonathan@test.com`;
     const password = 'password';
     const confirm_password = 'password';
     const ctx = ({
@@ -30,7 +35,7 @@ describe('Auth Api', () => {
 
     const user = await User.findOne({
       where: {
-        email: 'jonathan@test.com',
+        email: email,
       },
     });
 

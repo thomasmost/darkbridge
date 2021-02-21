@@ -14,4 +14,5 @@ export const sequelize = new Sequelize({
   port: parseInt(MYSQL_PORT),
   username: MYSQL_USERNAME,
   password: MYSQL_PASSWORD,
+  logging: process.env.NODE_ENV === 'test' ? false : console.log,
 });
