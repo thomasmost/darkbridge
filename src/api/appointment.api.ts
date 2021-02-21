@@ -7,9 +7,11 @@ import {
 } from '../models/appointment.model';
 import { getById } from './base.api';
 import { TeddyRequestContext } from './types';
-import { ClientProfile } from '../models/client_profile.model';
-import { Op, col } from 'sequelize';
-import sequelize from 'sequelize';
+import {
+  ClientProfile,
+  ClientProfileAttributes,
+} from '../models/client_profile.model';
+import { Op } from 'sequelize';
 import { ValidationError } from '../helpers/error.helper';
 
 // import { WhereAttributeHash } from 'sequelize/types';
@@ -20,31 +22,21 @@ import { ValidationError } from '../helpers/error.helper';
 
 export const appointmentAPI = new Router();
 
-export async function getDailyInfo(ctx: Koa.ParameterizedContext) {
-  const appointments = [
-    {
-      id: 'foo',
-      status: 'complete',
-      datetime_local: '2020-02-04 0:30:00',
-      datetime_utc: '2020-02-04 5:30:00',
-      duration: 60,
+// eslint-disable-next-line sonarjs/cognitive-complexity
+export async function getDailyInfo(ctx: TeddyRequestContext) {
+  if (!ctx.user) {
+    ctx.status = 401;
+    return;
+  }
+  const appointments = await Appointment.findAll({
+    where: {
+      service_provider_user_id: ctx.user.id,
+      datetime_local: {
+        [Op.gte]: new Date(),
+      },
     },
-    {
-      id: 'bar',
-      status: 'scheduled',
-      datetime_local: '2020-02-04 10:30:00',
-      datetime_utc: '2020-02-04 15:30:00',
-      duration: 60,
-    },
-    {
-      id: 'baz',
-      status: 'scheduled',
-      datetime_local: '2020-02-04 15:00:00',
-      datetime_utc: '2020-02-04 20:00:00',
-      duration: 90,
-    },
-  ];
-
+    order: [['datetime_local', 'ASC']],
+  });
   ctx.status = 200;
 
   const countAppointments = appointments.length;
@@ -58,36 +50,55 @@ export async function getDailyInfo(ctx: Koa.ParameterizedContext) {
     return;
   }
   const lastAppointment = appointments[countAppointments - 1];
-  const lastAppointmentDate = new Date(lastAppointment.datetime_local);
-  const doneBy = new Date(lastAppointment.datetime_local);
-  doneBy.setMinutes(
-    lastAppointmentDate.getMinutes() + lastAppointment.duration,
-  );
+  const doneBy = format(new Date(lastAppointment.datetime_end_utc), 'h:mm a');
   let completed = 0;
   let nextAppointment = null;
-  for (const appointment of appointments) {
-    if (appointment.status === 'complete') {
+  const client_profile_ids = appointments.map(
+    (appointment) => appointment.client_profile_id,
+  );
+  const clientProfilesById: Record<string, ClientProfileAttributes> = {};
+
+  const profiles = await ClientProfile.findAll({
+    where: {
+      id: client_profile_ids,
+    },
+  });
+  for (const profile of profiles) {
+    clientProfilesById[profile.id] = profile;
+    console.log(JSON.stringify(profile));
+  }
+
+  console.log('boo!');
+  console.log(JSON.stringify(clientProfilesById));
+
+  const appointmentsWithProfiles = appointments.map((appointment) => {
+    appointment.client_profile =
+      clientProfilesById[appointment.client_profile_id];
+    return appointment;
+  });
+
+  for (const appointment of appointmentsWithProfiles) {
+    if (appointment.status === 'completed') {
       completed++;
     }
     if (appointment.status === 'scheduled' && nextAppointment === null) {
       nextAppointment = appointment;
     }
   }
+
+  const noun = countAppointments === 1 ? 'appointment' : 'appointments';
   if (completed === 0) {
     ctx.body = {
-      appointments,
+      appointments: appointmentsWithProfiles,
       nextAppointment,
-      summary: `Today you have ${countAppointments} appointments, within a 15 mile radius. You should be done by ${doneBy}.`,
+      summary: `Today you have ${countAppointments} ${noun}, within a 15 mile radius. You should be done by ${doneBy}.`,
     };
     return;
   }
   ctx.body = {
-    appointments,
+    appointments: appointmentsWithProfiles,
     nextAppointment,
-    summary: `Today you have ${countAppointments} appointments, within a 15 mile radius. You've already knocked out ${completed}! You should be done by ${format(
-      doneBy,
-      'h:ma',
-    )} this evening.`,
+    summary: `Today you have ${countAppointments} ${noun}, within a 15 mile radius. You've already knocked out ${completed}! You should be done by ${doneBy} this evening.`,
   };
 }
 

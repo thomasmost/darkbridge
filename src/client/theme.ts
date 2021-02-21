@@ -19,6 +19,7 @@ export const theme = {
   activePageColor: teddyBlueLight,
   applicationBackgroundColor: white,
   applicationTextColor: darkGray,
+  boxShadowColor: lightGray,
   buttonColorActive: teddyBlueLight,
   buttonColorDisabled: lightGray,
   buttonColorPassive: teddyBlueLight,

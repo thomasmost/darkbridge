@@ -3,6 +3,7 @@ import { Model, Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
+import { ClientProfileAttributes } from './client_profile.model';
 
 export const AppointmentStatus = {
   requested: 'requested',
@@ -47,6 +48,7 @@ export interface AppointmentAttributes {
   duration_minutes: number;
   rating_of_service: number;
   rating_of_client: number;
+  client_profile?: ClientProfileAttributes;
 }
 
 // Some attributes are optional in `Appointment.build` and `Appointment.create` calls
@@ -85,6 +87,7 @@ export class Appointment
   public notes: string;
   public rating_of_service: number;
   public rating_of_client: number;
+  public client_profile: ClientProfileAttributes;
 
   // timestamps!
   public readonly created_at!: number;
@@ -186,6 +189,10 @@ Appointment.init(
     },
     rating_of_service: {
       type: DataTypes.NUMBER,
+    },
+    client_profile: {
+      type: DataTypes.VIRTUAL,
+      allowNull: false,
     },
   },
   {

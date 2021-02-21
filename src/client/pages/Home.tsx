@@ -2,11 +2,11 @@ import styled from '@emotion/styled';
 import { RouteComponentProps } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import { theme } from '../theme';
-import { format } from 'date-fns';
 
 import { getDailyInfo } from '../services/appointment.svc';
-import { Icon } from '../elements/Icon';
 import { AppointmentAttributes } from '../../models/appointment.model';
+import { AppointmentCard } from '../components/AppointmentCard';
+import { ClientCard } from '../components/ClientCard';
 
 const HeadingText = styled.h1`
   padding-bottom: 10px;
@@ -14,28 +14,35 @@ const HeadingText = styled.h1`
   color: ${theme.pageHeaderColor};
 `;
 
-const Summary = styled.div`
-  margin: 20px 0 30px;
+const Summary = styled.p`
+  margin: 20px 0 0px;
 `;
 
 const NextAppointmentHeader = styled.div`
   color: #999;
-  margin-bottom: 15px;
+  margin: 40px 0 15px;
 `;
-const Card = styled.div`
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-`;
-const CardHeading = styled.div`
-  display: flex;
-  align-items: center;
-  color: ${theme.cardHeaderColor};
-`;
-const CardInfo = styled.div`
-  margin-left: 40px;
-  font-weight: 500;
-`;
+
+export const renderAppointmentInfo = (
+  appointment: AppointmentAttributes | null,
+) => {
+  if (!appointment) {
+    return <div>No upcoming appointments!</div>;
+  }
+  return <AppointmentCard appointment={appointment} />;
+};
+
+export const renderCustomerInfo = (
+  appointment: AppointmentAttributes | null,
+) => {
+  if (!appointment) {
+    return null;
+  }
+  if (!appointment.client_profile) {
+    return <div>No associated client</div>;
+  }
+  return <ClientCard client={appointment.client_profile} />;
+};
 
 export const Home: React.FC<RouteComponentProps> = () => {
   const [summary, setSummary] = useState<string | null>(null);
@@ -71,39 +78,13 @@ export const Home: React.FC<RouteComponentProps> = () => {
       {Boolean(nextAppointment) && (
         <>
           <NextAppointmentHeader>Next appointment</NextAppointmentHeader>
-          <Card>
-            <div style={{ marginBottom: '20px' }}>
-              <CardHeading>
-                <span
-                  style={{
-                    fontSize: '1.5em',
-                    display: 'inline-block',
-                    width: '40px',
-                  }}
-                >
-                  <Icon name="Calendar" />
-                </span>
-                Date and time
-              </CardHeading>
-              <CardInfo>{format(new Date(), 'yyyy/MM/dd')}</CardInfo>
-            </div>
-            <div>
-              <CardHeading>
-                <span
-                  style={{
-                    fontSize: '1.5em',
-                    display: 'inline-block',
-                    width: '40px',
-                  }}
-                >
-                  <Icon name="Location" />
-                </span>
-                Address
-              </CardHeading>
-              <CardInfo>15 Main St</CardInfo>
-              <CardInfo>East Hampton, NY 11930</CardInfo>
-            </div>
-          </Card>
+          {renderAppointmentInfo(nextAppointment)}
+        </>
+      )}
+      {Boolean(nextAppointment) && (
+        <>
+          <NextAppointmentHeader>Customer</NextAppointmentHeader>
+          {renderCustomerInfo(nextAppointment)}
         </>
       )}
     </div>
