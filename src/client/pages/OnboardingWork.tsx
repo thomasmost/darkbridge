@@ -25,13 +25,14 @@ const selectStyles: Styles<IGenericOption, false> = {
     ...provided,
     cursor: 'pointer',
   }),
-  control: (provided) => ({
+  control: (provided, props) => ({
     ...provided,
     backgroundColor: theme.dropdownContainerColor,
     border: 'none',
     borderRadius: '10px',
     cursor: 'pointer',
     padding: '5px 10px',
+    boxShadow: props.isFocused ? '4px 4px #23C38A' : 'none',
   }),
   dropdownIndicator: (provided) => ({
     ...provided,

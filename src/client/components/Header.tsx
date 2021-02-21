@@ -97,7 +97,6 @@ export const Header: React.FC = () => {
           <StyledLink to="/">
             <Logo height="40px" src="/logo.png" />
           </StyledLink>
-          <StyledLink to="/sandbox">API Sandbox</StyledLink>
           <StyledLink to="/calendar">Calendar</StyledLink>
         </LeftNav>
         <Right>

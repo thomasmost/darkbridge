@@ -19,7 +19,7 @@ export const AccountForm = styled.form`
   input[type='submit'] {
     outline: none;
     border: none;
-    margin-top: 5px;
+    margin: 15px 0 10px;
     background-color: ${theme.buttonColorPassive};
     color: ${theme.buttonTextColor};
     padding: 10px;

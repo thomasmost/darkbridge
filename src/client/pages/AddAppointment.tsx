@@ -71,7 +71,7 @@ const StyledPicker = styled(DateTimePicker)`
       background-color: ${theme.inputBackgroundColor};
       font-family: 'Poppins', Helvetica, sans-serif;
     }
-    min-width: 300px;
+    min-width: 240px;
   }
 `;
 
@@ -81,7 +81,7 @@ const selectStyles: Styles<any, false> = {
     ...provided,
     cursor: 'pointer',
   }),
-  control: (provided) => ({
+  control: (provided, props) => ({
     ...provided,
     border: 'none',
     borderRadius: '10px',
@@ -89,6 +89,7 @@ const selectStyles: Styles<any, false> = {
     padding: '5px 10px',
     marginBottom: '20px',
     backgroundColor: theme.inputBackgroundColor,
+    boxShadow: props.isFocused ? '4px 4px #23C38A' : 'none',
   }),
   indicatorSeparator: (provided) => ({
     ...provided,

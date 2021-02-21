@@ -98,7 +98,7 @@ async function ssr(
     ) {
       // login/registration/onboarding has the dark-mode background
       indexHtml = indexHtml.replace(
-        'background-color: #f9f9f9;',
+        'background-color: white;',
         'background-color: #101042;',
       );
     }

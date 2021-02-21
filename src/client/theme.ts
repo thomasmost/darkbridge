@@ -15,7 +15,7 @@ const eggshellGray = '#717198';
 const darkGray = '#343434';
 
 export const theme = {
-  activeLinkColor: teddyBlueDark,
+  activeLinkColor: green,
   activePageColor: teddyBlueLight,
   applicationBackgroundColor: white,
   applicationTextColor: darkGray,
