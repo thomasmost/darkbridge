@@ -192,7 +192,6 @@ Appointment.init(
     },
     client_profile: {
       type: DataTypes.VIRTUAL,
-      allowNull: false,
     },
   },
   {
