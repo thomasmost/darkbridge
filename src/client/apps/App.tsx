@@ -17,6 +17,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
+import { NextAppointment } from '../pages/NextAppointment';
 
 const muiTheme = createMuiTheme({
   palette: {
@@ -69,6 +70,7 @@ const App = () => {
               <Router>
                 <Home path="/" />
                 <AddAppointment path="calendar/add-appointment" />
+                <NextAppointment path="next-appointment" />
                 <AddClientProfile path="add-client" />
                 <ApiSandbox path="sandbox" />
                 <Calendar path="calendar" />

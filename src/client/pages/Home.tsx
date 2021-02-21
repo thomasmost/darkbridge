@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { RouteComponentProps } from '@reach/router';
 import React, { useEffect, useState } from 'react';
+import { Link } from '@reach/router';
+
 import { theme } from '../theme';
 
 import { getDailyInfo } from '../services/appointment.svc';
@@ -23,13 +25,24 @@ const NextAppointmentHeader = styled.div`
   margin: 40px 0 15px;
 `;
 
+const WrapperLink = styled(Link)`
+  text-decoration: none;
+  &:visited {
+    color: ${theme.textColor};
+  }
+`;
+
 export const renderAppointmentInfo = (
   appointment: AppointmentAttributes | null,
 ) => {
   if (!appointment) {
     return <div>No upcoming appointments!</div>;
   }
-  return <AppointmentCard appointment={appointment} />;
+  return (
+    <WrapperLink to="/next-appointment">
+      <AppointmentCard appointment={appointment} interactive />
+    </WrapperLink>
+  );
 };
 
 export const renderCustomerInfo = (

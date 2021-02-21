@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import Router from 'koa-router';
-import { addMinutes, format } from 'date-fns';
+import { addMinutes, format, startOfDay } from 'date-fns';
 import {
   Appointment,
   AppointmentCreationAttributes,
@@ -32,7 +32,7 @@ export async function getDailyInfo(ctx: TeddyRequestContext) {
     where: {
       service_provider_user_id: ctx.user.id,
       datetime_utc: {
-        [Op.gte]: new Date(),
+        [Op.gte]: startOfDay(new Date()),
       },
     },
     order: [['datetime_local', 'ASC']],

@@ -7,18 +7,9 @@ import { theme } from '../theme';
 
 type AppointmentCardProps = {
   appointment: AppointmentAttributes;
+  interactive?: boolean;
 };
 
-const Card = styled.div`
-  align-items: center;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 20px 20px ${theme.boxShadowColor};
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-`;
 const CardHeading = styled.div`
   display: flex;
   align-items: center;
@@ -40,7 +31,18 @@ const CardArrow = styled.div`
 
 export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   appointment,
+  interactive,
 }) => {
+  const Card = styled.div`
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px 20px ${theme.boxShadowColor};
+    cursor: ${interactive ? 'pointer' : 'default'};
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  `;
   return (
     <Card>
       <div>
@@ -82,9 +84,11 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           </CardInfo>
         </div>
       </div>
-      <CardArrow>
-        <Icon name="Arrow-Right-2" />
-      </CardArrow>
+      {Boolean(interactive) && (
+        <CardArrow>
+          <Icon name="Arrow-Right-2" />
+        </CardArrow>
+      )}
     </Card>
   );
 };

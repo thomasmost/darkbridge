@@ -51,6 +51,10 @@ const ContactButton = styled.button`
   &:last-child {
     margin-right: 0;
   }
+  &:active,
+  &:focus {
+    color: white;
+  }
 `;
 
 export const ClientCard: React.FC<ClientProfileCardProps> = ({ client }) => {
