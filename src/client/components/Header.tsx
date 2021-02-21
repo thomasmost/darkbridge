@@ -9,8 +9,6 @@ import { Popdown } from './Popdown';
 const Logo = styled.img`
   display: inline-block;
   margin-right: 10px;
-  position: relative;
-  top: 6px;
 `;
 
 const Right = styled.span`
@@ -51,7 +49,8 @@ const LeftNav = styled.div`
 
 const StyledLink = styled(Link)`
   color: ${theme.headerTextColor};
-  display: inline-block;
+  display: flex;
+  align-items: center;
   font-size: 0.8em;
   text-decoration: none;
   padding: 0 10px;
@@ -76,6 +75,12 @@ const DropdownLink = styled(StyledLink)`
   display: block;
 `;
 
+const MenuIcon = styled.div`
+  font-size: 20px;
+  display: inline-block;
+  margin-right: 5px;
+`;
+
 export const Header: React.FC = () => {
   const { user, logout } = useAuth();
   if (!user) {
@@ -97,7 +102,12 @@ export const Header: React.FC = () => {
           <StyledLink to="/">
             <Logo height="40px" src="/logo.png" />
           </StyledLink>
-          <StyledLink to="/calendar">Calendar</StyledLink>
+          <StyledLink to="/calendar">
+            <MenuIcon>
+              <Icon name="Calendar" />
+            </MenuIcon>
+            Calendar
+          </StyledLink>
         </LeftNav>
         <Right>
           <Popdown
