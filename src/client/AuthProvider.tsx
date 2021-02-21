@@ -2,13 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useAuthFactory, IAuthContext } from './useAuth';
 import { IUserDto, UserUpdateFields } from '../shared/user.dto';
 
-const unauthorizedRoutes = ['/', '/login', '/register'];
+const unauthorizedRoutes = ['/', 'login', 'register', 'reset_password'];
 
 function getCurrentUser() {
   return fetch('/api/auth/current_user', {}).then(function (response) {
     if (
       response.status === 401 &&
-      !unauthorizedRoutes.includes(window.location.pathname)
+      !unauthorizedRoutes.includes(window.location.pathname.split('/')[1])
     ) {
       window.location.replace('/login');
       return;

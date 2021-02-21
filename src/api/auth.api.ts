@@ -203,10 +203,10 @@ export async function requestPasswordReset(ctx: Koa.ParameterizedContext) {
     subject: 'Reset your password',
     html: `
 <div>
-    To reset your password, <a href="${process.env.HOST_DOMAIN}/api/auth/reset_password?token=${resetPasswordRequest.verification_token}">click here</a>.
+    To reset your password, <a href="${process.env.HOST_DOMAIN}/reset_password/${resetPasswordRequest.verification_token}">click here</a>.
 </div>
 `,
-    text: `To reset your password, visit ${process.env.HOST_DOMAIN}/api/auth/reset_password?token=${resetPasswordRequest.verification_token}`,
+    text: `To reset your password, visit ${process.env.HOST_DOMAIN}/reset_password/${resetPasswordRequest.verification_token}`,
     // 'v:host': '',
     // 'v:token': resetPasswordRequest.verification_token,
   };
@@ -214,7 +214,7 @@ export async function requestPasswordReset(ctx: Koa.ParameterizedContext) {
   ctx.status = 204;
 }
 
-export async function verifyResetPassword(ctx: Koa.ParameterizedContext) {
+export async function verifyPasswordReset(ctx: Koa.ParameterizedContext) {
   const { token, password, confirm_password } = ctx.request.body;
 
   if (!token) {
@@ -256,12 +256,15 @@ export async function verifyResetPassword(ctx: Koa.ParameterizedContext) {
     throw new ValidationError('This token has expired');
   }
 
-  user.password_hash = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+  const { password_salt } = user;
+  const seasoned_password = `${password_salt}:${password}`;
+
+  user.password_hash = await bcrypt.hash(seasoned_password, BCRYPT_WORK_FACTOR);
   verificationRequest.fulfilled_at = Date.now();
 
   await Promise.all([user.save(), verificationRequest.save()]);
 
-  return ctx.redirect('/');
+  return (ctx.status = 204);
 }
 
 export async function verifyEmail(ctx: Koa.ParameterizedContext) {
@@ -317,6 +320,8 @@ export async function verifyEmail(ctx: Koa.ParameterizedContext) {
 }
 
 authAPI.post('/register', register);
+authAPI.post('/request_password_reset', requestPasswordReset);
+authAPI.post('/verify_password_reset', verifyPasswordReset);
 authAPI.get('/verify_email', verifyEmail);
 authAPI.post('/login', login);
 authAPI.get('/logout', logout);

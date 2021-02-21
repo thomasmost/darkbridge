@@ -112,7 +112,7 @@ export const Login: React.FC<RouteComponentProps> = () => {
       <p />
       <Input type="submit" value="Log In" />
       <p>
-        <Link to="/resetpassword">
+        <Link to="/request_password_reset">
           Click here to <b>reset password.</b>
         </Link>
       </p>

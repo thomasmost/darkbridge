@@ -8,6 +8,8 @@ import { Register } from '../pages/Register';
 import { theme } from '../theme';
 import { AuthProvider } from '../AuthProvider';
 import { Logout } from '../pages/Logout';
+import { RequestPasswordReset } from '../pages/RequestPasswordReset';
+import { ResetPassword } from '../pages/ResetPassword';
 
 if (typeof window !== 'undefined') {
   require('react-toastify/dist/ReactToastify.css');
@@ -51,6 +53,8 @@ const UnauthorizedApp = () => {
             <Login path="login" />
             <Logout path="logout" />
             <Register path="register" />
+            <RequestPasswordReset path="request_password_reset" />
+            <ResetPassword path="reset_password/:token" />
           </Router>
         </Main>
       </AppContainer>
