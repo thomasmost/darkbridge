@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useAuth } from '../AuthProvider';
+import React, { useState } from 'react';
 
 import { RouteComponentProps } from '@reach/router';
 import styled from '@emotion/styled';
 import { toast } from 'react-toastify';
 import { AccountForm } from '../elements/AccountForm';
 import { FormFieldPair } from '../elements/FormFieldPair';
-import { IUserDto } from '../../shared/user.dto';
 import { theme } from '../theme';
 import { useForm } from 'react-hook-form';
 

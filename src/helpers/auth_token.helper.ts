@@ -1,6 +1,5 @@
 import { AuthToken, ClientType } from '../models/auth_token.model';
 import { User } from '../models/user.model';
-import { IUserDto } from '../shared/user.dto';
 import { AuthenticationError } from './error.helper';
 
 export async function issueToken(
