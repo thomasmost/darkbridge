@@ -92,6 +92,7 @@ const App = () => {
                 <Logout path="logout" />
               </Router>
             </Main>
+            {shouldRenderPWA && <FooterPWA />}
           </AppContainer>
         </MuiPickersUtilsProvider>
       </ThemeProvider>
