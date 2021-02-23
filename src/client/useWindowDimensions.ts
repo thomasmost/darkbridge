@@ -4,19 +4,19 @@ function getWindowDimensions() {
   if (typeof window === 'undefined') {
     return {
       width: 1000,
-      height: 800,
+      // height: 800,
     };
   }
-  const { innerWidth: width, innerHeight: height } = window;
+  const { innerWidth: width /* innerHeight: height */ } = window;
   return {
     width,
-    height,
+    // height,
   };
 }
 
 export function useWindowDimensions() {
   const [windowDimensions, setWindowDimensions] = useState<{
-    height: number;
+    // height: number;
     width: number;
   }>(getWindowDimensions());
 
