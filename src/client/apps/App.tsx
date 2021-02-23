@@ -41,8 +41,8 @@ const AppContainer = styled.div`
 `;
 
 const App = () => {
-  const { height, width } = useWindowDimensions();
-  const shouldRenderPWA = width < 600 && height > 400;
+  const { width } = useWindowDimensions();
+  const shouldRenderPWA = width < 600;
 
   const Main = styled.main`
     color: ${theme.applicationTextColor};
