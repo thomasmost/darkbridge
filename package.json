@@ -33,6 +33,7 @@
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^9.4.0",
     "koa-static": "^5.0.0",
+    "koa-swagger-decorator": "^1.7.3",
     "mailgun-js": "^0.22.0",
     "mysql2": "^2.2.5",
     "node-fetch": "^2.6.1",

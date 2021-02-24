@@ -33,6 +33,11 @@ type ContractorProfileCreationAttributes = Optional<
   'id' | 'created_at'
 >;
 
+export type ContractorProfileUpdateAttributes = Omit<
+  ContractorProfileAttributes,
+  'id' | 'created_at' | 'user_id'
+>;
+
 export class ContractorProfile
   extends Model<
     ContractorProfileAttributes,

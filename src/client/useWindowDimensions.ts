@@ -22,7 +22,8 @@ export function useWindowDimensions() {
 
   useEffect(() => {
     function handleResize() {
-      setWindowDimensions(getWindowDimensions());
+      const { width } = getWindowDimensions();
+      if (width !== windowDimensions.width) setWindowDimensions({ width });
     }
 
     if (typeof window !== 'undefined') {

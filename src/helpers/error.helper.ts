@@ -23,3 +23,12 @@ export class AuthenticationError extends RoutineError {
     this.status = 401;
   }
 }
+
+export class NotImplemented extends Error {
+  status: number;
+  constructor() {
+    super('Not Yet Implemented');
+    this.name = this.constructor.name;
+    this.status = 501;
+  }
+}

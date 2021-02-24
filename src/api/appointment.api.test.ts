@@ -4,7 +4,7 @@ dotenv.config();
 import { Appointment } from '../models/appointment.model';
 import { ClientProfile } from '../models/client_profile.model';
 import { sequelize } from '../sequelize';
-import { createAppointment } from './appointment.api';
+import { AppointmentAPI } from './appointment.api';
 
 //eslint-disable-next-line max-lines-per-function
 describe('Appointment Api', () => {
@@ -58,7 +58,7 @@ describe('Appointment Api', () => {
       ip: 'TEST::1',
     } as unknown) as ParameterizedContext;
 
-    await createAppointment(ctx);
+    await AppointmentAPI.createAppointment(ctx);
 
     const appointment = await Appointment.findOne({
       where: {
@@ -97,7 +97,7 @@ describe('Appointment Api', () => {
       ip: 'TEST::1',
     } as unknown) as ParameterizedContext;
 
-    await createAppointment(ctx);
+    await AppointmentAPI.createAppointment(ctx);
 
     const body2 = {
       client_profile_id: profile.id,
@@ -118,7 +118,7 @@ describe('Appointment Api', () => {
       ip: 'TEST::1',
     } as unknown) as ParameterizedContext;
 
-    await expect(createAppointment(ctx2)).rejects.toThrow(
+    await expect(AppointmentAPI.createAppointment(ctx2)).rejects.toThrow(
       'An existing appointment conflicts',
     );
 

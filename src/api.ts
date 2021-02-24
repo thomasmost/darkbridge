@@ -1,29 +1,40 @@
-import Router from 'koa-router';
+// import Router from 'koa-router';
 import { authAPI } from './api/auth.api';
-import { appointmentAPI } from './api/appointment.api';
-import { contractorProfileAPI } from './api/contractor_profile.api';
-import { userAPI } from './api/user.api';
-import { clientProfileAPI } from './api/client_profile.api';
+import { AppointmentAPI } from './api/appointment.api';
+import { ContractorProfileAPI } from './api/contractor_profile.api';
+import { UserAPI } from './api/user.api';
+import { ClientProfileAPI } from './api/client_profile.api';
 import { getTimeZone } from './helpers/timezone.helper';
+import { SwaggerRouter } from 'koa-swagger-decorator';
+import { CalendarAPI } from './api/calendar.api';
 
-export const api = new Router();
+export const api = new SwaggerRouter();
 
-api.use(
-  '/appointment',
-  appointmentAPI.routes(),
-  appointmentAPI.allowedMethods(),
-);
-api.use(
-  '/contractor_profile',
-  contractorProfileAPI.routes(),
-  contractorProfileAPI.allowedMethods(),
-);
-api.use(
-  '/client_profile',
-  clientProfileAPI.routes(),
-  clientProfileAPI.allowedMethods(),
-);
-api.use('/user', userAPI.routes(), userAPI.allowedMethods());
+api.swagger({
+  title: 'Teddy Internal API',
+  description:
+    "API DOC for Teddy's internal-facing API, serving the web and mobile clients",
+  version: '0.1.2',
+  prefix: '/api',
+  swaggerHtmlEndpoint: '/swagger-html',
+  swaggerJsonEndpoint: '/swagger-json',
+  swaggerOptions: {
+    securityDefinitions: {
+      token: {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'teddy_web_token',
+      },
+    },
+  },
+});
+
+api.map(UserAPI, {});
+api.map(AppointmentAPI, {});
+api.map(CalendarAPI, {});
+api.map(ContractorProfileAPI, {});
+api.map(ClientProfileAPI, {});
+
 api.use('/auth', authAPI.routes(), authAPI.allowedMethods());
 
 api.get('/test_crash', () => {

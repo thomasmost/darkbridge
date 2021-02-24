@@ -23,7 +23,6 @@ export type ClientProfileCreationAttributes = Optional<
   ClientProfileAttributes,
   'id' | 'created_at'
 >;
-
 export class ClientProfile
   extends Model<ClientProfileAttributes, ClientProfileCreationAttributes>
   implements ClientProfileAttributes {

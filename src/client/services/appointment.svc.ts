@@ -9,5 +9,5 @@ export function getDailyInfo() {
   return apiRequest<{
     summary: string;
     nextAppointment: AppointmentAttributes;
-  }>('appointment/daily', 'json');
+  }>('calendar/daily', 'json');
 }
