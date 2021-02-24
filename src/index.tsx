@@ -76,6 +76,14 @@ app.use(async (ctx: TeddyRequestContext, next) => {
   await next();
 });
 
+app.use(async (ctx: TeddyRequestContext, next) => {
+  if (ctx.user && ctx.url === '/login') {
+    ctx.redirect('/');
+    return;
+  }
+  await next();
+});
+
 router.get('/healthz', async (ctx) => {
   await AuthToken.findOne({
     order: ['created_at'],

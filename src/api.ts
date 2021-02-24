@@ -1,4 +1,4 @@
-// import Router from 'koa-router';
+import Koa from 'koa';
 import { authAPI } from './api/auth.api';
 import { AppointmentAPI } from './api/appointment.api';
 import { ContractorProfileAPI } from './api/contractor_profile.api';
@@ -7,8 +7,27 @@ import { ClientProfileAPI } from './api/client_profile.api';
 import { getTimeZone } from './helpers/timezone.helper';
 import { SwaggerRouter } from 'koa-swagger-decorator';
 import { CalendarAPI } from './api/calendar.api';
+import { TeddyRequestContext } from './api/types';
+import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
+
+const protectDeveloperDocs = async (
+  ctx: TeddyRequestContext,
+  next: Koa.Next,
+) => {
+  console.log(JSON.stringify(ctx));
+  const user = ctx.user;
+  console.log(`USER: ${user?.email}`);
+  if (!user || !AppConfig.isStaff(user.email)) {
+    ctx.redirect('/login');
+    return;
+  }
+  next();
+};
+
+api.use('/swagger-html', protectDeveloperDocs);
+api.use('/swagger-json', protectDeveloperDocs);
 
 api.swagger({
   title: 'Teddy Internal API',
