@@ -23,7 +23,7 @@ RUN npx webpack --config webpack.config.ts
 RUN npx webpack --config webpack.server.ts
 
 # Stage 2: Copy Built Artifacts
-FROM node:12.18.3
+FROM node:14.16.0
 # Prevent dpkg errors
 ENV TERM=xterm-256color
 
