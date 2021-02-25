@@ -10,6 +10,7 @@ const white = '#fff';
 const paperWhite = '#f9f9f9';
 // const blueGray = '#496089';
 const lightGray = '#f2f2f2';
+const mediumGray = '#bbb';
 // const eggshellGray = '#414168';
 const eggshellGray = '#717198';
 const darkGray = '#343434';
@@ -21,6 +22,7 @@ export const theme = {
   applicationTextColor: darkGray,
   boxShadowColor: lightGray,
   buttonColorActive: teddyBlueLight,
+  buttonColorActiveSecondary: mediumGray,
   buttonColorDisabled: lightGray,
   buttonColorPassive: teddyBlueLight,
   buttonTextColor: white,

@@ -8,6 +8,7 @@ import {
   ClientProfileCreationAttributes,
 } from '../../models/client_profile.model';
 import { useAuth } from '../AuthProvider';
+import { Button } from '../elements/Button';
 import { FlexColumns } from '../elements/FlexColumns';
 import { Input } from '../elements/Input';
 import { apiRequest } from '../services/api.svc';
@@ -17,13 +18,6 @@ const Label = styled.label`
   color: ${theme.subheaderTextColor};
   display: block;
   margin-bottom: 10px;
-`;
-
-const Button = styled.button`
-  width: 100%;
-  display: block;
-  padding: 10px;
-  margin-top: 10px;
 `;
 
 type ClientProfileFormValues = Pick<
@@ -119,7 +113,12 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
           </div>
         </FlexColumns>
         <Button>Add Client</Button>
-        <Button>Cancel</Button>
+        <Button
+          variant="secondary"
+          onClick={() => navigate('/calendar/add-appointment')}
+        >
+          Cancel
+        </Button>
       </form>
     </div>
   );

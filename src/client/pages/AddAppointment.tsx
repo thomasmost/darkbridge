@@ -18,18 +18,12 @@ import { Styles } from 'react-select';
 import { ClientProfileAttributes } from '../../models/client_profile.model';
 import { apiRequest } from '../services/api.svc';
 import { Select } from '../components/Select';
+import { Button } from '../elements/Button';
 
 const Label = styled.label`
   color: ${theme.subheaderTextColor};
   display: block;
   margin-bottom: 10px;
-`;
-
-const Button = styled.button`
-  width: 100%;
-  display: block;
-  padding: 10px;
-  margin-top: 10px;
 `;
 
 type AppointmentFormValues = Pick<
@@ -140,7 +134,6 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
     setValue('datetime_local', date.toString());
     setDate(date);
   };
-
   const onSubmit = async (data: AppointmentFormValues) => {
     console.log(data);
     const result = await apiRequest<AppointmentAttributes>(
@@ -217,7 +210,9 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
           onChange={(selection) => setValue('priority', selection?.value)}
         />
         <Button>Add Appointment</Button>
-        <Button>Cancel</Button>
+        <Button variant="secondary" onClick={() => navigate('/calendar')}>
+          Cancel
+        </Button>
       </form>
     </div>
   );
