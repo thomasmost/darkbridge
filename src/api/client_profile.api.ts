@@ -6,7 +6,7 @@ import {
   prefix,
   tags,
   query,
-} from 'koa-swagger-decorator';
+} from '@callteddy/koa-swagger-decorator';
 
 import { TeddyRequestContext } from './types';
 import {

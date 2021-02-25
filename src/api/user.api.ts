@@ -1,7 +1,7 @@
 import { UserAttributes } from '../models/user.model';
 import { TeddyRequestContext } from './types';
 
-import { request, summary, body, prefix, tags } from 'koa-swagger-decorator';
+import { request, summary, body, prefix, tags } from '@callteddy/koa-swagger-decorator';
 
 const UserTag = tags(['users']);
 

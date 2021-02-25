@@ -18,7 +18,7 @@ import {
   path,
   description,
   responses,
-} from 'koa-swagger-decorator';
+} from '@callteddy/koa-swagger-decorator';
 
 import { NotImplemented } from '../helpers/error.helper';
 
