@@ -3,7 +3,7 @@
   "short_name": "Teddy",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#101042",
+  "background_color": "#fff",
   "description": "Your home in good hands",
   "icons": [{
     "src": "icons/android-icon-48x48",
