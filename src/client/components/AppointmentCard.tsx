@@ -20,6 +20,7 @@ const CardInfo = styled.div`
   margin-left: 40px;
   font-weight: 500;
   line-height: 1.5em;
+  color: ${theme.textColor};
 `;
 
 const CardArrow = styled.div`
