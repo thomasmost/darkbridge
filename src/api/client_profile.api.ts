@@ -63,7 +63,7 @@ const postParams: Record<
 @prefix('/client_profile')
 export class ClientProfileAPI {
   @ClientProfileTag
-  @request('post', '/')
+  @request('post', '')
   @summary('create a new client profile')
   @body(postParams)
   public static async addClientProfile(ctx: TeddyRequestContext) {
@@ -115,7 +115,7 @@ export class ClientProfileAPI {
   }
 
   @ClientProfileTag
-  @request('get', '/')
+  @request('get', '')
   @summary(
     'query the client profiles by name partial, typically during appointment creation',
   )

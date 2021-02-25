@@ -58,7 +58,7 @@ const updateAttributes: Record<
 @prefix('/contractor_profile')
 export class ContractorProfileAPI {
   @ContractorProfileTag
-  @request('put', '/')
+  @request('put', '')
   @summary(
     'update the logged in contractor profile with a subset of valid fields',
   )

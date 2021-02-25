@@ -27,7 +27,7 @@ const AppointmentTag = tags(['appointments']);
 @prefix('/appointment')
 export class AppointmentAPI {
   @AppointmentTag
-  @request('post', '/')
+  @request('post', '')
   @summary('create a new appointment for the logged in service provider')
   @body({
     client_profile_id: {
@@ -125,7 +125,7 @@ export class AppointmentAPI {
   }
 
   @AppointmentTag
-  @request('get', '/')
+  @request('get', '')
   @summary("query the logged in service provider's appointments")
   public static async getAppointments(ctx: Koa.ParameterizedContext) {
     throw new NotImplemented();
