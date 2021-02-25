@@ -113,10 +113,7 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
           </div>
         </FlexColumns>
         <Button>Add Client</Button>
-        <Button
-          variant="secondary"
-          onClick={() => navigate('/calendar/add-appointment')}
-        >
+        <Button variant="secondary" onClick={() => navigate(-1)}>
           Cancel
         </Button>
       </form>

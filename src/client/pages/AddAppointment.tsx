@@ -210,7 +210,7 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
           onChange={(selection) => setValue('priority', selection?.value)}
         />
         <Button>Add Appointment</Button>
-        <Button variant="secondary" onClick={() => navigate('/calendar')}>
+        <Button variant="secondary" onClick={() => navigate(-1)}>
           Cancel
         </Button>
       </form>
