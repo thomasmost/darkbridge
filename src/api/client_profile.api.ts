@@ -119,7 +119,11 @@ export class ClientProfileAPI {
   @summary(
     'query the client profiles by name partial, typically during appointment creation',
   )
-  @query({ name: 'string' })
+  @query({
+    name: {
+      type: 'string',
+    },
+  })
   public static async queryClientProfiles(ctx: TeddyRequestContext) {
     if (!ctx.user) {
       ctx.status = 401;
