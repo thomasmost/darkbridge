@@ -15,7 +15,7 @@ describe('Base Api', () => {
     const getActivityById = getById(AppointmentActivity);
 
     const ctx = ({
-      params: {
+      validatedParams: {
         id: 'foo',
       },
       cookies: {
@@ -44,7 +44,7 @@ describe('Base Api', () => {
     const activity_id = activity.id;
 
     const ctx = ({
-      params: {
+      validatedParams: {
         id: activity_id,
       },
     } as unknown) as ParameterizedContext;
