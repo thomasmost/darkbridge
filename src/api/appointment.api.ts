@@ -132,7 +132,7 @@ export class AppointmentAPI {
   @AppointmentTag
   @request('get', '')
   @summary("query the logged in service provider's appointments")
-  public static async getAppointments(ctx: Koa.ParameterizedContext) {
+  public static async getAppointments(/*ctx: Koa.ParameterizedContext*/) {
     throw new NotImplemented();
     // ctx.body = [];
     // ctx.status = 200;

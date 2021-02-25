@@ -1,4 +1,4 @@
-import { TeddyAppConfig } from './config';
+// import { TeddyAppConfig } from './config';
 
 // export let config: TeddyAppConfig | null = null;
 

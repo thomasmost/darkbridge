@@ -1,5 +1,11 @@
 import { TeddyRequestContext } from './types';
-import { body, request, summary, prefix, tags } from '@callteddy/koa-swagger-decorator';
+import {
+  body,
+  request,
+  summary,
+  prefix,
+  tags,
+} from '@callteddy/koa-swagger-decorator';
 import {
   ContractorProfile,
   ContractorProfileUpdateAttributes,

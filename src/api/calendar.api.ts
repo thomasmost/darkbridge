@@ -6,7 +6,12 @@ import {
   ClientProfileAttributes,
 } from '../models/client_profile.model';
 import { Op } from 'sequelize';
-import { request, summary, prefix, tags } from '@callteddy/koa-swagger-decorator';
+import {
+  request,
+  summary,
+  prefix,
+  tags,
+} from '@callteddy/koa-swagger-decorator';
 
 const CalendarTag = tags(['calendar']);
 
