@@ -1,5 +1,5 @@
 import Koa from 'koa';
-import { addMinutes, format, startOfDay } from 'date-fns';
+import { addMinutes } from 'date-fns';
 import {
   Appointment,
   AppointmentCreationAttributes,
@@ -24,34 +24,39 @@ import { NotImplemented } from '../helpers/error.helper';
 
 const AppointmentTag = tags(['appointments']);
 
+const postBodyParams = {
+  client_profile_id: {
+    type: 'string',
+    required: true,
+    description: 'the id of the ClientProfile associated with this appointment',
+  },
+  datetime_local: {
+    type: 'string',
+    required: true,
+    description: "the stringified datetime of the appointment's start",
+  },
+  duration_minutes: {
+    type: 'number',
+    required: true,
+    description: 'the length of the appointment',
+  },
+  summary: {
+    type: 'string',
+    required: true,
+    description: 'short description of the appointment',
+  },
+  priority: {
+    type: 'string',
+    required: true,
+    description: 'The appointment priority, from P0 to P3',
+  },
+};
 @prefix('/appointment')
 export class AppointmentAPI {
   @AppointmentTag
   @request('post', '')
   @summary('create a new appointment for the logged in service provider')
-  @body({
-    client_profile_id: {
-      type: 'string',
-      required: true,
-      description:
-        'the id of the ClientProfile associated with this appointment',
-    },
-    datetime_local: {
-      type: 'string',
-      required: true,
-      description: "the stringified datetime of the appointment's start",
-    },
-    duration_minutes: {
-      type: 'number',
-      required: true,
-      description: 'the length of the appointment',
-    },
-    summary: {
-      type: 'string',
-      required: true,
-      description: 'short description of the appointment',
-    },
-  })
+  @body(postBodyParams)
   public static async createAppointment(ctx: TeddyRequestContext) {
     if (!ctx.user) {
       ctx.status = 401;
@@ -134,14 +139,13 @@ export class AppointmentAPI {
   }
 
   @AppointmentTag
-  @request('get', '/by/{id}')
-  @summary("query the logged in service provider's appointments")
+  @request('get', '/{id}')
+  @summary('get a single appointment by primary key')
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
   public static async getAppointmentById(ctx: Koa.ParameterizedContext) {
-    const { id } = ctx.validatedParams;
-    return getById(Appointment)(id);
+    return getById(Appointment)(ctx);
     // ctx.body = [];
     // ctx.status = 200;
   }
