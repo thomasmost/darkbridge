@@ -1,5 +1,5 @@
 import Koa from 'koa';
-import { authAPI } from './api/auth.api';
+import { AuthAPI } from './api/auth.api';
 import { AppointmentAPI } from './api/appointment.api';
 import { ContractorProfileAPI } from './api/contractor_profile.api';
 import { UserAPI } from './api/user.api';
@@ -51,8 +51,7 @@ api.map(AppointmentAPI, {});
 api.map(CalendarAPI, {});
 api.map(ContractorProfileAPI, {});
 api.map(ClientProfileAPI, {});
-
-api.use('/auth', authAPI.routes(), authAPI.allowedMethods());
+api.map(AuthAPI, {});
 
 api.get('/test_crash', () => {
   process.exit(1);
