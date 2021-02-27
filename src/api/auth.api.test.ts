@@ -3,7 +3,7 @@ import { ParameterizedContext } from 'koa';
 dotenv.config();
 import { User } from '../models/user.model';
 import { sequelize } from '../sequelize';
-import { register } from './auth.api';
+import { AuthAPI } from './auth.api';
 
 describe('Auth Api', () => {
   const email = `jonathan@test.com`;
@@ -34,7 +34,7 @@ describe('Auth Api', () => {
       },
       ip: 'TEST::1',
     } as unknown) as ParameterizedContext;
-    await register(ctx);
+    await AuthAPI.register(ctx);
 
     const user = await User.findOne({
       where: {
