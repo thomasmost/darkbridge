@@ -16,6 +16,7 @@ export interface ClientProfileAttributes {
   address_state: string;
   address_postal_code: string;
   timezone: string;
+  timezone_offset: number;
 }
 
 // Some attributes are optional in `ClientProfile.build` and `ClientProfile.create` calls
@@ -36,6 +37,7 @@ export class ClientProfile
   public address_state!: string;
   public address_postal_code!: string;
   public timezone!: string;
+  public timezone_offset!: number;
 
   // timestamps!
   public readonly created_at!: number;
@@ -93,6 +95,10 @@ ClientProfile.init(
     },
     timezone: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    timezone_offset: {
+      type: DataTypes.NUMBER,
       allowNull: false,
     },
   },

@@ -32,5 +32,6 @@ export const getTimeZone = async (city: string, state: string) => {
     `https://api.ipgeolocation.io/timezone?apiKey=${API_KEY}&location=${city},%20${state}`,
   );
   const data = (await result.json()) as IPGeolocationResponse;
-  return data.timezone;
+  const { timezone, timezone_offset } = data;
+  return { timezone, timezone_offset };
 };

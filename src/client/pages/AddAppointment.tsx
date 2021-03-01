@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import {
   AppointmentAttributes,
-  AppointmentCreationAttributes,
+  IAppointmentPostBody,
 } from '../../models/appointment.model';
 import { useAuth } from '../AuthProvider';
 import { FlexColumns } from '../elements/FlexColumns';
@@ -19,21 +19,13 @@ import { ClientProfileAttributes } from '../../models/client_profile.model';
 import { apiRequest } from '../services/api.svc';
 import { Select } from '../components/Select';
 import { Button } from '../elements/Button';
+import { DateTimeHelper } from '../../helpers/datetime.helper';
 
 const Label = styled.label`
   color: ${theme.subheaderTextColor};
   display: block;
   margin-bottom: 10px;
 `;
-
-type AppointmentFormValues = Pick<
-  AppointmentCreationAttributes,
-  | 'client_profile_id'
-  | 'datetime_local'
-  | 'duration_minutes'
-  | 'summary'
-  | 'priority'
->;
 
 const priorityOptions = [
   {
@@ -120,7 +112,7 @@ const loadOptions = async (name: string) => {
 export const AddAppointment: React.FC<RouteComponentProps> = () => {
   const [selectedDate, setDate] = useState(new Date());
   const navigate = useNavigate();
-  const { register, handleSubmit, setValue } = useForm<AppointmentFormValues>();
+  const { register, handleSubmit, setValue } = useForm<IAppointmentPostBody>();
   useEffect(() => {
     register('client_profile_id');
     register('datetime_local');
@@ -131,10 +123,10 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
     return null;
   }
   const handleDateChange = (date: Date) => {
-    setValue('datetime_local', date.toString());
+    setValue('datetime_local', DateTimeHelper.formatToPureDateTime(date));
     setDate(date);
   };
-  const onSubmit = async (data: AppointmentFormValues) => {
+  const onSubmit = async (data: IAppointmentPostBody) => {
     console.log(data);
     const result = await apiRequest<AppointmentAttributes>(
       'appointment',
@@ -209,7 +201,7 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
           styles={selectStyles}
           onChange={(selection) => setValue('priority', selection?.value)}
         />
-        <Button>Add Appointment</Button>
+        <Button onClick={handleSubmit(onSubmit)}>Add Appointment</Button>
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Cancel
         </Button>

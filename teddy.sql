@@ -53,9 +53,7 @@ create table `appointment` (
   client_profile_id VARCHAR(255) NOT NULL,
   status VARCHAR(255) NOT NULL,
   priority VARCHAR(16) NOT NULL,
-  datetime_local DATETIME NOT NULL,
   datetime_utc DATETIME NOT NULL,
-  datetime_end_local DATETIME NOT NULL,
   datetime_end_utc DATETIME NOT NULL,
   logged_minutes SMALLINT NULL,
   notes TEXT NULL,
@@ -65,6 +63,7 @@ create table `appointment` (
   address_state VARCHAR(255) NOT NULL,
   address_postal_code VARCHAR(255) NOT NULL,
   timezone VARCHAR(255) NOT NULL,
+  timezone_offset TINYINT NOT NULL,
   rating_of_service TINYINT NULL,
   rating_of_client TINYINT NULL,
   INDEX(service_provider_user_id)
@@ -120,6 +119,7 @@ create table `client_profile` (
   address_state VARCHAR(255) NOT NULL,
   address_postal_code VARCHAR(255) NOT NULL,
   timezone VARCHAR(255) NOT NULL,
+  timezone_offset TINYINT NOT NULL,
   stripe_customer_id VARCHAR(255) NULL,
   UNIQUE KEY(user_id)
 );

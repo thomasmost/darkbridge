@@ -41,7 +41,7 @@ export const assembleDailyInfo = async (user_id: string) => {
         [Op.gte]: startOfDay(new Date()),
       },
     },
-    order: [['datetime_local', 'ASC']],
+    order: [['datetime_utc', 'ASC']],
   });
 
   const countAppointments = appointments.length;

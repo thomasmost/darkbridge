@@ -44,6 +44,9 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     justify-content: space-between;
     padding: 20px;
   `;
+
+  const userOffset = new Date().getTimezoneOffset();
+  const showTimezone = userOffset !== appointment.timezone_offset;
   return (
     <Card>
       <div>
@@ -61,8 +64,9 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
             Date and time
           </CardHeading>
           <CardInfo>
-            {format(new Date(appointment.datetime_utc), 'yyyy/MM/dd h:mm')}—
-            {format(new Date(appointment.datetime_end_utc), 'h:mm a')}
+            {format(new Date(appointment.datetime_local), 'yyyy/MM/dd h:mm')}—
+            {format(new Date(appointment.datetime_end_local), 'h:mm a')}{' '}
+            {showTimezone && `(${appointment.timezone_friendly})`}
           </CardInfo>
         </div>
         <div>

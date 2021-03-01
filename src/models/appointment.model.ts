@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
 import { ClientProfileAttributes } from './client_profile.model';
+import { DateTimeHelper } from '../helpers/datetime.helper';
 
 export const AppointmentStatus = {
   requested: 'requested',
@@ -45,24 +46,35 @@ export interface AppointmentAttributes {
   address_state: string;
   address_postal_code: string;
   timezone: string;
+  timezone_offset: number;
+  timezone_friendly: string;
   duration_minutes: number;
   rating_of_service: number;
   rating_of_client: number;
   client_profile?: ClientProfileAttributes;
 }
 
+export interface IAppointmentPostBody {
+  client_profile_id: string;
+  datetime_local: string;
+  duration_minutes: number;
+  priority: keyof typeof AppointmentPriority;
+  summary: string;
+}
+
 // Some attributes are optional in `Appointment.build` and `Appointment.create` calls
-export type AppointmentCreationAttributes = Optional<
-  Omit<
-    AppointmentAttributes,
-    | 'id'
-    | 'created_at'
-    | 'status'
-    | 'rating_of_client'
-    | 'rating_of_service'
-    | 'notes'
-  >,
-  'duration_minutes'
+export type AppointmentCreationAttributes = Omit<
+  AppointmentAttributes,
+  | 'id'
+  | 'created_at'
+  | 'status'
+  | 'rating_of_client'
+  | 'rating_of_service'
+  | 'notes'
+  | 'datetime_local'
+  | 'datetime_end_local'
+  | 'duration_minutes'
+  | 'timezone_friendly'
 >;
 
 export class Appointment
@@ -83,6 +95,8 @@ export class Appointment
   public duration_minutes!: number;
   public address_postal_code!: string;
   public timezone!: string;
+  public timezone_offset!: number;
+  public timezone_friendly!: string;
   public summary!: string;
   public notes: string;
   public rating_of_service: number;
@@ -132,21 +146,29 @@ Appointment.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    datetime_local: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
     datetime_utc: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    datetime_end_local: {
       type: DataTypes.DATE,
       allowNull: false,
     },
     datetime_end_utc: {
       type: DataTypes.DATE,
       allowNull: false,
+    },
+    datetime_local: {
+      type: DataTypes.VIRTUAL,
+      get: function () {
+        const date = new Date(this.getDataValue('datetime_utc'));
+        const timezone = this.getDataValue('timezone');
+        return DateTimeHelper.toLocal(date, timezone);
+      },
+    },
+    datetime_end_local: {
+      type: DataTypes.VIRTUAL,
+      get: function () {
+        const date = new Date(this.getDataValue('datetime_end_utc'));
+        const timezone = this.getDataValue('timezone');
+        return DateTimeHelper.toLocal(date, timezone);
+      },
     },
     address_street: {
       type: DataTypes.STRING,
@@ -167,6 +189,17 @@ Appointment.init(
     timezone: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    timezone_offset: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+    },
+    timezone_friendly: {
+      type: DataTypes.VIRTUAL,
+      get: function () {
+        const timezone = this.getDataValue('timezone');
+        return timezone.replace(/_/, ' ');
+      },
     },
     summary: {
       type: DataTypes.STRING,

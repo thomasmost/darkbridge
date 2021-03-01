@@ -26,7 +26,7 @@ type BodyParameter = {
 const postParams: Record<
   keyof Omit<
     ClientProfileCreationAttributes,
-    'created_by_user_id' | 'timezone' | 'id' | 'created_at'
+    'created_by_user_id' | 'timezone' | 'timezone_offset' | 'id' | 'created_at'
   >,
   BodyParameter
 > = {
@@ -96,7 +96,10 @@ export class ClientProfileAPI {
     }
     const created_by_user_id = user.id;
 
-    const timezone = await getTimeZone(address_city, address_state);
+    const { timezone, timezone_offset } = await getTimeZone(
+      address_city,
+      address_state,
+    );
 
     const profile = await ClientProfile.create({
       created_by_user_id,
@@ -108,6 +111,7 @@ export class ClientProfileAPI {
       address_state,
       address_postal_code,
       timezone,
+      timezone_offset,
     });
 
     ctx.status = 200;

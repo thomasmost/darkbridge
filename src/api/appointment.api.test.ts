@@ -22,6 +22,7 @@ describe('Appointment Api', () => {
       address_state: 'foo',
       address_postal_code: 'foo',
       timezone: 'foo',
+      timezone_offset: 2,
     };
 
     profile = await ClientProfile.create(profileAttributes);

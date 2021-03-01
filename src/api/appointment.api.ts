@@ -1,9 +1,5 @@
 import Koa from 'koa';
-import { addMinutes } from 'date-fns';
-import {
-  Appointment,
-  AppointmentCreationAttributes,
-} from '../models/appointment.model';
+import { Appointment, IAppointmentPostBody } from '../models/appointment.model';
 import { getById } from './base.api';
 import { TeddyRequestContext } from './types';
 import { ClientProfile } from '../models/client_profile.model';
@@ -21,6 +17,7 @@ import {
 } from '@callteddy/koa-swagger-decorator';
 
 import { NotImplemented } from '../helpers/error.helper';
+import { DateTimeHelper } from '../helpers/datetime.helper';
 
 const AppointmentTag = tags(['appointments']);
 
@@ -33,7 +30,8 @@ const postBodyParams = {
   datetime_local: {
     type: 'string',
     required: true,
-    description: "the stringified datetime of the appointment's start",
+    description:
+      "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
   },
   duration_minutes: {
     type: 'number',
@@ -69,9 +67,9 @@ export class AppointmentAPI {
       duration_minutes,
       priority,
       summary,
-    } = ctx.request.body as AppointmentCreationAttributes;
+    } = ctx.request.body as IAppointmentPostBody;
 
-    if (!duration_minutes) {
+    if (!duration_minutes || !datetime_local) {
       throw Error('400');
     }
 
@@ -79,16 +77,20 @@ export class AppointmentAPI {
     if (!client_profile) {
       throw Error(`Client with id ${client_profile_id} not found`);
     }
-
-    const datetime_end_local = addMinutes(
-      new Date(datetime_local),
-      duration_minutes,
-    ).toString();
-
     const timezone = client_profile.timezone;
+    const timezone_offset = client_profile.timezone_offset;
 
-    const datetime_utc = new Date(datetime_local).toUTCString();
-    const datetime_end_utc = new Date(datetime_end_local).toUTCString();
+    const datetime_utc = DateTimeHelper.toUTC(
+      datetime_local,
+      timezone,
+    ).toISOString();
+    const date_utc = new Date(datetime_utc);
+    const date_end_utc = DateTimeHelper.add(
+      date_utc,
+      duration_minutes,
+      'minutes',
+    );
+    const datetime_end_utc = date_end_utc.toISOString();
 
     const {
       address_street,
@@ -111,9 +113,7 @@ export class AppointmentAPI {
 
     const appointment = await Appointment.create({
       client_profile_id,
-      datetime_local: datetime_local.substring(0, 24) + ' GMT',
       datetime_utc,
-      datetime_end_local: datetime_end_local.substring(0, 24) + ' GMT',
       datetime_end_utc,
       service_provider_user_id,
       summary,
@@ -122,6 +122,7 @@ export class AppointmentAPI {
       address_state,
       address_postal_code,
       timezone,
+      timezone_offset,
       priority,
     });
 

@@ -63,15 +63,3 @@ api.get('/timezone', async (ctx) => {
   const { city, state } = ctx.request.query;
   ctx.body = await getTimeZone(city, state);
 });
-
-api.get('/get_secret_var', (ctx) => {
-  ctx.body = {
-    var: process.env.EXAMPLE_SECRET_VARIABLE || 'None Found',
-  };
-});
-
-api.get('/get_public_var', (ctx) => {
-  ctx.body = {
-    var: process.env.NODE_ENV || 'None Found',
-  };
-});

@@ -112,7 +112,7 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
             />
           </div>
         </FlexColumns>
-        <Button>Add Client</Button>
+        <Button onClick={handleSubmit(onSubmit)}>Add Client</Button>
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Cancel
         </Button>
