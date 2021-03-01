@@ -32,6 +32,7 @@ const postBodyParams = {
     required: true,
     description:
       "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
+    example: DateTimeHelper.formatToPureDateTime(new Date()),
   },
   duration_minutes: {
     type: 'number',

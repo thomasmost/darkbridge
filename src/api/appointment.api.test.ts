@@ -35,7 +35,8 @@ describe('Appointment Api', () => {
     sequelize.close();
   });
 
-  test('creating an appointment should work', async (done) => {
+  test('creating an appointment with an iso datetime format should throw', async (done) => {
+    expect.assertions(1);
     const user = {
       id: testUserId,
     };
@@ -43,6 +44,67 @@ describe('Appointment Api', () => {
     const body = {
       client_profile_id: profile.id,
       datetime_local: 'Sun, 21 Feb 2021 05:00:00 GMT',
+      duration_minutes: 90,
+      priority: 'P2',
+      summary: 'leaky sink',
+    };
+
+    const ctx = ({
+      user,
+      request: {
+        body,
+      },
+      cookies: {
+        set: () => null,
+      },
+      ip: 'TEST::1',
+    } as unknown) as ParameterizedContext;
+
+    await expect(AppointmentAPI.createAppointment(ctx)).rejects.toThrow(
+      'Expected a local datetime exactly 19 characters long',
+    );
+    done();
+  });
+
+  test('creating an appointment with an improper datetime format should throw', async (done) => {
+    expect.assertions(1);
+    const user = {
+      id: testUserId,
+    };
+
+    const body = {
+      client_profile_id: profile.id,
+      datetime_local: '02/02/2021 04:30:01',
+      duration_minutes: 90,
+      priority: 'P2',
+      summary: 'leaky sink',
+    };
+
+    const ctx = ({
+      user,
+      request: {
+        body,
+      },
+      cookies: {
+        set: () => null,
+      },
+      ip: 'TEST::1',
+    } as unknown) as ParameterizedContext;
+
+    await expect(AppointmentAPI.createAppointment(ctx)).rejects.toThrow(
+      "Expected a local datetime to exactly match the following format: 'YYYY-MM-DD HH:MM:SS'",
+    );
+    done();
+  });
+
+  test('creating an appointment should work', async (done) => {
+    const user = {
+      id: testUserId,
+    };
+
+    const body = {
+      client_profile_id: profile.id,
+      datetime_local: '2031-02-21 05:00:00',
       duration_minutes: 90,
       priority: 'P2',
       summary: 'leaky faucet',
@@ -81,7 +143,7 @@ describe('Appointment Api', () => {
 
     const body = {
       client_profile_id: profile.id,
-      datetime_local: 'Tuesday, 10 Feb 2021 05:00:00 GMT',
+      datetime_local: '2041-02-21 05:00:00',
       duration_minutes: 90,
       priority: 'P2',
       summary: 'leaky drainpipe',
@@ -102,7 +164,7 @@ describe('Appointment Api', () => {
 
     const body2 = {
       client_profile_id: profile.id,
-      datetime_local: 'Tuesday, 10 Feb 2021 05:00:00 GMT',
+      datetime_local: '2041-02-21 06:00:00',
       duration_minutes: 90,
       priority: 'P2',
       summary: 'sparking lamp',
