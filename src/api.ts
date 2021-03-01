@@ -8,6 +8,7 @@ import { getTimeZone } from './helpers/timezone.helper';
 import { SwaggerRouter } from '@callteddy/koa-swagger-decorator';
 import { CalendarAPI } from './api/calendar.api';
 import { TeddyRequestContext } from './api/types';
+import { OmniAPI } from './api/omni.api';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -52,6 +53,7 @@ api.map(CalendarAPI, {});
 api.map(ContractorProfileAPI, {});
 api.map(ClientProfileAPI, {});
 api.map(AuthAPI, {});
+api.map(OmniAPI, {});
 
 api.get('/test_crash', () => {
   process.exit(1);

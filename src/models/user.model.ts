@@ -100,7 +100,7 @@ User.init(
 );
 
 export function permissionUser(user: User) {
-  const permissionedUser = {
+  return {
     id: user.id,
     email: user.email,
     phone: user.phone,
@@ -110,8 +110,4 @@ export function permissionUser(user: User) {
     verified_at: user.verified_at,
     contractor_profile: user.contractor_profile,
   };
-
-  console.log(`USER ID: ${permissionedUser.id}`);
-
-  return permissionedUser;
 }
