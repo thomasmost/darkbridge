@@ -13,8 +13,8 @@ The core api, server, and web client for the Teddy application
 
 This repository is known to work with the following:
 
-- node `12.16.3`
-- npm `7.5.2`
+- node `14.16.0`
+- npm `6.14.11`
 - mysql `8.0.20`
 
 # Development
