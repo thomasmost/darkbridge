@@ -43,7 +43,7 @@ export class User
   public contractor_profile?: ContractorProfile;
 }
 
-User.init(
+export const UserModel = User.init(
   {
     // Model attributes are defined here
     id: {

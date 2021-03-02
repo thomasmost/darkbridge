@@ -107,7 +107,7 @@ export class Appointment
   public readonly created_at!: number;
 }
 
-Appointment.init(
+export const AppointmentModel = Appointment.init(
   {
     // Model attributes are defined here
     id: {

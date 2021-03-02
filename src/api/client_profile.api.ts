@@ -4,8 +4,9 @@ import {
   request,
   summary,
   prefix,
-  tags,
   query,
+  securityAll,
+  tagsAll,
 } from '@callteddy/koa-swagger-decorator';
 
 import { TeddyRequestContext } from './types';
@@ -16,7 +17,7 @@ import {
 } from '../models/client_profile.model';
 import { getTimeZone } from '../helpers/timezone.helper';
 
-const ClientProfileTag = tags(['clientProfile']);
+// const ClientProfileTag = tags(['clientProfile']);
 
 type BodyParameter = {
   type: 'string' | 'number';
@@ -61,8 +62,9 @@ const postParams: Record<
 };
 
 @prefix('/client_profile')
+@securityAll([{ token: [] }])
+@tagsAll(['clientProfile'])
 export class ClientProfileAPI {
-  @ClientProfileTag
   @request('post', '')
   @summary('create a new client profile')
   @body(postParams)
@@ -118,7 +120,6 @@ export class ClientProfileAPI {
     ctx.body = profile;
   }
 
-  @ClientProfileTag
   @request('get', '')
   @summary(
     'query the client profiles by name partial, typically during appointment creation',

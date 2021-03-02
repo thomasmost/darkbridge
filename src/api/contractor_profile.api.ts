@@ -4,14 +4,13 @@ import {
   request,
   summary,
   prefix,
-  tags,
+  securityAll,
+  tagsAll,
 } from '@callteddy/koa-swagger-decorator';
 import {
   ContractorProfile,
   ContractorProfileUpdateAttributes,
 } from '../models/contractor_profile.model';
-
-const ContractorProfileTag = tags(['contractorProfile']);
 
 type BodyParameter = {
   type: 'string' | 'number';
@@ -62,8 +61,9 @@ const updateAttributes: Record<
 };
 
 @prefix('/contractor_profile')
+@securityAll([{ token: [] }])
+@tagsAll(['contractorProfile'])
 export class ContractorProfileAPI {
-  @ContractorProfileTag
   @request('put', '')
   @summary(
     'update the logged in contractor profile with a subset of valid fields',

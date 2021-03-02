@@ -40,7 +40,7 @@ api.swagger({
     securityDefinitions: {
       token: {
         type: 'apiKey',
-        in: 'cookie',
+        in: 'header',
         name: 'teddy_web_token',
       },
     },

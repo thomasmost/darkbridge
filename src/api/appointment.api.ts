@@ -10,16 +10,15 @@ import {
   summary,
   body,
   prefix,
-  tags,
   path,
   description,
   responses,
+  securityAll,
+  tagsAll,
 } from '@callteddy/koa-swagger-decorator';
 
 import { NotImplemented } from '../helpers/error.helper';
 import { DateTimeHelper } from '../helpers/datetime.helper';
-
-const AppointmentTag = tags(['appointments']);
 
 const postBodyParams = {
   client_profile_id: {
@@ -51,8 +50,9 @@ const postBodyParams = {
   },
 };
 @prefix('/appointment')
+@securityAll([{ token: [] }])
+@tagsAll(['appointments'])
 export class AppointmentAPI {
-  @AppointmentTag
   @request('post', '')
   @summary('create a new appointment for the logged in service provider')
   @body(postBodyParams)
@@ -131,7 +131,6 @@ export class AppointmentAPI {
     ctx.status = 200;
   }
 
-  @AppointmentTag
   @request('get', '')
   @summary("query the logged in service provider's appointments")
   public static async getAppointments(/*ctx: Koa.ParameterizedContext*/) {
@@ -140,7 +139,6 @@ export class AppointmentAPI {
     // ctx.status = 200;
   }
 
-  @AppointmentTag
   @request('get', '/{id}')
   @summary('get a single appointment by primary key')
   @path({
@@ -152,13 +150,12 @@ export class AppointmentAPI {
     // ctx.status = 200;
   }
 
-  @AppointmentTag
   @request('put', '/{id}/cancel')
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
   @summary('cancel an appointment by the service provider')
-  @summary(
+  @description(
     "For now, only service providers can cancel their appointments. We'll need to support client cancellations soon enough",
   )
   @responses({
@@ -185,7 +182,6 @@ export class AppointmentAPI {
     ctx.status = 204;
   }
 
-  @AppointmentTag
   @request('put', '/{id}/rate_service')
   @path({
     id: { type: 'string', required: true, description: 'id' },
@@ -226,7 +222,6 @@ export class AppointmentAPI {
     ctx.status = 204;
   }
 
-  @AppointmentTag
   @request('put', '/{id}/rate_client')
   @path({
     id: { type: 'string', required: true, description: 'id' },
