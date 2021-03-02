@@ -9,7 +9,6 @@ import { theme } from '../theme';
 
 const StyledLink = styled(Link)`
   color: ${theme.buttonColorActive};
-  text-decoration: none;
   font-size: 2em;
 `;
 

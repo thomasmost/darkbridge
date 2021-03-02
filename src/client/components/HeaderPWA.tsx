@@ -54,7 +54,6 @@ const StyledLink = styled(Link)`
   color: ${theme.headerTextColor};
   display: inline-block;
   font-size: 0.6em;
-  text-decoration: none;
   padding: 0 10px;
   &[aria-current] {
     color: ${theme.activePageColor};
@@ -65,7 +64,6 @@ const StyledAnchor = styled.a`
   color: ${theme.headerTextColor};
   display: block;
   font-size: 0.6em;
-  text-decoration: none;
   padding: 0 10px;
   &[aria-current] {
     color: ${theme.activePageColor};

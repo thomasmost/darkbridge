@@ -28,7 +28,6 @@ const NextAppointmentHeader = styled.div`
 `;
 
 const WrapperLink = styled(Link)`
-  text-decoration: none;
   &:visited {
     color: ${theme.textColor};
   }

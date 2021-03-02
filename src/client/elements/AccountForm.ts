@@ -9,7 +9,6 @@ export const AccountForm = styled.form`
   a {
     color: ${theme.passiveLinkColor};
     transition: color 0.5s;
-    text-decoration: none;
     &:hover,
     &:focus {
       color: ${theme.activeLinkColor};
