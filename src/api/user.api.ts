@@ -7,6 +7,7 @@ import {
   body,
   prefix,
   tags,
+  responses,
 } from '@callteddy/koa-swagger-decorator';
 
 const UserTag = tags(['users']);
@@ -33,10 +34,14 @@ export class UserAPI {
       description: "user's family (usually last) name",
     },
   })
-  // @security([{ token: [] }])
-  // @query({
-  //   type: { type: 'number', required: true, default: 1, description: 'type' },
-  // })
+  @responses({
+    204: {
+      description: 'Success',
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+  })
   public static async updateSelf(ctx: TeddyRequestContext) {
     if (!ctx.user) {
       ctx.status = 401;

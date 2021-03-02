@@ -18,10 +18,7 @@ import {
   ClientProfileModel,
 } from '../models/client_profile.model';
 import { getTimeZone } from '../helpers/timezone.helper';
-import {
-  arrayOf,
-  sequelizeModelToSwaggerSchema,
-} from '../helpers/swagger.helper';
+import { arrayOf, swaggerSchemaFromModel } from '../helpers/swagger.helper';
 
 // const ClientProfileTag = tags(['clientProfile']);
 
@@ -77,7 +74,7 @@ export class ClientProfileAPI {
   @responses({
     200: {
       description: 'Success',
-      schema: sequelizeModelToSwaggerSchema(ClientProfileModel),
+      schema: swaggerSchemaFromModel(ClientProfileModel),
     },
     401: {
       description: 'Unauthorized',

@@ -61,7 +61,7 @@ export class ContractorProfile
   public readonly created_at!: number;
 }
 
-ContractorProfile.init(
+export const ContractorProfileModel = ContractorProfile.init(
   {
     // Model attributes are defined here
     id: {

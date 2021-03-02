@@ -13,10 +13,7 @@ import {
   tagsAll,
   responses,
 } from '@callteddy/koa-swagger-decorator';
-import {
-  arrayOf,
-  sequelizeModelToSwaggerSchema,
-} from '../helpers/swagger.helper';
+import { arrayOf, swaggerSchemaFromModel } from '../helpers/swagger.helper';
 
 @prefix('/calendar')
 @tagsAll(['calendar'])
@@ -32,7 +29,7 @@ export class CalendarAPI {
         type: 'object',
         properties: {
           appointments: arrayOf(AppointmentModel),
-          nextAppointment: sequelizeModelToSwaggerSchema(AppointmentModel),
+          nextAppointment: swaggerSchemaFromModel(AppointmentModel),
           summary: {
             type: 'string',
             example: `Looks like you don't have any appointments today. Time to kick back! (Alternatively, you can head over to your Calendar to add a new job)`,

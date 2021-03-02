@@ -2,7 +2,11 @@ import { Model, Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
-import { ContractorProfile } from './contractor_profile.model';
+import {
+  ContractorProfile,
+  ContractorProfileModel,
+} from './contractor_profile.model';
+import { RelationAttribute } from './types';
 
 // These are all the attributes in the User model
 export interface UserAttributes {
@@ -88,7 +92,8 @@ export const UserModel = User.init(
     },
     contractor_profile: {
       type: DataTypes.VIRTUAL,
-    },
+      model: ContractorProfileModel,
+    } as RelationAttribute,
   },
   {
     // Other model options go here

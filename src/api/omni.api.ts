@@ -1,7 +1,5 @@
 import { addMonths, subMonths } from 'date-fns';
-import { Appointment } from '../models/appointment.model';
 import { TeddyRequestContext } from './types';
-import { ClientProfile } from '../models/client_profile.model';
 import { Op } from 'sequelize';
 import {
   request,
@@ -9,11 +7,18 @@ import {
   prefix,
   tags,
   description,
+  responses,
 } from '@callteddy/koa-swagger-decorator';
 
 import { assembleDailyInfo } from './calendar.api';
+import { Appointment, AppointmentModel } from '../models/appointment.model';
+import {
+  ClientProfile,
+  ClientProfileModel,
+} from '../models/client_profile.model';
 import { ContractorProfile } from '../models/contractor_profile.model';
-import { permissionUser } from '../models/user.model';
+import { permissionUser, UserModel } from '../models/user.model';
+import { arrayOf, swaggerSchemaFromModel } from '../helpers/swagger.helper';
 
 const OmniTag = tags(['omni']);
 
@@ -25,8 +30,35 @@ export class OmniAPI {
     'query all the data required to use the app as a service provider/contractor',
   )
   @description(
-    'This endpoint will be used to immediately load all the data the app is likely to need for an average session. This includes the full current user with contractor profile, all appointments from two months in the past to two months in the future, the daily calendar data, and all client profiles created by the logged in user',
+    'This endpoint will be used to immediately load all the data the app is likely to need for an average session. This includes the full current user with contractor profile, all appointments from one month in the past to one month in the future, the daily calendar data, and all client profiles created by the logged in user',
   )
+  @responses({
+    200: {
+      description: 'Success',
+      schema: {
+        type: 'object',
+        properties: {
+          allAppointmentsWithinMonth: arrayOf(AppointmentModel),
+          clients: arrayOf(ClientProfileModel),
+          currentUser: swaggerSchemaFromModel(UserModel),
+          dailyInfo: {
+            type: 'object',
+            properties: {
+              appointments: arrayOf(AppointmentModel),
+              nextAppointment: swaggerSchemaFromModel(AppointmentModel),
+              summary: {
+                type: 'string',
+                example: `Looks like you don't have any appointments today. Time to kick back! (Alternatively, you can head over to your Calendar to add a new job)`,
+              },
+            },
+          },
+        },
+      },
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+  })
   public static async getOmniDataV0(ctx: TeddyRequestContext) {
     if (!ctx.user) {
       ctx.status = 401;
@@ -35,11 +67,11 @@ export class OmniAPI {
     const user = ctx.user;
     const user_id = user.id;
 
-    const allAppointmentsWithinTwoMonthsPromise = Appointment.findAll({
+    const allAppointmentsWithinMonthPromise = Appointment.findAll({
       where: {
         datetime_utc: {
-          [Op.gte]: subMonths(new Date(), 2),
-          [Op.lte]: addMonths(new Date(), 2),
+          [Op.gte]: subMonths(new Date(), 1),
+          [Op.lte]: addMonths(new Date(), 1),
         },
       },
     });
@@ -63,22 +95,22 @@ export class OmniAPI {
     });
 
     const [
-      allAppointmentsWithinTwoMonths,
+      allAppointmentsWithinMonth,
       dailyInfo,
       clients,
       currentUser,
     ] = await Promise.all([
-      allAppointmentsWithinTwoMonthsPromise,
+      allAppointmentsWithinMonthPromise,
       assembleDailyInfo(user_id),
       profilesPromise,
       userWithProfilePromise,
     ]);
 
     ctx.body = {
-      allAppointmentsWithinTwoMonths,
-      dailyInfo,
+      allAppointmentsWithinMonth,
       clients,
       currentUser,
+      dailyInfo,
     };
   }
 }

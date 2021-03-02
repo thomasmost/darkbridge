@@ -6,7 +6,7 @@ import validator from 'validator';
 import { AuthenticationError, ValidationError } from '../helpers/error.helper';
 import { AuthToken } from '../models/auth_token.model';
 import { issueToken } from '../helpers/auth_token.helper';
-import { permissionUser, User } from '../models/user.model';
+import { permissionUser, User, UserModel } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
 import { sendEmail } from '../helpers/email.helper';
 import { ResetPasswordRequest } from '../models/reset_password_request.model';
@@ -17,9 +17,11 @@ import {
   prefix,
   query,
   request,
+  responses,
   summary,
   tags,
 } from '@callteddy/koa-swagger-decorator';
+import { swaggerSchemaFromModel } from '../helpers/swagger.helper';
 
 export const authAPI = new Router();
 
@@ -416,6 +418,15 @@ export class AuthAPI {
   @AuthenticationTag
   @request('get', '/current_user')
   @summary('Get the currently logged in user')
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerSchemaFromModel(UserModel),
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+  })
   public static async getCurrentUser(ctx: TeddyRequestContext) {
     const user = ctx.user;
     if (!user) {

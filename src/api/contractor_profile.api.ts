@@ -6,6 +6,7 @@ import {
   prefix,
   securityAll,
   tagsAll,
+  responses,
 } from '@callteddy/koa-swagger-decorator';
 import {
   ContractorProfile,
@@ -69,6 +70,14 @@ export class ContractorProfileAPI {
     'update the logged in contractor profile with a subset of valid fields',
   )
   @body(updateAttributes)
+  @responses({
+    204: {
+      description: 'Success',
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+  })
   // eslint-disable-next-line sonarjs/cognitive-complexity
   public static async updateContractorProfile(ctx: TeddyRequestContext) {
     if (!ctx.user) {
