@@ -8,6 +8,7 @@ export function getAppointments() {
 export function getDailyInfo() {
   return apiRequest<{
     summary: string;
+    appointments: AppointmentAttributes[];
     nextAppointment: AppointmentAttributes;
   }>('calendar/daily', 'json');
 }

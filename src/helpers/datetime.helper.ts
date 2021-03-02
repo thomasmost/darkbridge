@@ -3,6 +3,7 @@ import format from 'date-fns/format';
 import add from 'date-fns/add';
 import sub from 'date-fns/sub';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+import { isAfter, isBefore } from 'date-fns';
 
 const DATETIME_LOCAL_REGEX = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (00|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/;
 
@@ -46,5 +47,12 @@ export class DateTimeHelper {
       );
     }
     return zonedTimeToUtc(datetime_local, timezone);
+  }
+
+  static isBefore(first: Date, second: Date) {
+    return isBefore(first, second);
+  }
+  static isAfter(first: Date, second: Date) {
+    return isAfter(first, second);
   }
 }

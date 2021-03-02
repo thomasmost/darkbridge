@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 import { Link, RouteComponentProps } from '@reach/router';
-import React from 'react';
+import React, { useContext } from 'react';
+import { AppointmentListItem } from '../components/AppointmentListItem';
 import { FlexColumns } from '../elements/FlexColumns';
 import { Icon } from '../elements/Icon';
+import { StateContext } from '../reducers';
 import { theme } from '../theme';
 
 const StyledLink = styled(Link)`
@@ -12,6 +14,7 @@ const StyledLink = styled(Link)`
 `;
 
 export const Calendar: React.FC<RouteComponentProps> = () => {
+  const { appointments } = useContext(StateContext);
   return (
     <div>
       <FlexColumns>
@@ -20,7 +23,9 @@ export const Calendar: React.FC<RouteComponentProps> = () => {
           <Icon name="Plus" />
         </StyledLink>
       </FlexColumns>
-      [Calendar List View here]
+      {appointments.map((appointment) => (
+        <AppointmentListItem key={appointment.id} appointment={appointment} />
+      ))}
     </div>
   );
 };

@@ -21,6 +21,8 @@ import { NextAppointment } from '../pages/NextAppointment';
 import { useWindowDimensions } from '../useWindowDimensions';
 import { FooterPWA } from '../components/FooterPWA';
 import { HeaderPWA } from '../components/HeaderPWA';
+import { AppointmentScreen } from '../pages/AppointmentScreen';
+import { StateProvider } from '../StateProvider';
 
 const muiTheme = createMuiTheme({
   palette: {
@@ -44,6 +46,7 @@ const App = () => {
   const { width } = useWindowDimensions();
   const shouldRenderPWA = width < 600;
 
+  console.log('re-rendering full app');
   const Main = styled.main`
     color: ${theme.applicationTextColor};
     background-color: ${theme.applicationBackgroundColor};
@@ -59,43 +62,46 @@ const App = () => {
   `;
   return (
     <AuthProvider>
-      <ThemeProvider theme={muiTheme}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <AppContainer>
-            <ToastContainer
-              position="top-center"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-            />
-            {shouldRenderPWA ? (
-              <Location>
-                {({ location }) => <HeaderPWA location={location} />}
-              </Location>
-            ) : (
-              <Header />
-            )}
-            <Main>
-              <Router>
-                <Home path="/" />
-                <AddAppointment path="calendar/add-appointment" />
-                <NextAppointment path="next-appointment" />
-                <AddClientProfile path="add-client" />
-                <ApiSandbox path="sandbox" />
-                <Calendar path="calendar" />
-                <Profile path="profile" />
-                <Logout path="logout" />
-              </Router>
-            </Main>
-            {shouldRenderPWA && <FooterPWA />}
-          </AppContainer>
-        </MuiPickersUtilsProvider>
-      </ThemeProvider>
+      <StateProvider>
+        <ThemeProvider theme={muiTheme}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <AppContainer>
+              <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+              />
+              {shouldRenderPWA ? (
+                <Location>
+                  {({ location }) => <HeaderPWA location={location} />}
+                </Location>
+              ) : (
+                <Header />
+              )}
+              <Main>
+                <Router>
+                  <Home path="/" />
+                  <AppointmentScreen path="appointment/:appointment_id" />
+                  <AddAppointment path="calendar/add-appointment" />
+                  <NextAppointment path="next-appointment" />
+                  <AddClientProfile path="add-client" />
+                  <ApiSandbox path="sandbox" />
+                  <Calendar path="calendar" />
+                  <Profile path="profile" />
+                  <Logout path="logout" />
+                </Router>
+              </Main>
+              {shouldRenderPWA && <FooterPWA />}
+            </AppContainer>
+          </MuiPickersUtilsProvider>
+        </ThemeProvider>
+      </StateProvider>
     </AuthProvider>
   );
 };

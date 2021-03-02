@@ -185,6 +185,46 @@ export class AppointmentAPI {
     ctx.status = 204;
   }
 
+  @request('put', '/{id}/complete')
+  @path({
+    id: { type: 'string', required: true, description: 'id' },
+  })
+  @summary('complete an appointment by the service provider')
+  @description(
+    'For now, only service providers can complete their appointments.',
+  )
+  @responses(baseCodes([204, 401, 404, 405]))
+  public static async completeAppointment(ctx: TeddyRequestContext) {
+    if (!ctx.user) {
+      ctx.status = 401;
+      return;
+    }
+    const user = ctx.user;
+
+    const { id } = ctx.validatedParams;
+    const appointment = await Appointment.findByPk(id);
+
+    // If either the appointment doesn't exist or doesn't belong to the logged in user, 404
+    if (!appointment || appointment.service_provider_user_id !== user.id) {
+      ctx.status = 404;
+      return;
+    }
+    if (appointment.status !== 'scheduled') {
+      ctx.status = 405;
+      ctx.body = `Appointments in state ${appointment.status} are not allowed to be completed`;
+      return;
+    }
+    const now = new Date();
+    if (DateTimeHelper.isBefore(now, new Date(appointment.datetime_utc))) {
+      ctx.status = 405;
+      ctx.body = `Appointment cannot be marked completed before its start-time`;
+      return;
+    }
+    appointment.status = 'completed';
+    await appointment.save();
+    ctx.status = 204;
+  }
+
   @request('put', '/{id}/rate_service')
   @path({
     id: { type: 'string', required: true, description: 'id' },

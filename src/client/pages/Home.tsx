@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { RouteComponentProps } from '@reach/router';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from '@reach/router';
 
 import { theme } from '../theme';
@@ -9,6 +9,7 @@ import { getDailyInfo } from '../services/appointment.svc';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { AppointmentCard } from '../components/AppointmentCard';
 import { ClientCard } from '../components/ClientCard';
+import { DispatchContext } from '../reducers';
 
 const HeadingText = styled.h1`
   padding-bottom: 10px;
@@ -60,6 +61,7 @@ export const renderCustomerInfo = (
 
 export const Home: React.FC<RouteComponentProps> = () => {
   const [summary, setSummary] = useState<string | null>(null);
+  const dispatch = useContext(DispatchContext);
   const [
     nextAppointment,
     setNextAppointment,
@@ -70,6 +72,7 @@ export const Home: React.FC<RouteComponentProps> = () => {
       if (result.error) {
         return;
       }
+      dispatch({ type: 'SET_APPOINTMENTS', data: result.data.appointments });
       setSummary(result.data.summary);
       setNextAppointment(result.data.nextAppointment);
     });
