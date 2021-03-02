@@ -20,8 +20,6 @@ import {
 import { getTimeZone } from '../helpers/timezone.helper';
 import { arrayOf, swaggerSchemaFromModel } from '../helpers/swagger.helper';
 
-// const ClientProfileTag = tags(['clientProfile']);
-
 type BodyParameter = {
   type: 'string' | 'number';
   description: string;

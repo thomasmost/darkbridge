@@ -12,10 +12,12 @@ import {
   prefix,
   tagsAll,
   responses,
+  securityAll,
 } from '@callteddy/koa-swagger-decorator';
 import { arrayOf, swaggerSchemaFromModel } from '../helpers/swagger.helper';
 
 @prefix('/calendar')
+@securityAll([{ token: [] }])
 @tagsAll(['calendar'])
 export class CalendarAPI {
   @request('get', '/daily')

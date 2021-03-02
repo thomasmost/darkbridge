@@ -18,6 +18,7 @@ import {
   query,
   request,
   responses,
+  security,
   summary,
   tagsAll,
 } from '@callteddy/koa-swagger-decorator';
@@ -422,6 +423,7 @@ export class AuthAPI {
 
   @request('get', '/current_user')
   @summary('Get the currently logged in user')
+  @security([{ token: [] }])
   @responses({
     200: {
       description: 'Success',
@@ -447,6 +449,7 @@ export class AuthAPI {
 
   @request('get', '/logout')
   @summary('Log out, voiding the current token and clearing the cookie')
+  @responses(baseCodes([204, 400]))
   public static async logout(ctx: Koa.ParameterizedContext) {
     const tokenId = ctx.cookies.get('teddy_web_token');
     if (tokenId) {
@@ -457,19 +460,19 @@ export class AuthAPI {
       });
       if (!token) {
         throw Error('Missing token');
+        // if !token log a warning
       }
       console.log('FOUND TOKEN AND LOGGING OUT');
-
       ctx.cookies.set('teddy_web_token', null);
-
-      // if !token log a warning
 
       await token.update({
         disabled_at: Date.now(),
         disabled_reason: 'logged_out',
       });
+      ctx.status = 204;
     } else {
-      // log a warning
+      // if !token log a warning
+      ctx.status = 400;
     }
   }
 }

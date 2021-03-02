@@ -6,15 +6,15 @@ import {
   summary,
   body,
   prefix,
-  tags,
+  tagsAll,
   responses,
+  securityAll,
 } from '@callteddy/koa-swagger-decorator';
 
-const UserTag = tags(['users']);
-
 @prefix('/user')
+@securityAll([{ token: [] }])
+@tagsAll(['users'])
 export class UserAPI {
-  @UserTag
   @request('put', '/self')
   @summary('update currently logged in user')
   @body({

@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
 
-const PrimaryWork = {
+export const PrimaryWork = {
   electrical: 'electrical',
   hvac: 'hvac',
   plumbing: 'plumbing',
