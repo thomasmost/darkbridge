@@ -21,7 +21,6 @@ const StyledLink = styled(Link)`
   color: ${theme.headerTextColor};
   display: block;
   font-size: 1.6em;
-  text-decoration: none;
   &[aria-current] {
     color: ${theme.activePageColor};
   }

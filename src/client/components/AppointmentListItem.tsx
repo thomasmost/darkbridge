@@ -41,6 +41,9 @@ const Time = styled.div`
 const Address = styled.div`
   color: ${theme.passiveLinkColor};
   font-size: 1.2em;
+  div {
+    margin-bottom: 5px;
+  }
 `;
 
 const StyledLink = styled(Link)`
