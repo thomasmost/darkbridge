@@ -19,9 +19,9 @@ import {
   request,
   responses,
   summary,
-  tags,
+  tagsAll,
 } from '@callteddy/koa-swagger-decorator';
-import { swaggerSchemaFromModel } from '../helpers/swagger.helper';
+import { baseCodes, swaggerSchemaFromModel } from '../helpers/swagger.helper';
 
 export const authAPI = new Router();
 
@@ -35,40 +35,27 @@ export function tokenFromCookies(ctx: Koa.ParameterizedContext) {
   return ctx.cookies.get('teddy_web_token');
 }
 
-const AuthenticationTag = tags(['auth']);
+const registrationBody = {
+  email: {
+    type: 'string',
+    required: true,
+    description: 'username',
+  },
+  password: {
+    type: 'string',
+    required: true,
+    description: 'password',
+  },
+  confirm_password: {
+    type: 'string',
+    required: true,
+    description: 'password',
+  },
+};
 
 @prefix('/auth')
+@tagsAll(['auth'])
 export class AuthAPI {
-  @AuthenticationTag
-  @request('get', '/logout')
-  @summary('Log out, voiding the current token and clearing the cookie')
-  public static async logout(ctx: Koa.ParameterizedContext) {
-    const tokenId = ctx.cookies.get('teddy_web_token');
-    if (tokenId) {
-      const token = await AuthToken.findOne({
-        where: {
-          id: tokenId,
-        },
-      });
-      if (!token) {
-        throw Error('Missing token');
-      }
-      console.log('FOUND TOKEN AND LOGGING OUT');
-
-      ctx.cookies.set('teddy_web_token', null);
-
-      // if !token log a warning
-
-      await token.update({
-        disabled_at: Date.now(),
-        disabled_reason: 'logged_out',
-      });
-    } else {
-      // log a warning
-    }
-  }
-
-  @AuthenticationTag
   @request('post', '/login')
   @summary('Log in, retrieving a new token as well as the user object')
   @body({
@@ -82,6 +69,21 @@ export class AuthAPI {
       required: true,
       description: 'password',
     },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: {
+        type: 'object',
+        properties: {
+          token: {
+            type: 'string',
+          },
+          user: swaggerSchemaFromModel(UserModel),
+        },
+      },
+    },
+    ...baseCodes([400]),
   })
   public static async login(ctx: Koa.ParameterizedContext) {
     const { email, password } = ctx.request.body;
@@ -127,25 +129,23 @@ export class AuthAPI {
     ctx.body = { token, user };
   }
 
-  @AuthenticationTag
   @request('post', '/register')
   @summary('Register a new user')
-  @body({
-    email: {
-      type: 'string',
-      required: true,
-      description: 'username',
+  @body(registrationBody)
+  @responses({
+    200: {
+      description: 'Success',
+      schema: {
+        type: 'object',
+        properties: {
+          token: {
+            type: 'string',
+          },
+          user: swaggerSchemaFromModel(UserModel),
+        },
+      },
     },
-    password: {
-      type: 'string',
-      required: true,
-      description: 'password',
-    },
-    confirm_password: {
-      type: 'string',
-      required: true,
-      description: 'password',
-    },
+    ...baseCodes([400]),
   })
   public static async register(ctx: Koa.ParameterizedContext) {
     const { email, password, confirm_password } = ctx.request.body;
@@ -224,7 +224,6 @@ export class AuthAPI {
     ctx.body = { token, user };
   }
 
-  @AuthenticationTag
   @request('post', '/request_password_reset')
   @summary('Request a password reset')
   @body({
@@ -233,6 +232,12 @@ export class AuthAPI {
       required: true,
       description: 'username',
     },
+  })
+  @responses({
+    204: {
+      description: 'Success',
+    },
+    ...baseCodes([400]),
   })
   public static async requestPasswordReset(ctx: Koa.ParameterizedContext) {
     const { email } = ctx.request.body;
@@ -276,7 +281,6 @@ export class AuthAPI {
     ctx.status = 204;
   }
 
-  @AuthenticationTag
   @request('post', '/verify_password_reset')
   @summary('Verify a password reset and change the password')
   @body({
@@ -296,6 +300,7 @@ export class AuthAPI {
       description: 'password',
     },
   })
+  @responses(baseCodes([204, 400]))
   public static async verifyPasswordReset(ctx: Koa.ParameterizedContext) {
     const { token, password, confirm_password } = ctx.request.body;
 
@@ -352,7 +357,6 @@ export class AuthAPI {
     return (ctx.status = 204);
   }
 
-  @AuthenticationTag
   @request('get', '/verify_email')
   @summary('Verify an email address')
   @query({
@@ -363,6 +367,7 @@ export class AuthAPI {
         'the unique id of the verification record, consumed after first use',
     },
   })
+  @responses(baseCodes([302, 400]))
   public static async verifyEmail(ctx: Koa.ParameterizedContext) {
     const token = ctx.query.token;
     console.log('hello');
@@ -415,7 +420,6 @@ export class AuthAPI {
     return ctx.redirect('/');
   }
 
-  @AuthenticationTag
   @request('get', '/current_user')
   @summary('Get the currently logged in user')
   @responses({
@@ -423,9 +427,7 @@ export class AuthAPI {
       description: 'Success',
       schema: swaggerSchemaFromModel(UserModel),
     },
-    401: {
-      description: 'Unauthorized',
-    },
+    ...baseCodes([401]),
   })
   public static async getCurrentUser(ctx: TeddyRequestContext) {
     const user = ctx.user;
@@ -441,5 +443,33 @@ export class AuthAPI {
       user.contractor_profile = contractor_profile;
     }
     ctx.body = permissionUser(user);
+  }
+
+  @request('get', '/logout')
+  @summary('Log out, voiding the current token and clearing the cookie')
+  public static async logout(ctx: Koa.ParameterizedContext) {
+    const tokenId = ctx.cookies.get('teddy_web_token');
+    if (tokenId) {
+      const token = await AuthToken.findOne({
+        where: {
+          id: tokenId,
+        },
+      });
+      if (!token) {
+        throw Error('Missing token');
+      }
+      console.log('FOUND TOKEN AND LOGGING OUT');
+
+      ctx.cookies.set('teddy_web_token', null);
+
+      // if !token log a warning
+
+      await token.update({
+        disabled_at: Date.now(),
+        disabled_reason: 'logged_out',
+      });
+    } else {
+      // log a warning
+    }
   }
 }

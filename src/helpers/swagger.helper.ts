@@ -70,3 +70,31 @@ export const swaggerPropertyFromAttribute = (
   }
   return swaggerProperty;
 };
+
+const codeMap: { [code: number]: string } = {
+  204: 'Success',
+  302: 'Redirect',
+  400: 'Bad Request',
+  401: 'Unauthorized',
+};
+
+export function baseCodes(codes: number[]) {
+  const supportedCodes = Object.keys(codeMap);
+  const swaggerCodes: { [code: number]: { description: string } } = {};
+  for (const code of codes) {
+    if (code === 200) {
+      throw Error(
+        '200 codes should be associated with data; did you mean 204?',
+      );
+    }
+    if (!supportedCodes.includes(code.toString())) {
+      throw Error(
+        'tried to generate a swagger response code definition for an unsupported standard code',
+      );
+    }
+    swaggerCodes[code] = {
+      description: codeMap[code],
+    };
+  }
+  return swaggerCodes;
+}
