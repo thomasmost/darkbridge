@@ -55,7 +55,7 @@ const StyledPicker = styled(DateTimePicker)`
       padding: 22px 20px 23px;
       width: 100%;
       background-color: ${theme.inputBackgroundColor};
-      font-family: 'Poppins', Helvetica, sans-serif;
+      font-family: 'Circular Std', Helvetica, sans-serif;
     }
     min-width: 240px;
   }

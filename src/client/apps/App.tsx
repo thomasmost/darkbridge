@@ -35,7 +35,7 @@ if (typeof window !== 'undefined') {
 }
 
 const AppContainer = styled.div`
-  font-family: 'Poppins', Helvetica, sans-serif;
+  font-family: 'Circular Std', Helvetica, sans-serif;
   display: flex;
   flex-wrap: wrap;
 `;
