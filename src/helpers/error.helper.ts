@@ -15,6 +15,13 @@ export class ValidationError extends RoutineError {
     this.status = 400;
   }
 }
+export class CollisionError extends RoutineError {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+    this.status = 405;
+  }
+}
 
 export class AuthenticationError extends RoutineError {
   constructor(message: string) {
