@@ -13,7 +13,10 @@ import {
   tagsAll,
   responses,
 } from '@callteddy/koa-swagger-decorator';
-import { sequelizeModelToSwaggerSchema } from '../helpers/swagger.helper';
+import {
+  arrayOf,
+  sequelizeModelToSwaggerSchema,
+} from '../helpers/swagger.helper';
 
 @prefix('/calendar')
 @tagsAll(['calendar'])
@@ -28,10 +31,7 @@ export class CalendarAPI {
       schema: {
         type: 'object',
         properties: {
-          appointments: {
-            type: 'array',
-            items: sequelizeModelToSwaggerSchema(AppointmentModel),
-          },
+          appointments: arrayOf(AppointmentModel),
           nextAppointment: sequelizeModelToSwaggerSchema(AppointmentModel),
           summary: {
             type: 'string',
@@ -39,6 +39,9 @@ export class CalendarAPI {
           },
         },
       },
+    },
+    401: {
+      description: 'Unauthorized',
     },
   })
   public static async getDailyInfo(ctx: TeddyRequestContext) {

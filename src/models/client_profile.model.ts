@@ -43,7 +43,7 @@ export class ClientProfile
   public readonly created_at!: number;
 }
 
-ClientProfile.init(
+export const ClientProfileModel = ClientProfile.init(
   {
     // Model attributes are defined here
     id: {

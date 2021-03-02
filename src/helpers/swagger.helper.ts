@@ -1,14 +1,26 @@
+import { Model, ModelAttributeColumnOptions } from 'sequelize';
+
 type SwaggerProperty = {
   type?: 'string' | 'integer';
   example?: string;
   format?: 'uuid' | 'email';
 };
 
-export const sequelizeModelToSwaggerSchema = (model: any) => {
+export const arrayOf = (model: Model) => ({
+  type: 'array',
+  items: sequelizeModelToSwaggerSchema(model),
+});
+
+export const sequelizeModelToSwaggerSchema = (model: Model) => {
   const swaggerProperties: Record<string, SwaggerProperty> = {};
-  for (const key in model.rawAttributes) {
+  // Below casting is obviously sub-optimal, but the sequelize types don't
+  // seem to believe that rawAttributes are accessible on an initialized model
+  const { rawAttributes } = (model as unknown) as {
+    rawAttributes: { [attribute: string]: ModelAttributeColumnOptions };
+  };
+  for (const key in rawAttributes) {
     const swaggerProperty: SwaggerProperty = {};
-    if (model.rawAttributes[key].primaryKey) {
+    if (rawAttributes[key].primaryKey) {
       swaggerProperties[key] = {
         type: 'string',
         format: 'uuid',
@@ -16,7 +28,7 @@ export const sequelizeModelToSwaggerSchema = (model: any) => {
       continue;
     }
     try {
-      const typeString = model.rawAttributes[key].type.toString();
+      const typeString = rawAttributes[key].type.toString({});
       switch (typeString) {
         case 'VARCHAR(255)':
           swaggerProperty.type = 'string';
@@ -28,8 +40,7 @@ export const sequelizeModelToSwaggerSchema = (model: any) => {
           swaggerProperty.type = 'string';
           break;
         case 'VIRTUAL':
-          swaggerProperty.type =
-            model.rawAttributes[key].swaggerType || 'string';
+          swaggerProperty.type = 'string';
           break;
         default:
           swaggerProperty.type = 'string';

@@ -7,6 +7,7 @@ import {
   query,
   securityAll,
   tagsAll,
+  responses,
 } from '@callteddy/koa-swagger-decorator';
 
 import { TeddyRequestContext } from './types';
@@ -14,8 +15,13 @@ import {
   ClientProfile,
   ClientProfileAttributes,
   ClientProfileCreationAttributes,
+  ClientProfileModel,
 } from '../models/client_profile.model';
 import { getTimeZone } from '../helpers/timezone.helper';
+import {
+  arrayOf,
+  sequelizeModelToSwaggerSchema,
+} from '../helpers/swagger.helper';
 
 // const ClientProfileTag = tags(['clientProfile']);
 
@@ -68,6 +74,15 @@ export class ClientProfileAPI {
   @request('post', '')
   @summary('create a new client profile')
   @body(postParams)
+  @responses({
+    200: {
+      description: 'Success',
+      schema: sequelizeModelToSwaggerSchema(ClientProfileModel),
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+  })
   public static async addClientProfile(ctx: TeddyRequestContext) {
     if (!ctx.user) {
       ctx.status = 401;
@@ -127,6 +142,15 @@ export class ClientProfileAPI {
   @query({
     name: {
       type: 'string',
+    },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: arrayOf(ClientProfileModel),
+    },
+    401: {
+      description: 'Unauthorized',
     },
   })
   public static async queryClientProfiles(ctx: TeddyRequestContext) {
