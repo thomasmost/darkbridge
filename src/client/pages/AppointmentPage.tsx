@@ -23,7 +23,8 @@ export const AppointmentPage: React.FC<
     if (currentAppointment) {
       return;
     }
-    queryAppointments({ ids: [appointment_id, 'foo'] }).then((result) => {
+    // the additional 'noop' id is a hack to satisfy the swagger validation
+    queryAppointments({ ids: [appointment_id, 'noop'] }).then((result) => {
       if (result.error) {
         return;
       }
