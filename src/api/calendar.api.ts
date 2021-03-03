@@ -1,4 +1,4 @@
-import { format, startOfDay } from 'date-fns';
+import { endOfDay, format, startOfDay } from 'date-fns';
 import { Appointment, AppointmentModel } from '../models/appointment.model';
 import { TeddyRequestContext } from './types';
 import {
@@ -53,11 +53,13 @@ export class CalendarAPI {
 }
 
 export const assembleDailyInfo = async (user_id: string) => {
+  const today = new Date();
   const appointments = await Appointment.findAll({
     where: {
       service_provider_user_id: user_id,
       datetime_utc: {
-        [Op.gte]: startOfDay(new Date()),
+        [Op.gte]: startOfDay(today),
+        [Op.lte]: endOfDay(today),
       },
     },
     order: [['datetime_utc', 'ASC']],

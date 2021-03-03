@@ -16,6 +16,10 @@ export class DateTimeHelper {
     return format(date, 'yyyy-MM-dd HH:mm:ss');
   }
 
+  static formatForDayHeader(date: Date) {
+    return format(date, 'eeee');
+  }
+
   static add(
     originalDate: Date,
     count: number,

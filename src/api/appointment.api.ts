@@ -24,6 +24,7 @@ import {
 import { DateTimeHelper } from '../helpers/datetime.helper';
 import { arrayOf, baseCodes } from '../helpers/swagger.helper';
 import { createAppointmentForClient } from '../helpers/appointment.helper';
+import { ValidationError } from '../helpers/error.helper';
 
 const postBodyParams = {
   client_profile_id: {
@@ -104,6 +105,12 @@ export class AppointmentAPI {
     after: {
       type: 'string',
     },
+    beforeMs: {
+      type: 'number',
+    },
+    afterMs: {
+      type: 'number',
+    },
   })
   @responses({
     200: {
@@ -117,29 +124,15 @@ export class AppointmentAPI {
       ctx.status = 401;
       return;
     }
-    console.log('LEZGO');
-    const where: WhereAttributeHash = {
-      service_provider_user_id: ctx.user.id,
-    };
-    const { ids, before, after } = ctx.query;
-    let id: string[] = ids;
-    if (ids && !Array.isArray(ids)) {
-      id = [ids];
-    }
-    where.id = id;
+    const { before, after, beforeMs, afterMs } = ctx.query;
 
-    // note that these bounds are officially as generous as possible:
-    // we use the end time for the earlier bound and the start time for the later bound
-    if (before) {
-      where.datetime_utc = {
-        [Op.lte]: before,
-      };
+    if ((before && beforeMs) || (after && afterMs)) {
+      throw new ValidationError(
+        "Can't query with both millisecond time and string dates",
+      );
     }
-    if (after) {
-      where.datetime_end_utc = {
-        [Op.lte]: after,
-      };
-    }
+
+    const where = constructAppointmentQueryWhere(ctx.user.id, ctx.query);
     const appointments = await Appointment.findAll({
       where,
     });
@@ -335,3 +328,48 @@ export class AppointmentAPI {
     ctx.status = 204;
   }
 }
+
+type AppointmentQueryParams = {
+  ids?: string[];
+  before?: string;
+  after?: string;
+  beforeMs?: string;
+  afterMs?: string;
+};
+
+export const constructAppointmentQueryWhere = (
+  service_provider_user_id: string,
+  query: AppointmentQueryParams,
+) => {
+  const where: WhereAttributeHash = {
+    service_provider_user_id,
+  };
+  const { ids, before, after, beforeMs, afterMs } = query;
+
+  if (ids) {
+    where.id = Array.isArray(ids) ? ids : [ids];
+  }
+  // note that these bounds are officially as generous as possible:
+  // we use the end time for the earlier bound and the start time for the later bound
+  if (before) {
+    where.datetime_utc = {
+      [Op.lte]: new Date(before),
+    };
+  }
+  if (after) {
+    where.datetime_end_utc = {
+      [Op.lte]: new Date(after),
+    };
+  }
+  if (beforeMs) {
+    where.datetime_utc = {
+      [Op.lte]: new Date(parseInt(beforeMs)),
+    };
+  }
+  if (afterMs) {
+    where.datetime_end_utc = {
+      [Op.gte]: new Date(parseInt(afterMs)),
+    };
+  }
+  return where;
+};

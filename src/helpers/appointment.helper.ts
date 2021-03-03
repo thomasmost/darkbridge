@@ -39,6 +39,7 @@ export const createAppointmentForClient = async (
   } = client_profile;
 
   const conflictingAppointments = await getConflictingAppointments(
+    service_provider_user_id,
     datetime_utc,
     datetime_end_utc,
   );
@@ -64,11 +65,13 @@ export const createAppointmentForClient = async (
 };
 
 export async function getConflictingAppointments(
+  service_provider_user_id: string,
   datetime_utc: string,
   datetime_end_utc: string,
 ) {
   return Appointment.findAll({
     where: {
+      service_provider_user_id,
       [Op.or]: [
         {
           datetime_utc: {
