@@ -156,7 +156,7 @@ async function createAppointmentsForUserDay(
   date: string,
 ) {
   const promises = [];
-  const appointmentsForDay = Math.floor(Math.random() * 4);
+  const appointmentsForDay = Math.floor(Math.random() * 5);
   for (let i = 0; i < appointmentsForDay; i++) {
     const randomTime =
       commonTimes[Math.floor(Math.random() * commonTimes.length)];
