@@ -2,9 +2,10 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import Koa from 'koa';
 import Router from 'koa-router';
+import { UserAgentContext } from 'koa-useragent';
 import validator from 'validator';
 import { AuthenticationError, ValidationError } from '../helpers/error.helper';
-import { AuthToken } from '../models/auth_token.model';
+import { AuthToken, ClientType } from '../models/auth_token.model';
 import { issueToken } from '../helpers/auth_token.helper';
 import { permissionUser, User, UserModel } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
@@ -34,6 +35,26 @@ const DEFAULT_FAILED_LOGIN_MESSAGE =
 
 export function tokenFromCookies(ctx: Koa.ParameterizedContext) {
   return ctx.cookies.get('teddy_web_token');
+}
+
+export function tokenFromAuthorizationHeader(ctx: Koa.ParameterizedContext) {
+  const { headers } = ctx.request;
+  const authHeader = headers['authorization'];
+  if (!authHeader) {
+    throw new AuthenticationError('Missing Authorization Header');
+  }
+  const bearerParts = authHeader.split(' ');
+  if (
+    !bearerParts ||
+    bearerParts.length != 2 ||
+    bearerParts[0].toLowerCase() !== 'bearer' ||
+    !bearerParts[1]
+  ) {
+    throw new AuthenticationError(
+      'Authorization Header is expected to comply with rfc6750 and rfc2617',
+    );
+  }
+  return bearerParts[1];
 }
 
 const registrationBody = {
@@ -86,7 +107,7 @@ export class AuthAPI {
     },
     ...baseCodes([400]),
   })
-  public static async login(ctx: Koa.ParameterizedContext) {
+  public static async login(ctx: Koa.ParameterizedContext & UserAgentContext) {
     const { email, password } = ctx.request.body;
 
     if (!email || !password) {
@@ -117,7 +138,14 @@ export class AuthAPI {
       throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
     }
 
-    const client_type = 'web';
+    let client_type: ClientType = 'web';
+    if (ctx.userAgent.isAndroid || ctx.userAgent.isAndroidTablet) {
+      client_type = 'android';
+    }
+    if (ctx.userAgent.isiPhone || ctx.userAgent.isiPad) {
+      client_type = 'ios';
+    }
+
     const ip = ctx.ip;
 
     const token = await issueToken(user.id, 'email_password', client_type, ip);

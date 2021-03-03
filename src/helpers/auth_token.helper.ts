@@ -35,6 +35,7 @@ export async function consumeToken(tokenId: string): Promise<User> {
     throw new AuthenticationError('Invalid token');
   }
   if (
+    token.client_type === 'web' &&
     token.last_used_at &&
     token.last_used_at <= Date.now() - 1 * 60 * 60 * 1000
   ) {

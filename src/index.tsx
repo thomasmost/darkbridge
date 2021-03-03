@@ -9,6 +9,8 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import Router from 'koa-router';
 import serveStatic from 'koa-static';
+import { userAgent, UserAgentContext } from 'koa-useragent';
+
 import { createHttpTerminator } from 'http-terminator';
 
 import { isRedirect, ServerLocation } from '@reach/router';
@@ -23,7 +25,7 @@ const NODE_ENV = process.env.NODE_ENV;
 console.log(`NODE_ENV: ${NODE_ENV}`);
 
 import App from './client/apps/App';
-import { tokenFromCookies } from './api/auth.api';
+import { tokenFromAuthorizationHeader, tokenFromCookies } from './api/auth.api';
 import { consumeToken } from './helpers/auth_token.helper';
 import UnauthorizedApp from './client/apps/UnauthorizedApp';
 import { TeddyRequestContext } from './api/types';
@@ -32,6 +34,7 @@ import { AuthenticationError, ValidationError } from './helpers/error.helper';
 import OnboardingApp from './client/apps/OnboardingApp';
 
 const app = new Koa();
+app.use(userAgent);
 const router = new Router();
 
 // this route needs to precede our wildcard route so that we can correctly get the application bundle
@@ -62,8 +65,11 @@ app.use(async (ctx, next) => {
   }
 });
 
-app.use(async (ctx: TeddyRequestContext, next) => {
-  const tokenId = tokenFromCookies(ctx);
+app.use(async (ctx: Koa.ParameterizedContext & UserAgentContext, next) => {
+  const isMobile = ctx.userAgent.isMobile;
+  const tokenId = isMobile
+    ? tokenFromAuthorizationHeader(ctx)
+    : tokenFromCookies(ctx);
   if (tokenId) {
     try {
       ctx.user = await consumeToken(tokenId);
