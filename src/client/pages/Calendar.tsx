@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { DateTimePicker } from '@material-ui/pickers';
 import { Link, RouteComponentProps } from '@reach/router';
+import { startOfDay } from 'date-fns';
 import React, { useContext, useEffect } from 'react';
 import { DateTimeHelper } from '../../helpers/datetime.helper';
 import { AppointmentAttributes } from '../../models/appointment.model';
@@ -36,22 +37,25 @@ const Count = styled.label`
 const mapAppointmentsToDays = (appointments: AppointmentAttributes[]) => {
   const byDay: Record<string, AppointmentAttributes[]> = {};
   for (const appointment of appointments) {
-    const day = DateTimeHelper.formatForDayHeader(
-      new Date(appointment.datetime_local),
-    );
-    if (!byDay[day]) {
-      byDay[day] = [];
+    const dayUnix = startOfDay(new Date(appointment.datetime_utc)).valueOf();
+    if (!byDay[dayUnix]) {
+      byDay[dayUnix] = [];
     }
-    byDay[day].push(appointment);
+    byDay[dayUnix].push(appointment);
   }
   return byDay;
 };
 
-const renderDay = (header: string, appointments: AppointmentAttributes[]) => {
+const renderDay = (
+  headerUnixStr: string,
+  appointments: AppointmentAttributes[],
+) => {
   return (
     <div>
       <CalendarHeader>
-        <label>{header}</label>
+        <label>
+          {DateTimeHelper.formatForDayHeader(new Date(parseInt(headerUnixStr)))}
+        </label>
         <Count>{appointments.length} Appointments</Count>
       </CalendarHeader>
       {appointments?.map((appointment) => (
@@ -79,7 +83,7 @@ export const Calendar: React.FC<RouteComponentProps> = () => {
     });
   }, []);
 
-  const days = Object.keys(byDay);
+  const days = Object.keys(byDay).sort((a, b) => parseInt(a) - parseInt(b));
 
   return (
     <div>
