@@ -135,6 +135,7 @@ export class AppointmentAPI {
     const where = constructAppointmentQueryWhere(ctx.user.id, ctx.query);
     const appointments = await Appointment.findAll({
       where,
+      order: [['datetime_utc', 'ASC']],
     });
 
     const client_profile_ids = appointments.map(
