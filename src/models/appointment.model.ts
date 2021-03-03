@@ -18,10 +18,10 @@ export const AppointmentStatus = {
 };
 
 export const AppointmentPriority = {
-  p0_emergency: 'P0',
-  p1_urgent: 'P1',
-  p2_earliest_convenience: 'P2',
-  p3_discretionary: 'P3',
+  P0: 'P0',
+  P1: 'P1',
+  P2: 'P2',
+  P3: 'P3',
 };
 
 // These are all the attributes in the Appointment model
