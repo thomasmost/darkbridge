@@ -3,8 +3,12 @@ import { Model, Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
-import { ClientProfileAttributes } from './client_profile.model';
+import {
+  ClientProfileAttributes,
+  ClientProfileModel,
+} from './client_profile.model';
 import { DateTimeHelper } from '../helpers/datetime.helper';
+import { RelationAttribute } from './types';
 
 export const AppointmentStatus = {
   requested: 'requested',
@@ -225,7 +229,8 @@ export const AppointmentModel = Appointment.init(
     },
     client_profile: {
       type: DataTypes.VIRTUAL,
-    },
+      model: ClientProfileModel,
+    } as RelationAttribute,
   },
   {
     // Other model options go here

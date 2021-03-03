@@ -8,6 +8,7 @@ import { theme } from '../theme';
 type AppointmentCardProps = {
   appointment: AppointmentAttributes;
   interactive?: boolean;
+  warning?: boolean;
 };
 
 const CardHeading = styled.div`
@@ -16,13 +17,6 @@ const CardHeading = styled.div`
   color: ${theme.cardHeaderColor};
   margin-bottom: 5px;
 `;
-const CardInfo = styled.div`
-  margin-left: 40px;
-  font-weight: 500;
-  line-height: 1.5em;
-  color: ${theme.textColor};
-`;
-
 const CardArrow = styled.div`
   width: 20px;
   max-width: 20px;
@@ -33,6 +27,7 @@ const CardArrow = styled.div`
 export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   appointment,
   interactive,
+  warning,
 }) => {
   const Card = styled.div`
     align-items: center;
@@ -43,6 +38,13 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     display: flex;
     justify-content: space-between;
     padding: 20px;
+  `;
+
+  const CardInfo = styled.div`
+    margin-left: 40px;
+    font-weight: 500;
+    line-height: 1.5em;
+    color: ${warning ? theme.warningColor : theme.textColor};
   `;
 
   const userOffset = new Date().getTimezoneOffset();

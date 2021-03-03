@@ -24,14 +24,14 @@ export const Calendar: React.FC<RouteComponentProps> = () => {
   const dispatch = useContext(DispatchContext);
 
   useEffect(() => {
-    if (!appointments.length) {
-      getDailyInfo().then((result) => {
-        if (result.error) {
-          return;
-        }
-        dispatch({ type: 'SET_APPOINTMENTS', data: result.data.appointments });
-      });
-    }
+    // Always refresh day's appointments
+    // in the future we shouldq query for a range
+    getDailyInfo().then((result) => {
+      if (result.error) {
+        return;
+      }
+      dispatch({ type: 'SET_APPOINTMENTS', data: result.data.appointments });
+    });
   }, []);
 
   return (

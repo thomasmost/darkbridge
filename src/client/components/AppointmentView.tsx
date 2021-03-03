@@ -6,6 +6,7 @@ import { AppointmentAttributes } from '../../models/appointment.model';
 import { AppointmentCard } from './AppointmentCard';
 import { ClientCard } from './ClientCard';
 import { Icon } from '../elements/Icon';
+import { Link } from '@reach/router';
 
 const HeadingText = styled.h2`
   margin-bottom: 20px;
@@ -41,13 +42,15 @@ export const renderAppointmentInfo = (
   return <AppointmentCard appointment={appointment} />;
 };
 
-export const renderCancelCard = () => (
-  <Card>
-    <div>Cancel Appointment</div>
-    <CardArrow>
-      <Icon name="Arrow-Right-2" />
-    </CardArrow>
-  </Card>
+export const renderCancelCard = (appointment_id: string) => (
+  <Link to={`/cancel-appointment/${appointment_id}`}>
+    <Card>
+      <div>Cancel Appointment</div>
+      <CardArrow>
+        <Icon name="Arrow-Right-2" />
+      </CardArrow>
+    </Card>
+  </Link>
 );
 
 export const renderCustomerInfo = (
@@ -75,7 +78,7 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
     <div>
       <HeadingText>{header}</HeadingText>
       {renderAppointmentInfo(appointment)}
-      {renderCancelCard()}
+      {renderCancelCard(appointment.id)}
       {renderCustomerInfo(appointment)}
     </div>
   );

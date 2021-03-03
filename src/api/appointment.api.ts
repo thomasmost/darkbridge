@@ -1,9 +1,13 @@
 import Koa from 'koa';
-import { Appointment, IAppointmentPostBody } from '../models/appointment.model';
+import {
+  Appointment,
+  AppointmentModel,
+  IAppointmentPostBody,
+} from '../models/appointment.model';
 import { getById } from './base.api';
 import { TeddyRequestContext } from './types';
 import { ClientProfile } from '../models/client_profile.model';
-import { Op } from 'sequelize';
+import { Op, WhereAttributeHash } from 'sequelize';
 import { CollisionError } from '../helpers/error.helper';
 import {
   request,
@@ -15,11 +19,11 @@ import {
   responses,
   securityAll,
   tagsAll,
+  query,
 } from '@callteddy/koa-swagger-decorator';
 
-import { NotImplemented } from '../helpers/error.helper';
 import { DateTimeHelper } from '../helpers/datetime.helper';
-import { baseCodes } from '../helpers/swagger.helper';
+import { arrayOf, baseCodes } from '../helpers/swagger.helper';
 
 const postBodyParams = {
   client_profile_id: {
@@ -134,10 +138,78 @@ export class AppointmentAPI {
 
   @request('get', '')
   @summary("query the logged in service provider's appointments")
-  public static async getAppointments(/*ctx: Koa.ParameterizedContext*/) {
-    throw new NotImplemented();
-    // ctx.body = [];
-    // ctx.status = 200;
+  @query({
+    ids: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
+    before: {
+      type: 'string',
+    },
+    after: {
+      type: 'string',
+    },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: arrayOf(AppointmentModel),
+    },
+    ...baseCodes([400, 401]),
+  })
+  public static async getAppointments(ctx: TeddyRequestContext) {
+    if (!ctx.user) {
+      ctx.status = 401;
+      return;
+    }
+    console.log('LEZGO');
+    const where: WhereAttributeHash = {
+      service_provider_user_id: ctx.user.id,
+    };
+    const { ids, before, after } = ctx.query;
+    let id: string[] = ids;
+    if (ids && !Array.isArray(ids)) {
+      id = [ids];
+    }
+    where.id = id;
+
+    // note that these bounds are officially as generous as possible:
+    // we use the end time for the earlier bound and the start time for the later bound
+    if (before) {
+      where.datetime_utc = {
+        [Op.lte]: before,
+      };
+    }
+    if (after) {
+      where.datetime_end_utc = {
+        [Op.lte]: after,
+      };
+    }
+    const appointments = await Appointment.findAll({
+      where,
+    });
+
+    const client_profile_ids = appointments.map(
+      (appointment) => appointment.client_profile_id,
+    );
+    const client_profiles = await ClientProfile.findAll({
+      where: {
+        id: client_profile_ids,
+      },
+    });
+    const client_profiles_by_id: Record<string, ClientProfile> = {};
+    for (const profile of client_profiles) {
+      client_profiles_by_id[profile.id] = profile;
+    }
+    for (const appointment of appointments) {
+      appointment.client_profile =
+        client_profiles_by_id[appointment.client_profile_id];
+    }
+
+    ctx.status = 200;
+    ctx.body = appointments;
   }
 
   @request('get', '/{id}')

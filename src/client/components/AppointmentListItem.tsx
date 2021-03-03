@@ -22,7 +22,7 @@ const BlockSection = styled.div`
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 20px;
-  &:last-child {
+  &:last-of-type {
     margin-bottom: 0;
   }
 `;
@@ -31,7 +31,7 @@ const Time = styled.div`
   color: ${theme.passiveLinkColor};
   display: flex;
   align-items: center;
-  *:first-child {
+  *:first-of-type {
     margin-right: 5px;
     font-size: 1.1em;
     top: 1px;

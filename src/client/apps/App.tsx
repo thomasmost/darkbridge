@@ -21,8 +21,9 @@ import { NextAppointment } from '../pages/NextAppointment';
 import { useWindowDimensions } from '../useWindowDimensions';
 import { FooterPWA } from '../components/FooterPWA';
 import { HeaderPWA } from '../components/HeaderPWA';
-import { AppointmentScreen } from '../pages/AppointmentScreen';
+import { AppointmentPage } from '../pages/AppointmentPage';
 import { StateProvider } from '../StateProvider';
+import { CancelAppointment } from '../pages/CancelAppointment';
 
 const muiTheme = createMuiTheme({
   palette: {
@@ -87,7 +88,8 @@ const App = () => {
               <Main>
                 <Router>
                   <Home path="/" />
-                  <AppointmentScreen path="appointment/:appointment_id" />
+                  <AppointmentPage path="appointment/:appointment_id" />
+                  <CancelAppointment path="cancel-appointment/:appointment_id" />
                   <AddAppointment path="calendar/add-appointment" />
                   <NextAppointment path="next-appointment" />
                   <AddClientProfile path="add-client" />
