@@ -38,6 +38,23 @@ const summaries = [
   'broken AC',
   'no heat',
 ];
+const americanTimezones = [
+  'America/Anchorage',
+  'America/Los_Angeles',
+  'America/Vancouver',
+  'America/Creston',
+  'America/Dawson_Creek',
+  'America/Hermosillo',
+  'America/Phoenix',
+  'America/Denver',
+  'America/Chicago',
+  'America/North_Dakota/Beulah',
+  'America/North_Dakota/Center',
+  'America/North_Dakota/New_Salem',
+  'America/Detroit',
+  'America/New_York',
+  'America/Toronto',
+];
 
 async function createUsers() {
   const users = [
@@ -90,7 +107,8 @@ async function createUsers() {
 async function createClients(created_by_user_id: string) {
   const promises = [];
   for (let i = 0; i < CLIENTS_PER_USER; i++) {
-    const timezone = faker.address.timeZone();
+    const timezone =
+      americanTimezones[Math.floor(Math.random() * americanTimezones.length)];
     const static_timezone = timezones_by_utc_string[timezone];
     if (!static_timezone) {
       console.log('Could not find static timezone for ', timezone);
