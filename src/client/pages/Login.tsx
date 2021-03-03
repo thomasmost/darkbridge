@@ -79,7 +79,7 @@ export const Login: React.FC<RouteComponentProps> = () => {
 
   return (
     <AccountForm autoComplete="disabled" onSubmit={onSubmit}>
-      <Logo height="64px" src="/logo_light.png" />
+      <Logo height="64px" src="/logo_light.svg" />
       <FormHeader>Log In</FormHeader>
       <Instruction>
         Don&apos;t have an account?{' '}

@@ -74,7 +74,7 @@ export const ResetPassword: React.FC<RouteComponentProps<{ token: string }>> = (
 
   return (
     <AccountForm autoComplete="disabled" onSubmit={handleSubmit(submit)}>
-      <Logo height="64px" src="/logo_light.png" />
+      <Logo height="64px" src="/logo_light.svg" />
       <FormHeader>Request Password Reset</FormHeader>
       <Instruction>
         Enter your email and we&apos;ll send you a link to change your password.

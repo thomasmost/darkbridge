@@ -20,7 +20,7 @@ const Button = styled.button`
 export const OnboardingComplete: React.FC<RouteComponentProps> = () => {
   return (
     <div>
-      <Logo height="64px" src="/logo_light.png" />
+      <Logo height="64px" src="/logo_light.svg" />
       <FinalH3>You&apos;re all set!</FinalH3>
       <Button onClick={() => location.assign('/')}>Go to my Dashboard</Button>
       <OnboardingNav slideNumber={5} hideContinueButton />

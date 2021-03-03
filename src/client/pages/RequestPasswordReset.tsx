@@ -63,7 +63,7 @@ export const RequestPasswordReset: React.FC<RouteComponentProps> = () => {
   if (success) {
     return (
       <AccountForm autoComplete="disabled" onSubmit={handleSubmit(submit)}>
-        <Logo height="64px" src="/logo_light.png" />
+        <Logo height="64px" src="/logo_light.svg" />
         <FormHeader>Request Submitted!</FormHeader>
         <Instruction>Check your email for instructions!</Instruction>
       </AccountForm>
@@ -72,7 +72,7 @@ export const RequestPasswordReset: React.FC<RouteComponentProps> = () => {
 
   return (
     <AccountForm autoComplete="disabled" onSubmit={handleSubmit(submit)}>
-      <Logo height="64px" src="/logo_light.png" />
+      <Logo height="64px" src="/logo_light.svg" />
       <FormHeader>Request Password Reset</FormHeader>
       <Instruction>
         Enter your email and we&apos;ll send you a link to change your password.

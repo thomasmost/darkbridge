@@ -88,7 +88,7 @@ export const Register: React.FC<RouteComponentProps> = () => {
 
   return (
     <AccountForm autoComplete="disabled" onSubmit={onSubmit}>
-      <Logo height="64px" src="/logo_light.png" />
+      <Logo height="64px" src="/logo_light.svg" />
       <FormHeader>Register</FormHeader>
       <Instruction>
         Already have an account?{' '}

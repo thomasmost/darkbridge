@@ -95,7 +95,7 @@ function getViewHeaderFromRouterLocation(location: WindowLocation) {
       return <ViewHeader>New Customer</ViewHeader>;
     }
     case '/': {
-      return <Logo height="40px" src="/logo.png" />;
+      return <Logo height="40px" src="/logo_dark.svg" />;
     }
     default: {
       return <ViewHeader />;

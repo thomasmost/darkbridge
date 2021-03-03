@@ -52,7 +52,8 @@ const StyledLink = styled(Link)`
   display: flex;
   align-items: center;
   font-size: 0.8em;
-  padding: 0 10px;
+  padding-right: 20px;
+  padding-left: 0px;
   &[aria-current] {
     color: ${theme.activePageColor};
   }
@@ -98,7 +99,7 @@ export const Header: React.FC = () => {
       <HeaderContents>
         <LeftNav>
           <StyledLink to="/">
-            <Logo height="40px" src="/logo.png" />
+            <Logo height="40px" src="/logo_dark.svg" />
           </StyledLink>
           <StyledLink to="/calendar">
             <MenuIcon>

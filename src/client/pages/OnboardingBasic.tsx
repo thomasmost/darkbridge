@@ -63,7 +63,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
 
   return (
     <div>
-      <Logo height="64px" src="/logo_light.png" />
+      <Logo height="64px" src="/logo_light.svg" />
       <P>Welcome!</P>
       <P>
         To ensure the best experience, we&apos;ll need to ask you some
