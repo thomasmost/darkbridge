@@ -1,5 +1,5 @@
 import { differenceInMinutes } from 'date-fns';
-import { Model, Optional, DataTypes } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
