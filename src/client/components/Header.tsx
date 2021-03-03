@@ -72,6 +72,7 @@ const StyledAnchor = styled.a`
 
 const DropdownLink = styled(StyledLink)`
   display: block;
+  padding-left: 10px;
 `;
 
 const MenuIcon = styled.div`
