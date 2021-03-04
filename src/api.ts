@@ -9,6 +9,11 @@ import { SwaggerRouter } from '@callteddy/koa-swagger-decorator';
 import { CalendarAPI } from './api/calendar.api';
 import { TeddyRequestContext } from './api/types';
 import { OmniAPI } from './api/omni.api';
+import { definitionsFromModels } from './helpers/swagger.helper';
+import { UserModel } from './models/user.model';
+import { ClientProfileModel } from './models/client_profile.model';
+import { ContractorProfileModel } from './models/contractor_profile.model';
+import { AppointmentModel } from './models/appointment.model';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -37,6 +42,12 @@ api.swagger({
   swaggerHtmlEndpoint: '/swagger-html',
   swaggerJsonEndpoint: '/swagger-json',
   swaggerOptions: {
+    definitions: definitionsFromModels([
+      AppointmentModel,
+      ClientProfileModel,
+      ContractorProfileModel,
+      UserModel,
+    ]),
     securityDefinitions: {
       token: {
         type: 'apiKey',

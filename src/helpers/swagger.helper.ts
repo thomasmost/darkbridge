@@ -9,7 +9,7 @@ type SwaggerProperty = {
 
 export const arrayOf = (model: Model) => ({
   type: 'array',
-  items: swaggerSchemaFromModel(model),
+  items: swaggerRefFromModel(model),
 });
 
 export const swaggerSchemaFromModel = (model: Model) => {
@@ -71,6 +71,12 @@ export const swaggerPropertyFromAttribute = (
   return swaggerProperty;
 };
 
+export const swaggerRefFromModel = (model: Model) => {
+  return {
+    $ref: `#/definitions/${(model as any).name}`,
+  };
+};
+
 const codeMap: { [code: number]: string } = {
   204: 'Success',
   302: 'Redirect',
@@ -99,4 +105,12 @@ export function baseCodes(codes: number[]) {
     };
   }
   return swaggerCodes;
+}
+
+export function definitionsFromModels(models: Model[]) {
+  const definitions: Record<string, any> = {};
+  for (const model of models) {
+    definitions[(model as any).name] = swaggerSchemaFromModel(model);
+  }
+  return definitions;
 }

@@ -29,7 +29,7 @@ import { permissionUser, UserModel } from '../models/user.model';
 import {
   arrayOf,
   baseCodes,
-  swaggerSchemaFromModel,
+  swaggerRefFromModel,
 } from '../helpers/swagger.helper';
 
 const omniResponsesV0 = {
@@ -40,12 +40,12 @@ const omniResponsesV0 = {
       properties: {
         allAppointmentsWithinMonth: arrayOf(AppointmentModel),
         clients: arrayOf(ClientProfileModel),
-        currentUser: swaggerSchemaFromModel(UserModel),
+        currentUser: swaggerRefFromModel(UserModel),
         dailyInfo: {
           type: 'object',
           properties: {
             appointments: arrayOf(AppointmentModel),
-            nextAppointment: swaggerSchemaFromModel(AppointmentModel),
+            nextAppointment: swaggerRefFromModel(AppointmentModel),
             summary: {
               type: 'string',
               example: `Looks like you don't have any appointments today. Time to kick back! (Alternatively, you can head over to your Calendar to add a new job)`,

@@ -23,7 +23,7 @@ import {
   summary,
   tagsAll,
 } from '@callteddy/koa-swagger-decorator';
-import { baseCodes, swaggerSchemaFromModel } from '../helpers/swagger.helper';
+import { baseCodes, swaggerRefFromModel } from '../helpers/swagger.helper';
 
 export const authAPI = new Router();
 
@@ -101,7 +101,7 @@ export class AuthAPI {
           token: {
             type: 'string',
           },
-          user: swaggerSchemaFromModel(UserModel),
+          user: swaggerRefFromModel(UserModel),
         },
       },
     },
@@ -170,7 +170,7 @@ export class AuthAPI {
           token: {
             type: 'string',
           },
-          user: swaggerSchemaFromModel(UserModel),
+          user: swaggerRefFromModel(UserModel),
         },
       },
     },
@@ -455,7 +455,7 @@ export class AuthAPI {
   @responses({
     200: {
       description: 'Success',
-      schema: swaggerSchemaFromModel(UserModel),
+      schema: swaggerRefFromModel(UserModel),
     },
     ...baseCodes([401]),
   })

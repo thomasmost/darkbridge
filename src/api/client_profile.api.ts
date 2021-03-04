@@ -18,7 +18,7 @@ import {
   ClientProfileModel,
 } from '../models/client_profile.model';
 import { getTimeZone } from '../helpers/timezone.helper';
-import { arrayOf, swaggerSchemaFromModel } from '../helpers/swagger.helper';
+import { arrayOf, swaggerRefFromModel } from '../helpers/swagger.helper';
 
 type BodyParameter = {
   type: 'string' | 'number';
@@ -72,7 +72,7 @@ export class ClientProfileAPI {
   @responses({
     200: {
       description: 'Success',
-      schema: swaggerSchemaFromModel(ClientProfileModel),
+      schema: swaggerRefFromModel(ClientProfileModel),
     },
     401: {
       description: 'Unauthorized',
