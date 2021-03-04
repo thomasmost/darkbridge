@@ -73,7 +73,7 @@ export const swaggerPropertyFromAttribute = (
 
 export const swaggerRefFromModel = (model: Model) => {
   return {
-    $ref: `#/definitions/${(model as any).name}`,
+    $ref: `#/definitions/${((model as unknown) as { name: string }).name}`,
   };
 };
 
@@ -108,9 +108,11 @@ export function baseCodes(codes: number[]) {
 }
 
 export function definitionsFromModels(models: Model[]) {
-  const definitions: Record<string, any> = {};
+  const definitions: Record<string, SwaggerProperty> = {};
   for (const model of models) {
-    definitions[(model as any).name] = swaggerSchemaFromModel(model);
+    definitions[
+      ((model as unknown) as { name: string }).name
+    ] = swaggerSchemaFromModel(model);
   }
   return definitions;
 }

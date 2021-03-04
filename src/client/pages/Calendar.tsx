@@ -1,15 +1,14 @@
-import styled from '@emotion/styled';
-import { DateTimePicker } from '@material-ui/pickers';
+import React, { useContext, useEffect } from 'react';
 import { Link, RouteComponentProps } from '@reach/router';
 import { startOfDay } from 'date-fns';
-import React, { useContext, useEffect } from 'react';
-import { DateTimeHelper } from '../../helpers/datetime.helper';
+import styled from '@emotion/styled';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { AppointmentListItem } from '../components/AppointmentListItem';
-import { FlexColumns } from '../elements/FlexColumns';
-import { Icon } from '../elements/Icon';
+import { DateTimeHelper } from '../../helpers/datetime.helper';
 import { DispatchContext, StateContext } from '../reducers';
+import { FlexColumns } from '../elements/FlexColumns';
 import { getCalendar } from '../services/appointment.svc';
+import { Icon } from '../elements/Icon';
 import { theme } from '../theme';
 
 const StyledLink = styled(Link)`
