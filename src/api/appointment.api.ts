@@ -16,6 +16,7 @@ import {
   path,
   description,
   responses,
+  operation,
   securityAll,
   tagsAll,
   query,
@@ -60,6 +61,7 @@ const postBodyParams = {
 @tagsAll(['appointments'])
 export class AppointmentAPI {
   @request('post', '')
+  @operation('apiAppointment_create')
   @summary('create a new appointment for the logged in service provider')
   @body(postBodyParams)
   public static async createAppointment(ctx: TeddyRequestContext) {
@@ -91,6 +93,7 @@ export class AppointmentAPI {
   }
 
   @request('get', '')
+  @operation('apiAppointment_query')
   @summary("query the logged in service provider's appointments")
   @query({
     ids: {
@@ -160,6 +163,7 @@ export class AppointmentAPI {
   }
 
   @request('get', '/{id}')
+  @operation('apiAppointment_getById')
   @summary('get a single appointment by primary key')
   @path({
     id: { type: 'string', required: true, description: 'id' },
@@ -171,6 +175,7 @@ export class AppointmentAPI {
   }
 
   @request('put', '/{id}/cancel')
+  @operation('apiAppointment_cancel')
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
@@ -205,6 +210,7 @@ export class AppointmentAPI {
   }
 
   @request('put', '/{id}/complete')
+  @operation('apiAppointment_complete')
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
@@ -245,6 +251,7 @@ export class AppointmentAPI {
   }
 
   @request('put', '/{id}/rate_service')
+  @operation('apiAppointment_rateService')
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
@@ -285,6 +292,7 @@ export class AppointmentAPI {
   }
 
   @request('put', '/{id}/rate_client')
+  @operation('apiAppointment_rateClient')
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })

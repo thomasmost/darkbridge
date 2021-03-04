@@ -8,6 +8,7 @@ import {
   securityAll,
   tagsAll,
   responses,
+  operation,
 } from '@callteddy/koa-swagger-decorator';
 
 import { TeddyRequestContext } from './types';
@@ -67,6 +68,7 @@ const postParams: Record<
 @tagsAll(['clientProfile'])
 export class ClientProfileAPI {
   @request('post', '')
+  @operation('apiClientProfile_create')
   @summary('create a new client profile')
   @body(postParams)
   @responses({
@@ -131,6 +133,7 @@ export class ClientProfileAPI {
   }
 
   @request('get', '')
+  @operation('apiClientProfile_query')
   @summary(
     'query the client profiles by name partial, typically during appointment creation',
   )

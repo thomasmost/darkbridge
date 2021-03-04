@@ -9,6 +9,7 @@ import {
   description,
   responses,
   securityAll,
+  operation,
 } from '@callteddy/koa-swagger-decorator';
 
 import { assembleDailyInfo } from './calendar.api';
@@ -79,6 +80,7 @@ const omniResponsesV0 = {
 @tagsAll(['omni'])
 export class OmniAPI {
   @request('get', '/v0/service')
+  @operation('apiOmni_getV0')
   @summary(
     'query all the data required to use the app as a service provider/contractor',
   )

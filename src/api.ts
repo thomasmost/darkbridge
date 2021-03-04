@@ -39,6 +39,11 @@ api.swagger({
     "API DOC for Teddy's internal-facing API, serving the web and mobile clients",
   version: '0.1.3',
   prefix: '/api',
+  swaggerConfiguration: {
+    display: {
+      displayOperationId: true,
+    },
+  },
   swaggerHtmlEndpoint: '/swagger-html',
   swaggerJsonEndpoint: '/swagger-json',
   swaggerOptions: {

@@ -7,6 +7,7 @@ import {
   securityAll,
   tagsAll,
   responses,
+  operation,
 } from '@callteddy/koa-swagger-decorator';
 import {
   ContractorProfile,
@@ -66,6 +67,7 @@ const updateAttributes: Record<
 @tagsAll(['contractorProfile'])
 export class ContractorProfileAPI {
   @request('put', '')
+  @operation('apiContractorProfile_update')
   @summary(
     'update the logged in contractor profile with a subset of valid fields',
   )

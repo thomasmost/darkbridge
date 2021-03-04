@@ -13,6 +13,7 @@ import {
   tagsAll,
   responses,
   securityAll,
+  operation,
 } from '@callteddy/koa-swagger-decorator';
 import { arrayOf, swaggerRefFromModel } from '../helpers/swagger.helper';
 
@@ -21,6 +22,7 @@ import { arrayOf, swaggerRefFromModel } from '../helpers/swagger.helper';
 @tagsAll(['calendar'])
 export class CalendarAPI {
   @request('get', '/daily')
+  @operation('apiCalendar_getDailyInfo')
   @summary(
     "get the day's appointments, the next appointment, and a summary of the user's day so far",
   )

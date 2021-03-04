@@ -15,6 +15,7 @@ import { TeddyRequestContext } from './types';
 import { ContractorProfile } from '../models/contractor_profile.model';
 import {
   body,
+  operation,
   prefix,
   query,
   request,
@@ -79,6 +80,7 @@ const registrationBody = {
 @tagsAll(['auth'])
 export class AuthAPI {
   @request('post', '/login')
+  @operation('apiAuth_login')
   @summary('Log in, retrieving a new token as well as the user object')
   @body({
     email: {
@@ -159,6 +161,7 @@ export class AuthAPI {
   }
 
   @request('post', '/register')
+  @operation('apiAuth_register')
   @summary('Register a new user')
   @body(registrationBody)
   @responses({
@@ -254,6 +257,7 @@ export class AuthAPI {
   }
 
   @request('post', '/request_password_reset')
+  @operation('apiAuth_requestPasswordReset')
   @summary('Request a password reset')
   @body({
     email: {
@@ -311,6 +315,7 @@ export class AuthAPI {
   }
 
   @request('post', '/verify_password_reset')
+  @operation('apiAuth_verifyPasswordReset')
   @summary('Verify a password reset and change the password')
   @body({
     token: {
@@ -387,6 +392,7 @@ export class AuthAPI {
   }
 
   @request('get', '/verify_email')
+  @operation('apiAuth_verifyEmail')
   @summary('Verify an email address')
   @query({
     token: {
@@ -450,6 +456,7 @@ export class AuthAPI {
   }
 
   @request('get', '/current_user')
+  @operation('apiAuth_getCurrentUser')
   @summary('Get the currently logged in user')
   @security([{ token: [] }])
   @responses({
@@ -476,6 +483,7 @@ export class AuthAPI {
   }
 
   @request('get', '/logout')
+  @operation('apiAuth_logout')
   @summary('Log out, voiding the current token and clearing the cookie')
   @responses(baseCodes([204, 400]))
   public static async logout(ctx: Koa.ParameterizedContext) {

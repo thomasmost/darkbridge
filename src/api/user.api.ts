@@ -9,6 +9,7 @@ import {
   tagsAll,
   responses,
   securityAll,
+  operation,
 } from '@callteddy/koa-swagger-decorator';
 
 @prefix('/user')
@@ -16,6 +17,7 @@ import {
 @tagsAll(['users'])
 export class UserAPI {
   @request('put', '/self')
+  @operation('apiUser_update')
   @summary('update currently logged in user')
   @body({
     phone: {
