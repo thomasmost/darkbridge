@@ -1,5 +1,6 @@
 import { Model, ModelAttributeColumnOptions } from 'sequelize';
 import { RelationAttribute } from '../models/types';
+import { DateTimeHelper } from './datetime.helper';
 
 type SwaggerProperty = {
   type?: 'string' | 'integer' | 'object';
@@ -71,10 +72,16 @@ export const swaggerPropertyFromAttribute = (
   return swaggerProperty;
 };
 
-export const swaggerRefFromModel = (model: Model) => {
+export const swaggerRefFromDefinitionName = (name: string) => {
   return {
-    $ref: `#/definitions/${((model as unknown) as { name: string }).name}`,
+    $ref: `#/definitions/${name}`,
   };
+};
+
+export const swaggerRefFromModel = (model: Model) => {
+  return swaggerRefFromDefinitionName(
+    ((model as unknown) as { name: string }).name,
+  );
 };
 
 const codeMap: { [code: number]: string } = {
@@ -115,4 +122,67 @@ export function definitionsFromModels(models: Model[]) {
     ] = swaggerSchemaFromModel(model);
   }
   return definitions;
+}
+
+export function definitionsForPostBodies() {
+  return {
+    RegistrationBody: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+        },
+        password: {
+          type: 'string',
+        },
+        confirm_password: {
+          type: 'string',
+        },
+      },
+    },
+    LoginBody: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+        },
+        password: {
+          type: 'string',
+        },
+      },
+    },
+    AppointmentCreateBody: {
+      type: 'object',
+      properties: {
+        client_profile_id: {
+          type: 'string',
+          required: true,
+          description:
+            'the id of the ClientProfile associated with this appointment',
+        },
+        datetime_local: {
+          type: 'string',
+          required: true,
+          description:
+            "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
+          example: DateTimeHelper.formatToPureDateTime(new Date()),
+        },
+        duration_minutes: {
+          type: 'number',
+          required: true,
+          description: 'the length of the appointment',
+        },
+        summary: {
+          type: 'string',
+          required: true,
+          description: 'short description of the appointment',
+        },
+        priority: {
+          type: 'string',
+          required: true,
+          description: 'The appointment priority, from P0 to P3',
+        },
+      },
+    },
+  };
 }

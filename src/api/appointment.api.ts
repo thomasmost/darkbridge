@@ -23,7 +23,11 @@ import {
 } from '@callteddy/koa-swagger-decorator';
 
 import { DateTimeHelper } from '../helpers/datetime.helper';
-import { arrayOf, baseCodes } from '../helpers/swagger.helper';
+import {
+  arrayOf,
+  baseCodes,
+  swaggerRefFromModel,
+} from '../helpers/swagger.helper';
 import { createAppointmentForClient } from '../helpers/appointment.helper';
 import { ValidationError } from '../helpers/error.helper';
 
@@ -168,10 +172,23 @@ export class AppointmentAPI {
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
-  public static async getAppointmentById(ctx: Koa.ParameterizedContext) {
-    return getById(Appointment)(ctx);
-    // ctx.body = [];
-    // ctx.status = 200;
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(AppointmentModel),
+    },
+    ...baseCodes([401, 404]),
+  })
+  public static async getAppointmentById(ctx: TeddyRequestContext) {
+    if (!ctx.user) {
+      ctx.status = 401;
+      return;
+    }
+    await getById(Appointment)(ctx);
+    if (ctx.body.service_provider_user_id !== ctx.user.id) {
+      ctx.body = null;
+      ctx.status = 404;
+    }
   }
 
   @request('put', '/{id}/cancel')

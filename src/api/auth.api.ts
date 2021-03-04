@@ -24,7 +24,11 @@ import {
   summary,
   tagsAll,
 } from '@callteddy/koa-swagger-decorator';
-import { baseCodes, swaggerRefFromModel } from '../helpers/swagger.helper';
+import {
+  baseCodes,
+  swaggerRefFromDefinitionName,
+  swaggerRefFromModel,
+} from '../helpers/swagger.helper';
 
 export const authAPI = new Router();
 
@@ -97,17 +101,9 @@ export class AuthAPI {
   @responses({
     200: {
       description: 'Success',
-      schema: {
-        type: 'object',
-        properties: {
-          token: {
-            type: 'string',
-          },
-          user: swaggerRefFromModel(UserModel),
-        },
-      },
+      schema: swaggerRefFromDefinitionName('AuthenticationResult'),
     },
-    ...baseCodes([400]),
+    ...baseCodes([400, 401]),
   })
   public static async login(ctx: Koa.ParameterizedContext & UserAgentContext) {
     const { email, password } = ctx.request.body;
@@ -127,7 +123,7 @@ export class AuthAPI {
     });
 
     if (!user) {
-      throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
+      throw new AuthenticationError(DEFAULT_FAILED_LOGIN_MESSAGE);
     }
 
     const { password_salt } = user;
@@ -167,15 +163,7 @@ export class AuthAPI {
   @responses({
     200: {
       description: 'Success',
-      schema: {
-        type: 'object',
-        properties: {
-          token: {
-            type: 'string',
-          },
-          user: swaggerRefFromModel(UserModel),
-        },
-      },
+      schema: swaggerRefFromDefinitionName('AuthenticationResult'),
     },
     ...baseCodes([400]),
   })

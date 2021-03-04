@@ -9,7 +9,13 @@ import { SwaggerRouter } from '@callteddy/koa-swagger-decorator';
 import { CalendarAPI } from './api/calendar.api';
 import { TeddyRequestContext } from './api/types';
 import { OmniAPI } from './api/omni.api';
-import { definitionsFromModels } from './helpers/swagger.helper';
+import {
+  arrayOf,
+  definitionsForPostBodies,
+  definitionsFromModels,
+  swaggerRefFromDefinitionName,
+  swaggerRefFromModel,
+} from './helpers/swagger.helper';
 import { UserModel } from './models/user.model';
 import { ClientProfileModel } from './models/client_profile.model';
 import { ContractorProfileModel } from './models/contractor_profile.model';
@@ -47,12 +53,61 @@ api.swagger({
   swaggerHtmlEndpoint: '/swagger-html',
   swaggerJsonEndpoint: '/swagger-json',
   swaggerOptions: {
-    definitions: definitionsFromModels([
-      AppointmentModel,
-      ClientProfileModel,
-      ContractorProfileModel,
-      UserModel,
-    ]),
+    definitions: {
+      ...definitionsFromModels([
+        AppointmentModel,
+        ClientProfileModel,
+        ContractorProfileModel,
+        UserModel,
+      ]),
+      AuthenticationResult: {
+        type: 'object',
+        properties: {
+          token: {
+            type: 'string',
+          },
+          user: swaggerRefFromModel(UserModel),
+        },
+      },
+      DailyInfo: {
+        type: 'object',
+        properties: {
+          appointments: arrayOf(AppointmentModel),
+          nextAppointment: swaggerRefFromModel(AppointmentModel),
+          summary: {
+            type: 'string',
+            example: `Looks like you don't have any appointments today. Time to kick back! (Alternatively, you can head over to your Calendar to add a new job)`,
+          },
+        },
+      },
+      OmniResponseV0: {
+        type: 'object',
+        properties: {
+          allAppointmentsWithinMonth: arrayOf(AppointmentModel),
+          clients: arrayOf(ClientProfileModel),
+          currentUser: swaggerRefFromModel(UserModel),
+          dailyInfo: swaggerRefFromDefinitionName('DailyInfo'),
+          enums: {
+            type: 'object',
+            properties: {
+              primary_work: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+              appointment_priority: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+      // ...definitionsForPostBodies(),
+    },
     securityDefinitions: {
       token: {
         type: 'apiKey',

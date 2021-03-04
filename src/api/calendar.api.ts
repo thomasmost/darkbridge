@@ -15,7 +15,7 @@ import {
   securityAll,
   operation,
 } from '@callteddy/koa-swagger-decorator';
-import { arrayOf, swaggerRefFromModel } from '../helpers/swagger.helper';
+import { swaggerRefFromDefinitionName } from '../helpers/swagger.helper';
 
 @prefix('/calendar')
 @securityAll([{ token: [] }])
@@ -29,17 +29,7 @@ export class CalendarAPI {
   @responses({
     200: {
       description: 'Success',
-      schema: {
-        type: 'object',
-        properties: {
-          appointments: arrayOf(AppointmentModel),
-          nextAppointment: swaggerRefFromModel(AppointmentModel),
-          summary: {
-            type: 'string',
-            example: `Looks like you don't have any appointments today. Time to kick back! (Alternatively, you can head over to your Calendar to add a new job)`,
-          },
-        },
-      },
+      schema: swaggerRefFromDefinitionName('DailyInfo'),
     },
     401: {
       description: 'Unauthorized',

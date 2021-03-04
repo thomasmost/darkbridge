@@ -13,65 +13,22 @@ import {
 } from '@callteddy/koa-swagger-decorator';
 
 import { assembleDailyInfo } from './calendar.api';
-import {
-  Appointment,
-  AppointmentModel,
-  AppointmentPriority,
-} from '../models/appointment.model';
-import {
-  ClientProfile,
-  ClientProfileModel,
-} from '../models/client_profile.model';
+import { Appointment, AppointmentPriority } from '../models/appointment.model';
+import { ClientProfile } from '../models/client_profile.model';
 import {
   ContractorProfile,
   PrimaryWork,
 } from '../models/contractor_profile.model';
-import { permissionUser, UserModel } from '../models/user.model';
+import { permissionUser } from '../models/user.model';
 import {
-  arrayOf,
   baseCodes,
-  swaggerRefFromModel,
+  swaggerRefFromDefinitionName,
 } from '../helpers/swagger.helper';
 
 const omniResponsesV0 = {
   200: {
     description: 'Success',
-    schema: {
-      type: 'object',
-      properties: {
-        allAppointmentsWithinMonth: arrayOf(AppointmentModel),
-        clients: arrayOf(ClientProfileModel),
-        currentUser: swaggerRefFromModel(UserModel),
-        dailyInfo: {
-          type: 'object',
-          properties: {
-            appointments: arrayOf(AppointmentModel),
-            nextAppointment: swaggerRefFromModel(AppointmentModel),
-            summary: {
-              type: 'string',
-              example: `Looks like you don't have any appointments today. Time to kick back! (Alternatively, you can head over to your Calendar to add a new job)`,
-            },
-          },
-        },
-        enums: {
-          type: 'object',
-          properties: {
-            primary_work: {
-              type: 'array',
-              items: {
-                type: 'string',
-              },
-            },
-            appointment_priority: {
-              type: 'array',
-              items: {
-                type: 'string',
-              },
-            },
-          },
-        },
-      },
-    },
+    schema: swaggerRefFromDefinitionName('OmniResponseV0'),
   },
   ...baseCodes([401]),
 };
