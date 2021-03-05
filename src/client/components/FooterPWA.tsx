@@ -31,11 +31,11 @@ const StyledLink = styled(Link)`
 export const FooterPWA: React.FC = () => {
   return (
     <PWAFooter>
-      <StyledLink to="/">
-        <Icon name="Home" />
-      </StyledLink>
       <StyledLink to="/calendar">
         <Icon name="Calendar" />
+      </StyledLink>
+      <StyledLink to="/">
+        <Icon name="Home" />
       </StyledLink>
       <StyledLink to="/settings">
         <Icon name="Setting" />

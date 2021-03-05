@@ -48,8 +48,8 @@ const Address = styled.div`
 
 const StyledLink = styled(Link)`
   background-color: white;
+  color: ${theme.buttonColorActive};
   border-radius: 20px;
-  color: black;
   display: block;
   line-height: 40px;
   padding: 0 20px;

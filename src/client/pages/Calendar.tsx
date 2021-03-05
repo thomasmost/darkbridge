@@ -1,7 +1,8 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from '@reach/router';
 import { startOfDay } from 'date-fns';
 import styled from '@emotion/styled';
+import Accordion from '@material-ui/core/Accordion';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { AppointmentListItem } from '../components/AppointmentListItem';
 import { DateTimeHelper } from '../../helpers/datetime.helper';
@@ -27,10 +28,18 @@ const CalendarHeader = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 15px 20px;
+  cursor: pointer;
+  * {
+    cursor: pointer;
+  }
+  span {
+    color: ${theme.lightIconColor};
+  }
 `;
 
 const Count = styled.label`
   color: ${theme.passiveLinkColor};
+  margin-right: 10px;
 `;
 
 const mapAppointmentsToDays = (appointments: AppointmentAttributes[]) => {
@@ -45,22 +54,27 @@ const mapAppointmentsToDays = (appointments: AppointmentAttributes[]) => {
   return byDay;
 };
 
-const renderDay = (
-  headerUnixStr: string,
-  appointments: AppointmentAttributes[],
-) => {
+const CalendarDay: React.FC<{
+  headerUnixStr: string;
+  appointments: AppointmentAttributes[];
+}> = ({ headerUnixStr, appointments }) => {
+  const isToday = headerUnixStr === startOfDay(new Date()).valueOf().toString();
+  const [expanded, setExpanded] = useState<boolean>(isToday);
   return (
-    <div>
-      <CalendarHeader>
+    <Accordion expanded={expanded}>
+      <CalendarHeader onClick={() => setExpanded(!expanded)}>
         <label>
           {DateTimeHelper.formatForDayHeader(new Date(parseInt(headerUnixStr)))}
         </label>
-        <Count>{appointments.length} Appointments</Count>
+        <div>
+          <Count>{appointments.length} Appointments</Count>
+          <Icon name={expanded ? 'Arrow-Up-2' : 'Arrow-Down-2'} />
+        </div>
       </CalendarHeader>
       {appointments?.map((appointment) => (
         <AppointmentListItem key={appointment.id} appointment={appointment} />
       ))}
-    </div>
+    </Accordion>
   );
 };
 
@@ -93,7 +107,9 @@ export const Calendar: React.FC<RouteComponentProps> = () => {
         </StyledLink>
       </FlexColumns>
       <Spacer />
-      {days?.map((day) => renderDay(day, byDay[day]))}
+      {days?.map((day) => (
+        <CalendarDay key={day} headerUnixStr={day} appointments={byDay[day]} />
+      ))}
     </div>
   );
 };

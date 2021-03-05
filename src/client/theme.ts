@@ -39,6 +39,7 @@ export const theme = {
   pageHeaderColor: darkGray,
   passiveLinkColor: teddyBlueLight,
   subheaderTextColor: eggshellGray,
+  lightIconColor: mediumGray,
   textColor: charcoal,
   upvoteColor: green,
   warningColor: red,
