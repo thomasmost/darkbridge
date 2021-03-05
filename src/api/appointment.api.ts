@@ -1,4 +1,3 @@
-import Koa from 'koa';
 import {
   Appointment,
   AppointmentModel,
@@ -30,10 +29,7 @@ import {
 } from '../helpers/swagger.helper';
 import { createAppointmentForClient } from '../helpers/appointment.helper';
 import { ValidationError } from '../helpers/error.helper';
-import {
-  AppointmentAction,
-  AppointmentActivity,
-} from '../models/appointment_activity.model';
+import { AppointmentActivity } from '../models/appointment_activity.model';
 
 const postBodyParams = {
   client_profile_id: {

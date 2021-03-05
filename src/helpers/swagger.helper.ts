@@ -1,6 +1,5 @@
 import { Model, ModelAttributeColumnOptions } from 'sequelize';
 import { RelationAttribute } from '../models/types';
-import { DateTimeHelper } from './datetime.helper';
 
 type SwaggerProperty = {
   type?: 'string' | 'integer' | 'object';
@@ -126,7 +125,7 @@ export function definitionsFromModels(models: Model[]) {
 
 // This function post-processes the generated swagger-json to move
 // any 'inline' POST body parameter schemas into named definitions
-// eslint-disable-next-line sonarjs/cognitive-complexity
+// eslint-disable-next-line sonarjs/cognitive-complexity, @typescript-eslint/no-explicit-any
 export function moveInlinePostBodiesToDefinitions(swaggerJson: any) {
   const { paths } = swaggerJson;
   const pathKeys = Object.keys(paths);

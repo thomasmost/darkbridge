@@ -1,5 +1,5 @@
 import { endOfDay, format, startOfDay } from 'date-fns';
-import { Appointment, AppointmentModel } from '../models/appointment.model';
+import { Appointment } from '../models/appointment.model';
 import { TeddyRequestContext } from './types';
 import {
   ClientProfile,
