@@ -155,7 +155,11 @@ export function moveInlinePostBodiesToDefinitions(swaggerJson: any) {
           }
         }
         postBodyDefinitionName += 'PostBody';
-        const postBody = parameter.schema;
+        if (parameter.schema.$ref) {
+          // Oop, looks like we've already post-processed this json and it's been cached.
+          continue;
+        }
+        const postBody = { ...parameter.schema };
         swaggerJson.definitions[postBodyDefinitionName] = postBody;
         parameter.schema = { $ref: '#/definitions/' + postBodyDefinitionName };
       }
