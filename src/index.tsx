@@ -66,7 +66,13 @@ app.use(async (ctx, next) => {
 });
 
 app.use(async (ctx: Koa.ParameterizedContext & UserAgentContext, next) => {
-  const isMobile = ctx.userAgent.isMobile;
+  const isBrowser =
+    ctx.userAgent.isChrome ||
+    ctx.userAgent.isEdge ||
+    ctx.userAgent.isFirefox ||
+    ctx.userAgent.isIE ||
+    ctx.userAgent.isSafari;
+  const isMobile = ctx.userAgent.isMobile && !isBrowser;
   const tokenId = isMobile
     ? tokenFromAuthorizationHeader(ctx)
     : tokenFromCookies(ctx);
