@@ -103,7 +103,8 @@ create table `appointment_activity` (
   created_at BIGINT NOT NULL,
   acting_user_id VARCHAR(255) NOT NULL,
   appointment_id VARCHAR(255) NOT NULL,
-  action VARCHAR(255) NOT NULL
+  action VARCHAR(255) NOT NULL,
+  note VARCHAR(255) NOT NULL DEFAULT ''
 );
 
 create table `client_profile` (
