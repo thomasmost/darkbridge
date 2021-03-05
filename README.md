@@ -59,8 +59,8 @@ A brief list of development conventions for new contributors.
 - :beetle: _beetle_ bug fixes
 - :pancakes: _pancakes_ for SQL schema changes
 - :calendar: _calendar_ relating to the calendar feature of the application
-- :hammer: _hammer_ I typically use this for configuration/build changes, erego...
-- :bear: _bear_ for a Smart*Bear* for Swagger docs (had to)
+- :hammer: _hammer_ I typically use this for configuration/build changes
+- :bear: _bear_ a Smart*Bear* for Swagger docs (had to)
 
 ## Next Steps
 
@@ -81,14 +81,3 @@ For a more detailed breakdown of the AWS resources required to make this work, s
 The application is deployed by GitHub to AWS Fargate, and currently uses RDS for its database. We'll likely use S3 in the near future.
 
 For details see [Infrastructure.md](/docs/Infrastructure.md).
-
-# Todos
-
-- [x] ~Connecting to RDS~
-- [x] ~Allow attaching to the server process for debugging~
-- [x] ~Optional connecting to Mailgun~
-- [x] ~Continuous integration tests run on push~
-- [x] ~Use the image output from the staging deploy for the prod deploy~
-- [ ] Connecting to S3
-- [ ] Sourcemaps for production error monitoring
-- [ ] Debugging by attaching to the existing process needs to be more reliable
