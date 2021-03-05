@@ -6,7 +6,7 @@ export const Input = styled.input`
   box-sizing: border-box;
   display: block;
   margin-bottom: 30px;
-  padding: 10px 20px;
+  padding: 12px 20px 13px;
   width: 100%;
   background-color: ${theme.inputBackgroundColor};
 `;

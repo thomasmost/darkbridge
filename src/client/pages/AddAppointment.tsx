@@ -3,6 +3,7 @@ import { RouteComponentProps, useNavigate } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import Accordion from '@material-ui/core/Accordion';
 import {
   AppointmentAttributes,
   IAppointmentPostBody,
@@ -46,6 +47,14 @@ const priorityOptions = [
   },
 ];
 
+const StyledAccordion = styled(Accordion)`
+  box-shadow: none !important;
+  &:before {
+    background-color: none !important;
+    height: 0 !important;
+  }
+`;
+
 const StyledPicker = styled(DateTimePicker)`
   div {
     input {
@@ -59,6 +68,15 @@ const StyledPicker = styled(DateTimePicker)`
     }
     min-width: 240px;
   }
+`;
+
+const InfoBlock = styled.div`
+  border-radius: 10px;
+  background-color: ${theme.inputBackgroundColor}; //#daedfd;
+  color: ${theme.applicationTextColor};
+  padding: 10px 20px;
+  margin: 10px 0 20px;
+  line-height: 1.5em;
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -109,8 +127,13 @@ const loadOptions = async (name: string) => {
   return results;
 };
 
+//eslint-disable-next-line max-lines-per-function
 export const AddAppointment: React.FC<RouteComponentProps> = () => {
   const [selectedDate, setDate] = useState(new Date());
+  const [
+    selectedClient,
+    setSelectedClient,
+  ] = useState<ClientProfileAttributes | null>(null);
   const navigate = useNavigate();
   const { register, handleSubmit, setValue } = useForm<IAppointmentPostBody>();
   useEffect(() => {
@@ -161,8 +184,25 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
               return;
             }
             setValue('client_profile_id', selection?.id);
+            setSelectedClient(selection);
           }}
         />
+        <StyledAccordion expanded={Boolean(selectedClient)}>
+          <div />
+          <Label>Address</Label>
+          <InfoBlock>
+            <div>{selectedClient?.address_street}</div>
+            <div>
+              {selectedClient?.address_city}, {selectedClient?.address_state}{' '}
+              {selectedClient?.address_postal_code}
+            </div>
+          </InfoBlock>
+          <Label>Contact</Label>
+          <InfoBlock>
+            <div>{selectedClient?.phone}</div>
+            <div>{selectedClient?.email}</div>
+          </InfoBlock>
+        </StyledAccordion>
         <div>
           <Label>Summary</Label>
           <Input
