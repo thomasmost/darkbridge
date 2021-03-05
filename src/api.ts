@@ -11,8 +11,8 @@ import { TeddyRequestContext } from './api/types';
 import { OmniAPI } from './api/omni.api';
 import {
   arrayOf,
-  definitionsForPostBodies,
   definitionsFromModels,
+  moveInlinePostBodiesToDefinitions,
   swaggerRefFromDefinitionName,
   swaggerRefFromModel,
 } from './helpers/swagger.helper';
@@ -36,8 +36,16 @@ const protectDeveloperDocs = async (
   next();
 };
 
+const postProcessJson = async (
+  ctx: Koa.ParameterizedContext,
+  next: Koa.Next,
+) => {
+  next();
+  ctx.body = moveInlinePostBodiesToDefinitions(ctx.body);
+};
+
 api.use('/swagger-html', protectDeveloperDocs);
-api.use('/swagger-json', protectDeveloperDocs);
+api.use('/swagger-json', protectDeveloperDocs, postProcessJson);
 
 api.swagger({
   title: 'Teddy Internal API',
@@ -106,7 +114,6 @@ api.swagger({
           },
         },
       },
-      // ...definitionsForPostBodies(),
     },
     securityDefinitions: {
       token: {

@@ -124,65 +124,43 @@ export function definitionsFromModels(models: Model[]) {
   return definitions;
 }
 
-export function definitionsForPostBodies() {
-  return {
-    RegistrationBody: {
-      type: 'object',
-      properties: {
-        email: {
-          type: 'string',
-        },
-        password: {
-          type: 'string',
-        },
-        confirm_password: {
-          type: 'string',
-        },
-      },
-    },
-    LoginBody: {
-      type: 'object',
-      properties: {
-        email: {
-          type: 'string',
-        },
-        password: {
-          type: 'string',
-        },
-      },
-    },
-    AppointmentCreateBody: {
-      type: 'object',
-      properties: {
-        client_profile_id: {
-          type: 'string',
-          required: true,
-          description:
-            'the id of the ClientProfile associated with this appointment',
-        },
-        datetime_local: {
-          type: 'string',
-          required: true,
-          description:
-            "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          example: DateTimeHelper.formatToPureDateTime(new Date()),
-        },
-        duration_minutes: {
-          type: 'number',
-          required: true,
-          description: 'the length of the appointment',
-        },
-        summary: {
-          type: 'string',
-          required: true,
-          description: 'short description of the appointment',
-        },
-        priority: {
-          type: 'string',
-          required: true,
-          description: 'The appointment priority, from P0 to P3',
-        },
-      },
-    },
-  };
+// This function post-processes the generated swagger-json to move
+// any 'inline' POST body parameter schemas into named definitions
+// eslint-disable-next-line sonarjs/cognitive-complexity
+export function moveInlinePostBodiesToDefinitions(swaggerJson: any) {
+  const { paths } = swaggerJson;
+  const pathKeys = Object.keys(paths);
+  for (const pathKey of pathKeys) {
+    const path = paths[pathKey];
+    if (!path.post) {
+      continue;
+    }
+    const postConfig = path.post;
+    const { parameters } = postConfig;
+    if (!parameters) {
+      continue;
+    }
+    for (const parameter of parameters) {
+      if (parameter.in === 'body') {
+        const pathParts = pathKey.split('/').reduce((flatParts, currentStr) => {
+          currentStr.split('_').forEach((item) => flatParts.push(item));
+          return flatParts;
+        }, [] as string[]);
+        let postBodyDefinitionName = '';
+        for (const part of pathParts) {
+          if (part === 'api') {
+            continue;
+          }
+          if (part.length) {
+            postBodyDefinitionName += part.replace(/^./, part[0].toUpperCase());
+          }
+        }
+        postBodyDefinitionName += 'PostBody';
+        const postBody = parameter.schema;
+        swaggerJson.definitions[postBodyDefinitionName] = postBody;
+        parameter.schema = { $ref: '#/definitions/' + postBodyDefinitionName };
+      }
+    }
+  }
+  return swaggerJson;
 }
