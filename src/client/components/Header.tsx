@@ -33,6 +33,7 @@ const StyledHeader = styled.header`
   color: ${theme.headerTextColor};
   font-size: 1.2em;
   width: 100%;
+  z-index: 1;
 `;
 
 const HeaderContents = styled.div`

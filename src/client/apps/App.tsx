@@ -49,17 +49,20 @@ const App = () => {
 
   console.log('re-rendering full app');
   const Main = styled.main`
-    color: ${theme.applicationTextColor};
     background-color: ${theme.applicationBackgroundColor};
-    height: calc(100vh - 80px);
-    width: 100%;
+    box-sizing: border-box;
+    color: ${theme.applicationTextColor};
     display: block;
-    padding: 25px 25px 0;
-    max-width: 1000px;
     margin: auto;
-    padding-bottom: ${shouldRenderPWA
-      ? `${theme.pwa_footer_height + 40}px`
-      : '0px'};
+    max-width: 1000px;
+    padding: 25px 25px 0px;
+    width: 100%;
+  `;
+  const ScrollWrapper = styled.div`
+    height: calc(100vh - ${shouldRenderPWA ? `157px` : '52px'});
+    max-height: calc(100vh- ${shouldRenderPWA ? `157px` : '52px'});
+    overflow: scroll;
+    width: 100%;
   `;
   return (
     <AuthProvider>
@@ -85,20 +88,22 @@ const App = () => {
               ) : (
                 <Header />
               )}
-              <Main>
-                <Router>
-                  <Home path="/" />
-                  <AppointmentPage path="appointment/:appointment_id" />
-                  <CancelAppointment path="cancel-appointment/:appointment_id" />
-                  <AddAppointment path="calendar/add-appointment" />
-                  <NextAppointment path="next-appointment" />
-                  <AddClientProfile path="add-client" />
-                  <ApiSandbox path="sandbox" />
-                  <Calendar path="calendar" />
-                  <Profile path="profile" />
-                  <Logout path="logout" />
-                </Router>
-              </Main>
+              <ScrollWrapper>
+                <Main>
+                  <Router>
+                    <Home path="/" />
+                    <AppointmentPage path="appointment/:appointment_id" />
+                    <CancelAppointment path="cancel-appointment/:appointment_id" />
+                    <AddAppointment path="calendar/add-appointment" />
+                    <NextAppointment path="next-appointment" />
+                    <AddClientProfile path="add-client" />
+                    <ApiSandbox path="sandbox" />
+                    <Calendar path="calendar" />
+                    <Profile path="profile" />
+                    <Logout path="logout" />
+                  </Router>
+                </Main>
+              </ScrollWrapper>
               {shouldRenderPWA && <FooterPWA />}
             </AppContainer>
           </MuiPickersUtilsProvider>

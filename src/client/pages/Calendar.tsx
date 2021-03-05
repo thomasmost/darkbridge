@@ -113,6 +113,7 @@ export const Calendar: React.FC<RouteComponentProps> = () => {
       {days?.map((day) => (
         <CalendarDay key={day} headerUnixStr={day} appointments={byDay[day]} />
       ))}
+      <Spacer />
     </div>
   );
 };
