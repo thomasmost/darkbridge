@@ -12,11 +12,11 @@ import {
 import { timezones_by_utc_string } from '../src/data/timezones';
 import { DateTimeHelper } from '../src/helpers/datetime.helper';
 import { createAppointmentForClient } from '../src/helpers/appointment.helper';
-import { format } from 'date-fns';
+import { format, startOfWeek } from 'date-fns';
 import { Appointment } from '../src/models/appointment.model';
 
 const CLIENTS_PER_USER = 10;
-const DAYS_OF_APPOINTMENTS = 7;
+const DAYS_OF_APPOINTMENTS = 30;
 
 const commonTimes = [
   '09:00:00',
@@ -139,10 +139,10 @@ async function createAppointmentsForUser(
   user_id: string,
   clients: ClientProfile[],
 ) {
-  const today = new Date();
+  const firstDate = startOfWeek(new Date());
   const promises = [];
   for (let i = 0; i < DAYS_OF_APPOINTMENTS; i++) {
-    const dateForAppointments = DateTimeHelper.add(today, i, 'days');
+    const dateForAppointments = DateTimeHelper.add(firstDate, i, 'days');
     const datePartial = format(dateForAppointments, 'yyyy-MM-dd');
     const promise = createAppointmentsForUserDay(user_id, clients, datePartial);
     promises.push(promise);
