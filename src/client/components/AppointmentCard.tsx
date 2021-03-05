@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { format } from 'date-fns';
 import React from 'react';
 import { AppointmentAttributes } from '../../models/appointment.model';
+import { Card } from '../elements/Card';
 import { Icon } from '../elements/Icon';
 import { theme } from '../theme';
 
@@ -29,15 +30,10 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   interactive,
   warning,
 }) => {
-  const Card = styled.div`
-    align-items: center;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 20px 20px ${theme.boxShadowColor};
+  const StyledCard = styled(Card)`
     cursor: ${interactive ? 'pointer' : 'default'};
     display: flex;
     justify-content: space-between;
-    padding: 20px;
   `;
 
   const CardInfo = styled.div`
@@ -50,7 +46,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   const userOffset = new Date().getTimezoneOffset();
   const showTimezone = userOffset !== appointment.timezone_offset;
   return (
-    <Card>
+    <StyledCard>
       <div>
         <div style={{ marginBottom: '20px' }}>
           <CardHeading>
@@ -96,6 +92,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           <Icon name="Arrow-Right-2" />
         </CardArrow>
       )}
-    </Card>
+    </StyledCard>
   );
 };

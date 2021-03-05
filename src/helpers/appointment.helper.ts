@@ -71,6 +71,7 @@ export async function getConflictingAppointments(
 ) {
   return Appointment.findAll({
     where: {
+      status: 'scheduled',
       service_provider_user_id,
       [Op.or]: [
         {

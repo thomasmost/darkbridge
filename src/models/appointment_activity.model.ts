@@ -16,6 +16,7 @@ interface AppointmentActivityAttributes {
   acting_user_id: string;
   appointment_id: string;
   action: keyof typeof AppointmentAction;
+  note: string;
 }
 
 // Some attributes are optional in `AppointmentActivity.build` and `AppointmentActivity.create` calls
@@ -34,6 +35,7 @@ export class AppointmentActivity
   public acting_user_id!: string;
   public appointment_id!: string;
   public action!: keyof typeof AppointmentAction;
+  public note!: string;
 
   // timestamps!
   public readonly created_at!: number;
@@ -69,6 +71,9 @@ AppointmentActivity.init(
       type: DataTypes.ENUM,
       allowNull: false,
       values: Object.values(AppointmentAction),
+    },
+    note: {
+      type: DataTypes.STRING,
     },
   },
   {

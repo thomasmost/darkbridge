@@ -45,6 +45,9 @@ const Count = styled.label`
 const mapAppointmentsToDays = (appointments: AppointmentAttributes[]) => {
   const byDay: Record<string, AppointmentAttributes[]> = {};
   for (const appointment of appointments) {
+    if (appointment.status === 'canceled') {
+      continue;
+    }
     const dayUnix = startOfDay(new Date(appointment.datetime_utc)).valueOf();
     if (!byDay[dayUnix]) {
       byDay[dayUnix] = [];

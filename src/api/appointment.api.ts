@@ -30,6 +30,10 @@ import {
 } from '../helpers/swagger.helper';
 import { createAppointmentForClient } from '../helpers/appointment.helper';
 import { ValidationError } from '../helpers/error.helper';
+import {
+  AppointmentAction,
+  AppointmentActivity,
+} from '../models/appointment_activity.model';
 
 const postBodyParams = {
   client_profile_id: {
@@ -196,6 +200,13 @@ export class AppointmentAPI {
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
+  @body({
+    cancelation_reason: {
+      type: 'string',
+      required: true,
+      description: 'free text explaining the cancelation',
+    },
+  })
   @summary('cancel an appointment by the service provider')
   @description(
     "For now, only service providers can cancel their appointments. We'll need to support client cancellations soon enough",
@@ -209,6 +220,7 @@ export class AppointmentAPI {
     const user = ctx.user;
 
     const { id } = ctx.validatedParams;
+    const { cancelation_reason } = ctx.request.body;
     const appointment = await Appointment.findByPk(id);
 
     // If either the appointment doesn't exist or doesn't belong to the logged in user, 404
@@ -223,6 +235,12 @@ export class AppointmentAPI {
     }
     appointment.status = 'canceled';
     await appointment.save();
+    await AppointmentActivity.create({
+      appointment_id: id,
+      acting_user_id: user.id,
+      action: 'canceled',
+      note: cancelation_reason,
+    });
     ctx.status = 204;
   }
 

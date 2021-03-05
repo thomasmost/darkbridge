@@ -53,6 +53,10 @@ export const renderCancelCard = (appointment_id: string) => (
   </Link>
 );
 
+export const renderCanceledCard = () => (
+  <Card>This appointment has been canceled.</Card>
+);
+
 export const renderCustomerInfo = (
   appointment: AppointmentAttributes | null,
 ) => {
@@ -74,11 +78,12 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
   appointment,
   header,
 }) => {
+  const isCanceled = appointment.status === 'canceled';
   return (
     <div>
       <HeadingText>{header}</HeadingText>
       {renderAppointmentInfo(appointment)}
-      {renderCancelCard(appointment.id)}
+      {isCanceled ? renderCanceledCard() : renderCancelCard(appointment.id)}
       {renderCustomerInfo(appointment)}
     </div>
   );
