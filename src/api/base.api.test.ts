@@ -33,6 +33,7 @@ describe('Base Api', () => {
   test('a generated getById function should populate the context appropriately', async (done) => {
     const activity = await AppointmentActivity.create({
       action: 'canceled',
+      note: 'running late',
       acting_user_id: testUserId,
       appointment_id: 'test_appointment_id',
     });
