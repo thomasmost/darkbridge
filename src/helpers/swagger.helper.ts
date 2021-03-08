@@ -123,46 +123,66 @@ export function definitionsFromModels(models: Model[]) {
   return definitions;
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
+function assignSchemaByMethod(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  swaggerJson: any,
+  pathKey: string,
+  method: 'post' | 'put',
+) {
+  const { paths } = swaggerJson;
+  const path = paths[pathKey];
+  const postConfig = path[method];
+  const { parameters } = postConfig;
+  if (!parameters) {
+    return;
+  }
+  for (const parameter of parameters) {
+    if (parameter.in === 'body') {
+      const pathParts = pathKey
+        .split('/')
+        .reduce((flatParts, currentStr) => {
+          currentStr.split('_').forEach((item) => flatParts.push(item));
+          return flatParts;
+        }, [] as string[])
+        .reduce((flatParts, currentStr) => {
+          currentStr.split(/{.*}/).forEach((item) => flatParts.push(item));
+          return flatParts;
+        }, [] as string[]);
+      let postBodyDefinitionName = '';
+      for (const part of pathParts) {
+        if (part === 'api') {
+          continue;
+        }
+        if (part.length) {
+          postBodyDefinitionName += part.replace(/^./, part[0].toUpperCase());
+        }
+      }
+      postBodyDefinitionName += method === 'post' ? 'PostBody' : 'PutBody';
+      if (parameter.schema.$ref) {
+        // Oop, looks like we've already post-processed this json and it's been cached.
+        continue;
+      }
+      const postBody = { ...parameter.schema };
+      swaggerJson.definitions[postBodyDefinitionName] = postBody;
+      parameter.schema = { $ref: '#/definitions/' + postBodyDefinitionName };
+    }
+  }
+}
+
 // This function post-processes the generated swagger-json to move
 // any 'inline' POST body parameter schemas into named definitions
-// eslint-disable-next-line sonarjs/cognitive-complexity, @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function moveInlinePostBodiesToDefinitions(swaggerJson: any) {
   const { paths } = swaggerJson;
   const pathKeys = Object.keys(paths);
   for (const pathKey of pathKeys) {
     const path = paths[pathKey];
-    if (!path.post) {
-      continue;
+    if (path.post) {
+      assignSchemaByMethod(swaggerJson, pathKey, 'post');
     }
-    const postConfig = path.post;
-    const { parameters } = postConfig;
-    if (!parameters) {
-      continue;
-    }
-    for (const parameter of parameters) {
-      if (parameter.in === 'body') {
-        const pathParts = pathKey.split('/').reduce((flatParts, currentStr) => {
-          currentStr.split('_').forEach((item) => flatParts.push(item));
-          return flatParts;
-        }, [] as string[]);
-        let postBodyDefinitionName = '';
-        for (const part of pathParts) {
-          if (part === 'api') {
-            continue;
-          }
-          if (part.length) {
-            postBodyDefinitionName += part.replace(/^./, part[0].toUpperCase());
-          }
-        }
-        postBodyDefinitionName += 'PostBody';
-        if (parameter.schema.$ref) {
-          // Oop, looks like we've already post-processed this json and it's been cached.
-          continue;
-        }
-        const postBody = { ...parameter.schema };
-        swaggerJson.definitions[postBodyDefinitionName] = postBody;
-        parameter.schema = { $ref: '#/definitions/' + postBodyDefinitionName };
-      }
+    if (path.put) {
+      assignSchemaByMethod(swaggerJson, pathKey, 'put');
     }
   }
   return swaggerJson;
