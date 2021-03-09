@@ -36,7 +36,7 @@ import OnboardingApp from './client/apps/OnboardingApp';
 
 const app = new Koa();
 app.use(userAgent);
-app.use(cors());
+app.use(cors({ credentials: true }));
 const router = new Router();
 
 // this route needs to precede our wildcard route so that we can correctly get the application bundle
