@@ -1,4 +1,5 @@
 import bodyParser from 'koa-bodyparser';
+import cors from '@koa/cors';
 import dotenv from 'dotenv';
 dotenv.config();
 import fs from 'fs';
@@ -35,6 +36,7 @@ import OnboardingApp from './client/apps/OnboardingApp';
 
 const app = new Koa();
 app.use(userAgent);
+app.use(cors());
 const router = new Router();
 
 // this route needs to precede our wildcard route so that we can correctly get the application bundle
