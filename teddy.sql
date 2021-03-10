@@ -64,8 +64,10 @@ create table `appointment` (
   address_postal_code VARCHAR(255) NOT NULL,
   timezone VARCHAR(255) NOT NULL,
   timezone_offset TINYINT NOT NULL,
+  coordinates POINT NULL,
   rating_of_service TINYINT NULL,
   rating_of_client TINYINT NULL,
+  -- SPATIAL INDEX `SPATIAL` (`coordinates`),
   INDEX(service_provider_user_id)
 );
 
@@ -121,7 +123,9 @@ create table `client_profile` (
   address_postal_code VARCHAR(255) NOT NULL,
   timezone VARCHAR(255) NOT NULL,
   timezone_offset TINYINT NOT NULL,
+  coordinates POINT NULL,
   stripe_customer_id VARCHAR(255) NULL,
+  -- SPATIAL INDEX `SPATIAL` (`coordinates`),
   UNIQUE KEY(user_id)
 );
 
