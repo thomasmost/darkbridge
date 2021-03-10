@@ -20,6 +20,8 @@ import { UserModel } from './models/user.model';
 import { ClientProfileModel } from './models/client_profile.model';
 import { ContractorProfileModel } from './models/contractor_profile.model';
 import { AppointmentModel } from './models/appointment.model';
+import { UserNotificationSettingModel } from './models/user_notification_setting.model';
+import { UserNotificationSettingAPI } from './api/user_notification_setting.api';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -67,6 +69,7 @@ api.swagger({
         ClientProfileModel,
         ContractorProfileModel,
         UserModel,
+        UserNotificationSettingModel,
       ]),
       AuthenticationResult: {
         type: 'object',
@@ -126,6 +129,7 @@ api.swagger({
 });
 
 api.map(UserAPI, {});
+api.map(UserNotificationSettingAPI, {});
 api.map(AppointmentAPI, {});
 api.map(CalendarAPI, {});
 api.map(ContractorProfileAPI, {});
