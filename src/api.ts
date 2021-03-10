@@ -4,7 +4,7 @@ import { AppointmentAPI } from './api/appointment.api';
 import { ContractorProfileAPI } from './api/contractor_profile.api';
 import { UserAPI } from './api/user.api';
 import { ClientProfileAPI } from './api/client_profile.api';
-import { getTimeZone } from './helpers/timezone.helper';
+import { getTimeZone } from './helpers/location.helper';
 import { SwaggerRouter } from '@callteddy/koa-swagger-decorator';
 import { CalendarAPI } from './api/calendar.api';
 import { TeddyRequestContext } from './api/types';

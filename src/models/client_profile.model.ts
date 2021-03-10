@@ -17,12 +17,13 @@ export interface ClientProfileAttributes {
   address_postal_code: string;
   timezone: string;
   timezone_offset: number;
+  coordinates: any;
 }
 
 // Some attributes are optional in `ClientProfile.build` and `ClientProfile.create` calls
 export type ClientProfileCreationAttributes = Optional<
   ClientProfileAttributes,
-  'id' | 'created_at'
+  'id' | 'created_at' | 'coordinates'
 >;
 export class ClientProfile
   extends Model<ClientProfileAttributes, ClientProfileCreationAttributes>
@@ -38,6 +39,7 @@ export class ClientProfile
   public address_postal_code!: string;
   public timezone!: string;
   public timezone_offset!: number;
+  public coordinates!: any;
 
   // timestamps!
   public readonly created_at!: number;
@@ -100,6 +102,12 @@ export const ClientProfileModel = ClientProfile.init(
     timezone_offset: {
       type: DataTypes.NUMBER,
       allowNull: false,
+    },
+    // This should not be allowed to be null, but because of this bug: https://github.com/sequelize/sequelize/issues/13086
+    // we have to set it separately with a Sequelize query literal.
+    coordinates: {
+      type: DataTypes.GEOGRAPHY('POINT', 4326),
+      allowNull: true,
     },
   },
   {

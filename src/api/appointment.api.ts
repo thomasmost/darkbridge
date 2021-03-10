@@ -191,6 +191,44 @@ export class AppointmentAPI {
     }
   }
 
+  @request('put', '/{id}/start')
+  @operation('apiAppointment_start')
+  @path({
+    id: { type: 'string', required: true, description: 'id' },
+  })
+  @summary('cancel an appointment by the service provider')
+  @description('For now, only service providers can start their appointments.')
+  @responses(baseCodes([204, 401, 404, 405]))
+  public static async startAppointment(ctx: TeddyRequestContext) {
+    if (!ctx.user) {
+      ctx.status = 401;
+      return;
+    }
+    const user = ctx.user;
+
+    const { id } = ctx.validatedParams;
+    const appointment = await Appointment.findByPk(id);
+
+    // If either the appointment doesn't exist or doesn't belong to the logged in user, 404
+    if (!appointment || appointment.service_provider_user_id !== user.id) {
+      ctx.status = 404;
+      return;
+    }
+    if (appointment.status !== 'scheduled') {
+      ctx.status = 405;
+      ctx.body = `Appointments in state ${appointment.status} are not allowed to be started`;
+      return;
+    }
+    appointment.status = 'in_progress';
+    await appointment.save();
+    await AppointmentActivity.create({
+      appointment_id: id,
+      acting_user_id: user.id,
+      action: 'started',
+    });
+    ctx.status = 204;
+  }
+
   @request('put', '/{id}/cancel')
   @operation('apiAppointment_cancel')
   @path({

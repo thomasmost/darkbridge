@@ -13,6 +13,7 @@ import { RelationAttribute } from './types';
 export const AppointmentStatus = {
   requested: 'requested',
   scheduled: 'scheduled',
+  in_progress: 'in_progress',
   canceled: 'canceled',
   completed: 'completed',
 };
@@ -51,6 +52,7 @@ export interface AppointmentAttributes {
   address_postal_code: string;
   timezone: string;
   timezone_offset: number;
+  coordinates: any;
   timezone_friendly: string;
   duration_minutes: number;
   rating_of_service: number;
@@ -79,6 +81,7 @@ export type AppointmentCreationAttributes = Omit<
   | 'datetime_end_local'
   | 'duration_minutes'
   | 'timezone_friendly'
+  | 'coordinates'
 >;
 
 export class Appointment
@@ -100,6 +103,7 @@ export class Appointment
   public address_postal_code!: string;
   public timezone!: string;
   public timezone_offset!: number;
+  public coordinates!: any;
   public timezone_friendly!: string;
   public summary!: string;
   public notes: string;
@@ -197,6 +201,12 @@ export const AppointmentModel = Appointment.init(
     timezone_offset: {
       type: DataTypes.NUMBER,
       allowNull: false,
+    },
+    // This should not be allowed to be null, but because of this bug: https://github.com/sequelize/sequelize/issues/13086
+    // we have to set it separately with a Sequelize query literal.
+    coordinates: {
+      type: DataTypes.GEOGRAPHY('POINT', 4326),
+      allowNull: true,
     },
     timezone_friendly: {
       type: DataTypes.VIRTUAL,

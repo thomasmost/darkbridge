@@ -6,6 +6,7 @@ import { sequelize } from '../sequelize';
 export const AppointmentAction = {
   rescheduled: 'rescheduled',
   canceled: 'canceled',
+  started: 'started',
   edited: 'edited',
 };
 
@@ -22,7 +23,7 @@ interface AppointmentActivityAttributes {
 // Some attributes are optional in `AppointmentActivity.build` and `AppointmentActivity.create` calls
 type AppointmentActivityCreationAttributes = Optional<
   AppointmentActivityAttributes,
-  'id' | 'created_at'
+  'id' | 'created_at' | 'note'
 >;
 
 export class AppointmentActivity

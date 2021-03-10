@@ -12,6 +12,7 @@ import {
 import { timezones_by_utc_string } from '../src/data/timezones';
 import { DateTimeHelper } from '../src/helpers/datetime.helper';
 import { createAppointmentForClient } from '../src/helpers/appointment.helper';
+import { createClientProfileForServiceProvider } from '../src/helpers/client_profile.helper';
 import { format, startOfWeek } from 'date-fns';
 import { Appointment } from '../src/models/appointment.model';
 
@@ -113,24 +114,27 @@ async function createClients(created_by_user_id: string) {
     if (!static_timezone) {
       console.log('Could not find static timezone for ', timezone);
     }
-    const timezone_offset = static_timezone?.offset || 0;
+    // const timezone_offset = static_timezone?.offset || 0;
     const email = faker.internet.email();
     const full_name = faker.name.findName();
     const phone = faker.phone.phoneNumber();
-    const client_data: ClientProfileCreationAttributes = {
-      created_by_user_id,
-      email,
-      full_name,
-      phone,
-      timezone,
-      timezone_offset,
-      address_street: faker.address.streetAddress(),
-      address_city: faker.address.city(),
-      address_state: faker.address.state(),
-      address_postal_code: faker.address.zipCode(),
-    };
+    const address_street = faker.address.streetAddress();
+    const address_city = faker.address.city();
+    const address_state = faker.address.state();
+    const address_postal_code = faker.address.zipCode();
 
-    promises.push(ClientProfile.create(client_data));
+    promises.push(
+      createClientProfileForServiceProvider(
+        created_by_user_id,
+        email,
+        full_name,
+        phone,
+        address_street,
+        address_city,
+        address_state,
+        address_postal_code,
+      ),
+    );
   }
   return Promise.all(promises);
 }

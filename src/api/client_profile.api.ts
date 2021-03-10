@@ -18,7 +18,7 @@ import {
   ClientProfileCreationAttributes,
   ClientProfileModel,
 } from '../models/client_profile.model';
-import { getTimeZone } from '../helpers/timezone.helper';
+import { createClientProfileForServiceProvider } from '../helpers/client_profile.helper';
 import { arrayOf, swaggerRefFromModel } from '../helpers/swagger.helper';
 
 type BodyParameter = {
@@ -29,7 +29,12 @@ type BodyParameter = {
 const postParams: Record<
   keyof Omit<
     ClientProfileCreationAttributes,
-    'created_by_user_id' | 'timezone' | 'timezone_offset' | 'id' | 'created_at'
+    | 'created_by_user_id'
+    | 'coordinates'
+    | 'timezone'
+    | 'timezone_offset'
+    | 'id'
+    | 'created_at'
   >,
   BodyParameter
 > = {
@@ -110,23 +115,16 @@ export class ClientProfileAPI {
     }
     const created_by_user_id = user.id;
 
-    const { timezone, timezone_offset } = await getTimeZone(
-      address_city,
-      address_state,
-    );
-
-    const profile = await ClientProfile.create({
+    const profile = await createClientProfileForServiceProvider(
       created_by_user_id,
       email,
-      phone,
       full_name,
+      phone,
       address_street,
       address_city,
       address_state,
       address_postal_code,
-      timezone,
-      timezone_offset,
-    });
+    );
 
     ctx.status = 200;
     ctx.body = profile;

@@ -1,3 +1,4 @@
+import { sequelize } from '../sequelize';
 import { Op } from 'sequelize';
 import { Appointment, AppointmentPriority } from '../models/appointment.model';
 import { ClientProfile } from '../models/client_profile.model';
@@ -18,6 +19,7 @@ export const createAppointmentForClient = async (
   }
   const timezone = client_profile.timezone;
   const timezone_offset = client_profile.timezone_offset;
+  const coordinates = client_profile.coordinates;
 
   const datetime_utc = DateTimeHelper.toUTC(
     datetime_local,
@@ -48,7 +50,7 @@ export const createAppointmentForClient = async (
     throw new CollisionError('An existing appointment conflicts');
   }
 
-  return Appointment.create({
+  const appointment = await Appointment.create({
     client_profile_id,
     datetime_utc,
     datetime_end_utc,
@@ -62,6 +64,17 @@ export const createAppointmentForClient = async (
     timezone_offset,
     priority,
   });
+
+  console.log('HOLA!');
+  console.log(coordinates);
+  const [lat, lng] = coordinates.coordinates;
+
+  // Bec
+  await sequelize.query(
+    `update appointment set coordinates=ST_GeomFromText('POINT(${lat} ${lng})') WHERE id='${appointment.id}'`,
+  );
+
+  return Appointment.findByPk(appointment.id);
 };
 
 export async function getConflictingAppointments(
