@@ -23,7 +23,7 @@ const CancelCard = styled(Card)`
   display: flex;
   justify-content: space-between;
   padding: 20px;
-  margin-bottom: 50px;
+  margin: 50px 0;
   color: ${theme.warningColor};
 `;
 const StartCard = styled(Card)`
