@@ -153,3 +153,15 @@ create table `work_image` (
   url VARCHAR(255) NOT NULL,
   thumb_url VARCHAR(255) DEFAULT NULL
 );
+
+create table `user_notification_setting` (
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
+  created_at BIGINT NOT NULL,
+  updated_at BIGINT NOT NULL,
+  user_id VARCHAR(255) NOT NULL,
+  notification_id VARCHAR(255) NOT NULL,
+  email TINYINT NOT NULL,
+  push TINYINT NOT NULL,
+  text TINYINT NOT NULL,
+  UNIQUE KEY(user_id, notification_id)
+);
