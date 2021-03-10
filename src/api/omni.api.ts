@@ -24,6 +24,7 @@ import {
   baseCodes,
   swaggerRefFromDefinitionName,
 } from '../helpers/swagger.helper';
+import { NotificationSettingsHelper } from '../helpers/user_settings.helper';
 
 const omniResponsesV0 = {
   200: {
@@ -85,11 +86,13 @@ export class OmniAPI {
       dailyInfo,
       clients,
       currentUser,
+      userNotificationSettings,
     ] = await Promise.all([
       allAppointmentsWithinMonthPromise,
       assembleDailyInfo(user_id),
       profilesPromise,
       userWithProfilePromise,
+      NotificationSettingsHelper.getForUser(user.id),
     ]);
 
     const enums = {
@@ -101,6 +104,7 @@ export class OmniAPI {
       allAppointmentsWithinMonth,
       clients,
       currentUser,
+      userNotificationSettings,
       dailyInfo,
       enums,
     };

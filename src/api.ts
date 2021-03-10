@@ -97,6 +97,7 @@ api.swagger({
           allAppointmentsWithinMonth: arrayOf(AppointmentModel),
           clients: arrayOf(ClientProfileModel),
           currentUser: swaggerRefFromModel(UserModel),
+          userNotificationSettings: arrayOf(UserNotificationSettingModel),
           dailyInfo: swaggerRefFromDefinitionName('DailyInfo'),
           enums: {
             type: 'object',
