@@ -17,14 +17,12 @@ const Right = styled.span`
 `;
 
 const LoggedInHeader = styled.span`
-  padding: 0 10px;
-  margin-right: 10px;
+  font-size: 1.2em;
 `;
 
 const StyledHeader = styled.header`
   height: 50px;
   line-height: 50px;
-  padding: 0 20px;
   position: sticky;
   top: 0;
   left: 0;
@@ -39,6 +37,8 @@ const StyledHeader = styled.header`
 const HeaderContents = styled.div`
   max-width: 1000px;
   margin: auto;
+  padding: 0 25px;
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
 `;

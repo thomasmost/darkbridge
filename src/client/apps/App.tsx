@@ -24,6 +24,7 @@ import { HeaderPWA } from '../components/HeaderPWA';
 import { AppointmentPage } from '../pages/AppointmentPage';
 import { StateProvider } from '../StateProvider';
 import { CancelAppointment } from '../pages/CancelAppointment';
+import { JobFlow } from '../components/JobFlow';
 
 const muiTheme = createMuiTheme({
   palette: {
@@ -95,6 +96,7 @@ const App = () => {
                     <AppointmentPage path="appointment/:appointment_id" />
                     <CancelAppointment path="cancel-appointment/:appointment_id" />
                     <AddAppointment path="calendar/add-appointment" />
+                    <JobFlow path="job/:appointment_id/*" />
                     <NextAppointment path="next-appointment" />
                     <AddClientProfile path="add-client" />
                     <ApiSandbox path="sandbox" />

@@ -33,5 +33,18 @@ export const reducer = (
       appointments: action.data,
     };
   }
+  if (action.type === 'START_APPOINTMENT') {
+    const { appointment_id } = action.data;
+    const newAppointments = [...state.appointments];
+    for (const appointment of newAppointments) {
+      if (appointment.id === appointment_id) {
+        appointment.status = 'in_progress';
+      }
+    }
+    return {
+      ...state,
+      appointments: newAppointments,
+    };
+  }
   return state;
 };
