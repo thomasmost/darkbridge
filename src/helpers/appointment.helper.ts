@@ -65,8 +65,6 @@ export const createAppointmentForClient = async (
     priority,
   });
 
-  console.log('HOLA!');
-  console.log(coordinates);
   const [lat, lng] = coordinates.coordinates;
 
   // Bec

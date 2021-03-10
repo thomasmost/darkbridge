@@ -28,8 +28,6 @@ export const createClientProfileForServiceProvider = async (
     throw Error('Could not find this location, please try again later');
   }
 
-  console.log('nah we good');
-  console.log(location);
   // const coordinates = {
   //   type: 'Point',
   //   coordinates: [location.lat, location.lng],

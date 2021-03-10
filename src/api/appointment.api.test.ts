@@ -1,10 +1,26 @@
 import dotenv from 'dotenv';
-import { ParameterizedContext } from 'koa';
 dotenv.config();
+import { ParameterizedContext } from 'koa';
+import { createClientProfileForServiceProvider } from '../helpers/client_profile.helper';
 import { Appointment } from '../models/appointment.model';
 import { ClientProfile } from '../models/client_profile.model';
 import { sequelize } from '../sequelize';
 import { AppointmentAPI } from './appointment.api';
+
+jest.mock('../helpers/location.helper', () => ({
+  getTimeZone: () =>
+    Promise.resolve({
+      timezone: 'America/New_York',
+      timezone_offset: -5,
+    }),
+  getGeocodingForAddress: () =>
+    Promise.resolve({
+      location: {
+        lat: 47.6968933,
+        lng: -122.100652,
+      },
+    }),
+}));
 
 //eslint-disable-next-line max-lines-per-function
 describe('Appointment Api', () => {
@@ -12,20 +28,24 @@ describe('Appointment Api', () => {
   let profile: ClientProfile;
 
   beforeAll(async () => {
-    const profileAttributes = {
-      created_by_user_id: testUserId,
-      email: 'foo@bar.com',
-      full_name: 'foo',
-      phone: 'foo',
-      address_street: 'foo',
-      address_city: 'foo',
-      address_state: 'foo',
-      address_postal_code: 'foo',
-      timezone: 'foo',
-      timezone_offset: 2,
-    };
+    const email = 'foo@bar.com';
+    const full_name = 'foo';
+    const phone = 'foo';
+    const address_street = 'foo';
+    const address_city = 'foo';
+    const address_state = 'foo';
+    const address_postal_code = 'foo';
 
-    profile = await ClientProfile.create(profileAttributes);
+    profile = await createClientProfileForServiceProvider(
+      testUserId,
+      email,
+      full_name,
+      phone,
+      address_street,
+      address_city,
+      address_state,
+      address_postal_code,
+    );
 
     await Appointment.destroy({
       truncate: true,
