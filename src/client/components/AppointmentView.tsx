@@ -123,12 +123,12 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
   header,
 }) => {
   const dispatch = useContext(DispatchContext);
-  const startDate = new Date(appointment.datetime_utc);
-  const now = new Date();
+  // const startDate = new Date(appointment.datetime_utc);
+  // const now = new Date();
   const isCanceled = appointment.status === 'canceled';
-  const isStartable =
-    appointment.status === 'scheduled' &&
-    Math.abs(DateTimeHelper.differenceInMinutes(startDate, now)) < 12000;
+  const isStartable = false;
+  // appointment.status === 'scheduled' &&
+  // Math.abs(DateTimeHelper.differenceInMinutes(startDate, now)) < 12000;
   return (
     <div>
       <HeadingText>{header}</HeadingText>
