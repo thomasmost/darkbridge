@@ -68,16 +68,18 @@ app.use(async (ctx, next) => {
 });
 
 app.use(async (ctx: Koa.ParameterizedContext & UserAgentContext, next) => {
-  const isBrowser =
-    ctx.userAgent.isChrome ||
-    ctx.userAgent.isEdge ||
-    ctx.userAgent.isFirefox ||
-    ctx.userAgent.isIE ||
-    ctx.userAgent.isSafari;
-  const isMobile = ctx.userAgent.isMobile && !isBrowser;
-  const tokenId = isMobile
-    ? tokenFromAuthorizationHeader(ctx)
-    : tokenFromCookies(ctx);
+  // const isBrowser =
+  //   ctx.userAgent.isChrome ||
+  //   ctx.userAgent.isEdge ||
+  //   ctx.userAgent.isFirefox ||
+  //   ctx.userAgent.isIE ||
+  //   ctx.userAgent.isSafari;
+  // const isMobile = ctx.userAgent.isMobile && !isBrowser;
+  // const tokenId = isMobile
+  let tokenId = tokenFromAuthorizationHeader(ctx);
+  if (!tokenId) {
+    tokenId = tokenFromCookies(ctx);
+  }
   if (tokenId) {
     try {
       ctx.user = await consumeToken(tokenId);

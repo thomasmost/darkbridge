@@ -46,7 +46,8 @@ export function tokenFromAuthorizationHeader(ctx: Koa.ParameterizedContext) {
   const { headers } = ctx.request;
   const authHeader = headers['authorization'];
   if (!authHeader) {
-    throw new AuthenticationError('Missing Authorization Header');
+    return null;
+    // throw new AuthenticationError('Missing Authorization Header');
   }
   const bearerParts = authHeader.split(' ');
   if (
