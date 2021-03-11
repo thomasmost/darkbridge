@@ -1,10 +1,11 @@
-import { Model, ModelAttributeColumnOptions } from 'sequelize';
+import { DataTypes, Model, ModelAttributeColumnOptions } from 'sequelize';
 import { RelationAttribute } from '../models/types';
 
 type SwaggerProperty = {
   type?: 'string' | 'integer' | 'object';
   example?: string;
   format?: 'uuid' | 'email';
+  enum?: readonly string[];
 };
 
 export const arrayOf = (model: Model) => ({
@@ -36,6 +37,13 @@ export const swaggerPropertyFromAttribute = (
     return {
       type: 'string',
       format: 'uuid',
+    } as SwaggerProperty;
+  }
+  // Enums have to be handled as a special case, serializing the type with .toString() throws an error
+  if (attribute.type instanceof DataTypes.ENUM) {
+    return {
+      type: 'string',
+      enum: attribute.values,
     } as SwaggerProperty;
   }
   try {
