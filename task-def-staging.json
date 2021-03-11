@@ -55,14 +55,16 @@
         {
           "name": "IPGEOLOCATION_API_KEY",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_IPGEOLOCATION_API_KEY-F3rxGf"
+        },
+        {
+          "name": "GOOGLE_CLOUD_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_GOOGLE_CLOUD_API_KEY-eU5VSu"
         }
       ]
     }
   ],
   "executionRoleArn": "arn:aws:iam::786903541329:role/ecsTaskExecutionRole",
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
+  "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512"
 }
