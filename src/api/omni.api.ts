@@ -56,11 +56,13 @@ export class OmniAPI {
 
     const allAppointmentsWithinMonthPromise = Appointment.findAll({
       where: {
+        service_provider_user_id: user_id,
         datetime_utc: {
           [Op.gte]: subMonths(new Date(), 1),
           [Op.lte]: addMonths(new Date(), 1),
         },
       },
+      order: [['datetime_utc', 'ASC']],
     });
 
     const profilesPromise = ClientProfile.findAll({
