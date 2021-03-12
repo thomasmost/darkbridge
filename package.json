@@ -8,7 +8,7 @@
     "dev": "pm2 start pm2.dev.yml",
     "test": "jest",
     "setup_db": "bash initialize_db.sh",
-    "seed_data": "./node_modules/.bin/ts-node dev/seedData.ts",
+    "seed": "./node_modules/.bin/ts-node dev/seedData.ts",
     "lint": "eslint src --ext .ts,.tsx"
   },
   "repository": {
