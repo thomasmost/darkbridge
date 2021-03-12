@@ -3,12 +3,12 @@ import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
 
-export const AppointmentAction = {
-  rescheduled: 'rescheduled',
-  canceled: 'canceled',
-  started: 'started',
-  edited: 'edited',
-};
+export enum AppointmentAction {
+  rescheduled = 'rescheduled',
+  canceled = 'canceled',
+  started = 'started',
+  edited = 'edited',
+}
 
 // These are all the attributes in the AppointmentActivity model
 interface AppointmentActivityAttributes {

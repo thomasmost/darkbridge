@@ -10,20 +10,20 @@ import {
 import { DateTimeHelper } from '../helpers/datetime.helper';
 import { RelationAttribute } from './types';
 
-export const AppointmentStatus = {
-  requested: 'requested',
-  scheduled: 'scheduled',
-  in_progress: 'in_progress',
-  canceled: 'canceled',
-  completed: 'completed',
-};
+export enum AppointmentStatus {
+  requested = 'requested',
+  scheduled = 'scheduled',
+  in_progress = 'in_progress',
+  canceled = 'canceled',
+  completed = 'completed',
+}
 
-export const AppointmentPriority = {
-  P0: 'P0',
-  P1: 'P1',
-  P2: 'P2',
-  P3: 'P3',
-};
+export enum AppointmentPriority {
+  P0 = 'P0',
+  P1 = 'P1',
+  P2 = 'P2',
+  P3 = 'P3',
+}
 
 // These are all the attributes in the Appointment model
 export interface AppointmentAttributes {
