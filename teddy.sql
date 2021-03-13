@@ -51,6 +51,7 @@ create table `appointment` (
   created_at BIGINT NOT NULL,
   service_provider_user_id VARCHAR(255) NOT NULL,
   client_profile_id VARCHAR(255) NOT NULL,
+  parent_appointment_id VARCHAR(255) NULL,
   status VARCHAR(255) NOT NULL,
   priority VARCHAR(16) NOT NULL,
   datetime_utc DATETIME NOT NULL,
@@ -65,10 +66,23 @@ create table `appointment` (
   timezone VARCHAR(255) NOT NULL,
   timezone_offset TINYINT NOT NULL,
   coordinates POINT NULL,
+  requires_followup TINYINT DEFAULT 0,
   rating_of_service TINYINT NULL,
   rating_of_client TINYINT NULL,
   -- SPATIAL INDEX `SPATIAL` (`coordinates`),
-  INDEX(service_provider_user_id)
+  INDEX(service_provider_user_id),
+  INDEX(parent_appointment_id)
+);
+
+create table `appointment_activity` (
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
+  created_at BIGINT NOT NULL,
+  recorded_at BIGINT NOT NULL,
+  acting_user_id VARCHAR(255) NOT NULL,
+  appointment_id VARCHAR(255) NOT NULL,
+  action VARCHAR(255) NOT NULL,
+  note VARCHAR(255) NOT NULL DEFAULT '',
+  metadata_json TEXT NOT NULL
 );
 
 create table `invoice` (
@@ -83,6 +97,7 @@ create table `invoice` (
   cost_materials INT NULL,
   cost_taxes INT NULL,
   cost_processing_fee INT NULL,
+  currency_code VARCHAR(255) NOT NULL,
   INDEX(appointment_id)
 );
 
@@ -98,15 +113,6 @@ create table `invoice_item` (
   quantity INT NOT NULL DEFAULT 1,
   INDEX(invoice_id),
   INDEX(appointment_id)
-);
-
-create table `appointment_activity` (
-  id VARCHAR(255) NOT NULL PRIMARY KEY,
-  created_at BIGINT NOT NULL,
-  acting_user_id VARCHAR(255) NOT NULL,
-  appointment_id VARCHAR(255) NOT NULL,
-  action VARCHAR(255) NOT NULL,
-  note VARCHAR(255) NOT NULL DEFAULT ''
 );
 
 create table `client_profile` (
