@@ -1,6 +1,7 @@
 import {
   Appointment,
   AppointmentModel,
+  AppointmentStatus,
   IAppointmentPostBody,
 } from '../models/appointment.model';
 import { getById } from './base.api';
@@ -27,7 +28,11 @@ import {
   baseCodes,
   swaggerRefFromModel,
 } from '../helpers/swagger.helper';
-import { createAppointmentForClient } from '../helpers/appointment.helper';
+import {
+  createAppointmentForClient,
+  loadAndAuthorizeAppointment,
+  validateAppointmentStatusChange,
+} from '../helpers/appointment.helper';
 import { ValidationError } from '../helpers/error.helper';
 import { AppointmentActivity } from '../models/appointment_activity.model';
 
@@ -196,7 +201,16 @@ export class AppointmentAPI {
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
-  @summary('cancel an appointment by the service provider')
+  @body({
+    cause: {
+      type: 'string',
+      enum: ['geofence_arrival', 'manual'],
+      required: true,
+      description:
+        'indicate whether the appointment was auto-started or manually started',
+    },
+  })
+  @summary('start an appointment')
   @description('For now, only service providers can start their appointments.')
   @responses(baseCodes([204, 401, 404, 405]))
   public static async startAppointment(ctx: TeddyRequestContext) {
@@ -207,24 +221,16 @@ export class AppointmentAPI {
     const user = ctx.user;
 
     const { id } = ctx.validatedParams;
-    const appointment = await Appointment.findByPk(id);
+    const appointment = await loadAndAuthorizeAppointment(id, user);
 
-    // If either the appointment doesn't exist or doesn't belong to the logged in user, 404
-    if (!appointment || appointment.service_provider_user_id !== user.id) {
-      ctx.status = 404;
-      return;
-    }
-    if (appointment.status !== 'scheduled') {
-      ctx.status = 405;
-      ctx.body = `Appointments in state ${appointment.status} are not allowed to be started`;
-      return;
-    }
-    appointment.status = 'in_progress';
+    validateAppointmentStatusChange(appointment, AppointmentStatus.in_progress);
+    appointment.status = AppointmentStatus.in_progress;
     await appointment.save();
     await AppointmentActivity.create({
       appointment_id: id,
       acting_user_id: user.id,
       action: 'started',
+      note: ctx.request.body.cause,
     });
     ctx.status = 204;
   }
@@ -255,19 +261,10 @@ export class AppointmentAPI {
 
     const { id } = ctx.validatedParams;
     const { cancelation_reason } = ctx.request.body;
-    const appointment = await Appointment.findByPk(id);
+    const appointment = await loadAndAuthorizeAppointment(id, user);
 
-    // If either the appointment doesn't exist or doesn't belong to the logged in user, 404
-    if (!appointment || appointment.service_provider_user_id !== user.id) {
-      ctx.status = 404;
-      return;
-    }
-    if (appointment.status !== 'scheduled') {
-      ctx.status = 405;
-      ctx.body = `Appointments in state ${appointment.status} are not allowed to be canceled`;
-      return;
-    }
-    appointment.status = 'canceled';
+    validateAppointmentStatusChange(appointment, AppointmentStatus.canceled);
+    appointment.status = AppointmentStatus.canceled;
     await appointment.save();
     await AppointmentActivity.create({
       appointment_id: id,
@@ -283,6 +280,13 @@ export class AppointmentAPI {
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
+  @body({
+    followup_needed: {
+      type: 'boolean',
+      required: true,
+      description: 'true if another appointment must be scheduled',
+    },
+  })
   @summary('complete an appointment by the service provider')
   @description(
     'For now, only service providers can complete their appointments.',
@@ -295,27 +299,21 @@ export class AppointmentAPI {
     }
     const user = ctx.user;
 
-    const { id } = ctx.validatedParams;
-    const appointment = await Appointment.findByPk(id);
+    const { followup_needed } = ctx.request.body;
 
-    // If either the appointment doesn't exist or doesn't belong to the logged in user, 404
-    if (!appointment || appointment.service_provider_user_id !== user.id) {
-      ctx.status = 404;
-      return;
-    }
-    if (appointment.status !== 'scheduled') {
-      ctx.status = 405;
-      ctx.body = `Appointments in state ${appointment.status} are not allowed to be completed`;
-      return;
-    }
-    const now = new Date();
-    if (DateTimeHelper.isBefore(now, new Date(appointment.datetime_utc))) {
-      ctx.status = 405;
-      ctx.body = `Appointment cannot be marked completed before its start-time`;
-      return;
-    }
-    appointment.status = 'completed';
+    const { id } = ctx.validatedParams;
+    const appointment = await loadAndAuthorizeAppointment(id, user);
+
+    validateAppointmentStatusChange(appointment, AppointmentStatus.completed);
+    appointment.status = AppointmentStatus.completed;
+    appointment.requires_followup = followup_needed;
     await appointment.save();
+    await AppointmentActivity.create({
+      appointment_id: id,
+      acting_user_id: user.id,
+      action: 'completed',
+      note: followup_needed ? 'requires followup' : '',
+    });
     ctx.status = 204;
   }
 
@@ -390,13 +388,8 @@ export class AppointmentAPI {
     const { rating } = ctx.request.body as { rating: number };
 
     const { id } = ctx.validatedParams;
-    const appointment = await Appointment.findByPk(id);
+    const appointment = await loadAndAuthorizeAppointment(id, user);
 
-    // If either the appointment doesn't exist or doesn't belong to the logged in user, 404
-    if (!appointment || appointment.service_provider_user_id !== user.id) {
-      ctx.status = 404;
-      return;
-    }
     if (appointment.rating_of_client) {
       ctx.status = 405;
       ctx.body = 'Appointment service has already been rated';

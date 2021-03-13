@@ -13,8 +13,10 @@ import { RelationAttribute } from './types';
 export enum AppointmentStatus {
   requested = 'requested',
   scheduled = 'scheduled',
-  in_progress = 'in_progress',
+  missed = 'missed',
   canceled = 'canceled',
+  in_progress = 'in_progress',
+  pending_resolution = 'pending_resolution',
   completed = 'completed',
 }
 
@@ -55,6 +57,7 @@ export interface AppointmentAttributes {
   coordinates: any;
   timezone_friendly: string;
   duration_minutes: number;
+  requires_followup: boolean;
   rating_of_service: number;
   rating_of_client: number;
   client_profile?: ClientProfileAttributes;
@@ -73,7 +76,6 @@ export type AppointmentCreationAttributes = Omit<
   AppointmentAttributes,
   | 'id'
   | 'created_at'
-  | 'status'
   | 'rating_of_client'
   | 'rating_of_service'
   | 'notes'
@@ -82,6 +84,8 @@ export type AppointmentCreationAttributes = Omit<
   | 'duration_minutes'
   | 'timezone_friendly'
   | 'coordinates'
+  | 'requires_followup'
+  | 'parent_appointment_id'
 >;
 
 export class Appointment
@@ -90,8 +94,8 @@ export class Appointment
   public id!: string;
   public service_provider_user_id!: string;
   public client_profile_id!: string;
-  public status!: keyof typeof AppointmentStatus;
-  public priority!: keyof typeof AppointmentPriority;
+  public status!: AppointmentStatus;
+  public priority!: AppointmentPriority;
   public datetime_local!: string;
   public datetime_utc!: string;
   public datetime_end_local!: string;
@@ -107,6 +111,7 @@ export class Appointment
   public timezone_friendly!: string;
   public summary!: string;
   public notes: string;
+  public requires_followup!: boolean;
   public rating_of_service: number;
   public rating_of_client: number;
   public client_profile: ClientProfileAttributes;
@@ -230,6 +235,9 @@ export const AppointmentModel = Appointment.init(
         const endDate = new Date(this.getDataValue('datetime_end_utc'));
         return differenceInMinutes(endDate, startDate);
       },
+    },
+    requires_followup: {
+      type: DataTypes.BOOLEAN,
     },
     rating_of_client: {
       type: DataTypes.NUMBER,

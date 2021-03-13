@@ -1,9 +1,15 @@
 import { sequelize } from '../sequelize';
 import { Op } from 'sequelize';
-import { Appointment, AppointmentPriority } from '../models/appointment.model';
+import {
+  Appointment,
+  AppointmentPriority,
+  AppointmentStatus,
+} from '../models/appointment.model';
 import { ClientProfile } from '../models/client_profile.model';
 import { DateTimeHelper } from './datetime.helper';
-import { CollisionError } from './error.helper';
+import { LogicalError, NotFoundError } from './error.helper';
+import { AppointmentAction } from '../models/appointment_activity.model';
+import { User } from '../models/user.model';
 
 export const createAppointmentForClient = async (
   service_provider_user_id: string,
@@ -47,8 +53,10 @@ export const createAppointmentForClient = async (
   );
 
   if (conflictingAppointments.length) {
-    throw new CollisionError('An existing appointment conflicts');
+    throw new LogicalError('An existing appointment conflicts');
   }
+
+  const status = AppointmentStatus.scheduled;
 
   const appointment = await Appointment.create({
     client_profile_id,
@@ -63,6 +71,7 @@ export const createAppointmentForClient = async (
     timezone,
     timezone_offset,
     priority,
+    status,
   });
 
   const [lat, lng] = coordinates.coordinates;
@@ -100,4 +109,75 @@ export async function getConflictingAppointments(
       ],
     },
   });
+}
+
+const LEGAL_STATUS_TRANSITIONS: Record<
+  AppointmentStatus,
+  {
+    error_message: string;
+    prior_statuses: AppointmentStatus[];
+  }
+> = {
+  requested: {
+    error_message: 'Requested is an initial state',
+    prior_statuses: [],
+  },
+  scheduled: {
+    error_message:
+      'Appointments that have already been started cannot be rescheduled',
+    prior_statuses: [
+      AppointmentStatus.missed,
+      AppointmentStatus.canceled,
+      AppointmentStatus.requested,
+    ],
+  },
+  canceled: {
+    error_message: 'Only scheduled appointments may be canceled',
+    prior_statuses: [AppointmentStatus.scheduled],
+  },
+  in_progress: {
+    error_message: 'Only scheduled appointments may be started',
+    prior_statuses: [AppointmentStatus.scheduled],
+  },
+  missed: {
+    error_message: 'Only scheduled appointments can be missed',
+    prior_statuses: [AppointmentStatus.scheduled],
+  },
+  pending_resolution: {
+    error_message:
+      'Only in-progress appointments can be moved to a pending-resolution state',
+    prior_statuses: [AppointmentStatus.in_progress],
+  },
+  completed: {
+    error_message: 'A canceled appointment cannot be completed',
+    prior_statuses: [
+      AppointmentStatus.scheduled,
+      AppointmentStatus.in_progress,
+      AppointmentStatus.pending_resolution,
+      AppointmentStatus.missed,
+    ],
+  },
+};
+
+export async function loadAndAuthorizeAppointment(
+  appointment_id: string,
+  user: User,
+) {
+  const appointment = await Appointment.findByPk(appointment_id);
+
+  // If either the appointment doesn't exist or doesn't belong to the logged in user, 404 (since we don't want to indicate whether or not the appointment exists)
+  if (!appointment || appointment.service_provider_user_id !== user.id) {
+    throw new NotFoundError();
+  }
+  return appointment;
+}
+
+export function validateAppointmentStatusChange(
+  appointment: Appointment,
+  new_status: AppointmentStatus,
+) {
+  const transition = LEGAL_STATUS_TRANSITIONS[new_status];
+  if (!transition.prior_statuses.includes(appointment.status)) {
+    throw new LogicalError(transition.error_message);
+  }
 }

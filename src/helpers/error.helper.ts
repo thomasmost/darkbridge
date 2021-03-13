@@ -15,7 +15,16 @@ export class ValidationError extends RoutineError {
     this.status = 400;
   }
 }
-export class CollisionError extends RoutineError {
+
+export class NotFoundError extends RoutineError {
+  constructor(message = '') {
+    super(message || 'Not Found');
+    this.name = this.constructor.name;
+    this.status = 404;
+  }
+}
+
+export class LogicalError extends RoutineError {
   constructor(message: string) {
     super(message);
     this.name = this.constructor.name;
