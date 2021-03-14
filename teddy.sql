@@ -52,6 +52,7 @@ create table `appointment` (
   service_provider_user_id VARCHAR(255) NOT NULL,
   client_profile_id VARCHAR(255) NOT NULL,
   parent_appointment_id VARCHAR(255) NULL,
+  invoice_id VARCHAR(255) NULL,
   status VARCHAR(255) NOT NULL,
   priority VARCHAR(16) NOT NULL,
   datetime_utc DATETIME NOT NULL,
@@ -90,15 +91,17 @@ create table `invoice` (
   created_at BIGINT NOT NULL,
   service_provider_user_id VARCHAR(255) NOT NULL,
   client_profile_id VARCHAR(255) NOT NULL,
-  appointment_id VARCHAR(255) NOT NULL,
   status VARCHAR(255) NOT NULL,
-  cost_flat_rate INT NULL,
-  cost_time INT NULL,
-  cost_materials INT NULL,
-  cost_taxes INT NULL,
-  cost_processing_fee INT NULL,
+  payment_method VARCHAR(255) NULL,
+  flat_rate INT NULL,
+  hourly_rate INT NULL,
+  daily_rate INT NULL,
+  processing_fee INT NULL,
+  minutes_billed INT NULL,
+  days_billed INT NULL,
   currency_code VARCHAR(255) NOT NULL,
-  INDEX(appointment_id)
+  INDEX(service_provider_user_id),
+  INDEX(client_profile_id)
 );
 
 create table `invoice_item` (
