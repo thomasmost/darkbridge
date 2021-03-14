@@ -23,6 +23,7 @@ import { AppointmentModel } from './models/appointment.model';
 import { UserNotificationSettingModel } from './models/user_notification_setting.model';
 import { UserNotificationSettingAPI } from './api/user_notification_setting.api';
 import { InvoiceAPI } from './api/invoice.api';
+import { InvoiceModel } from './models/invoice.model';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -69,6 +70,7 @@ api.swagger({
         AppointmentModel,
         ClientProfileModel,
         ContractorProfileModel,
+        InvoiceModel,
         UserModel,
         UserNotificationSettingModel,
       ]),

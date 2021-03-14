@@ -30,6 +30,7 @@ import {
 import {
   createAppointmentForClient,
   loadAndAuthorizeAppointment,
+  rescheduleAppointment,
   validateAppointmentStatusChange,
 } from '../helpers/appointment.helper';
 import { ValidationError } from '../helpers/error.helper';
@@ -233,6 +234,59 @@ export class AppointmentAPI {
       note: ctx.request.body.cause,
     });
     ctx.status = 204;
+  }
+
+  @request('put', '/{id}/reschedule')
+  @operation('apiAppointment_reschedule')
+  @path({
+    id: { type: 'string', required: true, description: 'id' },
+  })
+  @body({
+    datetime_local: {
+      type: 'string',
+      required: true,
+      description:
+        "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
+      example: DateTimeHelper.formatToPureDateTime(new Date()),
+    },
+    duration_minutes: {
+      type: 'number',
+      required: true,
+      description: 'the length of the appointment',
+    },
+    reason_for_reschedule: {
+      type: 'string',
+      description: 'optional explanation for the reschedule',
+    },
+  })
+  @summary('reschedule an appointment by the service provider')
+  @description(
+    "For now, only service providers can reschedule their appointments. We'll need to support client requests soon enough",
+  )
+  @responses(baseCodes([204, 401, 404, 405]))
+  public static async rescheduleAppointment(ctx: TeddyRequestContext) {
+    if (!ctx.user) {
+      ctx.status = 401;
+      return;
+    }
+    const user = ctx.user;
+
+    const { id } = ctx.validatedParams;
+    const {
+      datetime_local,
+      duration_minutes,
+      reason_for_reschedule,
+    } = ctx.request.body;
+    const appointment = await loadAndAuthorizeAppointment(id, user);
+    const updatedAppointment = await rescheduleAppointment(
+      appointment,
+      datetime_local,
+      duration_minutes,
+      user.id,
+      reason_for_reschedule,
+    );
+    ctx.status = 200;
+    ctx.body = updatedAppointment;
   }
 
   @request('put', '/{id}/cancel')

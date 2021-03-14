@@ -6,6 +6,7 @@ import { DateTimeHelper } from './datetime.helper';
 import { LogicalError, NotFoundError } from './error.helper';
 import { User } from '../models/user.model';
 import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
+import { AppointmentActivity } from '../models/appointment_activity.model';
 
 export const createAppointmentForClient = async (
   service_provider_user_id: string,
@@ -79,6 +80,47 @@ export const createAppointmentForClient = async (
 
   return Appointment.findByPk(appointment.id);
 };
+
+export async function rescheduleAppointment(
+  appointment: Appointment,
+  datetime_local: string,
+  duration_minutes: number,
+  acting_user_id: string,
+  reason_for_reschedule: string,
+) {
+  const client_profile = await ClientProfile.findByPk(
+    appointment.client_profile_id,
+  );
+  if (!client_profile) {
+    throw Error(`Client with id ${appointment.client_profile_id} not found`);
+  }
+  const timezone = client_profile.timezone;
+
+  const datetime_utc = DateTimeHelper.toUTC(
+    datetime_local,
+    timezone,
+  ).toISOString();
+  const date_utc = new Date(datetime_utc);
+  const date_end_utc = DateTimeHelper.add(
+    date_utc,
+    duration_minutes,
+    'minutes',
+  );
+  const datetime_end_utc = date_end_utc.toISOString();
+
+  validateAppointmentStatusChange(appointment, AppointmentStatus.scheduled);
+  appointment.status = AppointmentStatus.scheduled;
+  appointment.datetime_utc = datetime_utc;
+  appointment.datetime_end_utc = datetime_end_utc;
+  const rescheduledAppointment = await appointment.save();
+  await AppointmentActivity.create({
+    appointment_id: appointment.id,
+    acting_user_id: acting_user_id,
+    action: 'rescheduled',
+    note: reason_for_reschedule,
+  });
+  return rescheduledAppointment;
+}
 
 export async function getConflictingAppointments(
   service_provider_user_id: string,
