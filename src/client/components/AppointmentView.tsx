@@ -8,7 +8,6 @@ import { ClientCard } from './ClientCard';
 import { Icon } from '../elements/Icon';
 import { Link } from '@reach/router';
 import { Card } from '../elements/Card';
-import { DateTimeHelper } from '../../helpers/datetime.helper';
 import { apiRequest } from '../services/api.svc';
 import { Action, DispatchContext } from '../reducers';
 
