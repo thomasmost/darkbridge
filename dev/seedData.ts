@@ -5,16 +5,16 @@ import faker from 'faker';
 
 dotenv.config();
 import { User } from '../src/models/user.model';
-import { ClientProfile } from '../src/models/client_profile.model';
+import {
+  ClientProfile,
+  ClientProfileCreationAttributes,
+} from '../src/models/client_profile.model';
 import { timezones_by_utc_string } from '../src/data/timezones';
 import { DateTimeHelper } from '../src/helpers/datetime.helper';
 import { createAppointmentForClient } from '../src/helpers/appointment.helper';
 import { createClientProfileForServiceProvider } from '../src/helpers/client_profile.helper';
 import { format, startOfWeek } from 'date-fns';
-import {
-  Appointment,
-  AppointmentPriority,
-} from '../src/models/appointment.model';
+import { Appointment } from '../src/models/appointment.model';
 
 const CLIENTS_PER_USER = 10;
 const DAYS_OF_APPOINTMENTS = 30;
@@ -168,7 +168,7 @@ async function createAppointmentsForUserDay(
     const datetimeLocal = date + ' ' + randomTime;
     const randomSummary =
       summaries[Math.floor(Math.random() * summaries.length)];
-    const randomPriority = AppointmentPriority.P2;
+    const randomPriority = 'P2';
     const randomDuration = 60;
     const promise = createAppointmentForClient(
       user_id,

@@ -8,6 +8,7 @@ import {
 import { ClientProfile } from '../models/client_profile.model';
 import { DateTimeHelper } from './datetime.helper';
 import { LogicalError, NotFoundError } from './error.helper';
+import { AppointmentAction } from '../models/appointment_activity.model';
 import { User } from '../models/user.model';
 
 export const createAppointmentForClient = async (
@@ -15,7 +16,7 @@ export const createAppointmentForClient = async (
   client_profile_id: string,
   datetime_local: string,
   duration_minutes: number,
-  priority: AppointmentPriority,
+  priority: keyof typeof AppointmentPriority,
   summary: string,
 ) => {
   const client_profile = await ClientProfile.findByPk(client_profile_id);

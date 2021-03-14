@@ -38,10 +38,8 @@ export interface AppointmentAttributes {
   // since a client could move or there might be multiple addresses belonging to a client
   // address_id: string;
   client_profile_id: string;
-  parent_appointment_id: string;
-  invoice_id: string;
-  status: AppointmentStatus;
-  priority: AppointmentPriority;
+  status: keyof typeof AppointmentStatus;
+  priority: keyof typeof AppointmentPriority;
   summary: string;
   notes: string;
   datetime_local: string;
@@ -69,7 +67,7 @@ export interface IAppointmentPostBody {
   client_profile_id: string;
   datetime_local: string;
   duration_minutes: number;
-  priority: AppointmentPriority;
+  priority: keyof typeof AppointmentPriority;
   summary: string;
 }
 
@@ -88,7 +86,6 @@ export type AppointmentCreationAttributes = Omit<
   | 'coordinates'
   | 'requires_followup'
   | 'parent_appointment_id'
-  | 'invoice_id'
 >;
 
 export class Appointment
@@ -97,8 +94,6 @@ export class Appointment
   public id!: string;
   public service_provider_user_id!: string;
   public client_profile_id!: string;
-  public parent_appointment_id: string;
-  public invoice_id: string;
   public status!: AppointmentStatus;
   public priority!: AppointmentPriority;
   public datetime_local!: string;
@@ -243,12 +238,6 @@ export const AppointmentModel = Appointment.init(
     },
     requires_followup: {
       type: DataTypes.BOOLEAN,
-    },
-    parent_appointment_id: {
-      type: DataTypes.STRING,
-    },
-    invoice_id: {
-      type: DataTypes.STRING,
     },
     rating_of_client: {
       type: DataTypes.NUMBER,
