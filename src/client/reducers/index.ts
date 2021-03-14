@@ -1,5 +1,8 @@
 import React from 'react';
-import { AppointmentAttributes } from '../../models/appointment.model';
+import {
+  AppointmentAttributes,
+  AppointmentStatus,
+} from '../../models/appointment.model';
 
 export interface IStateContainer {
   appointments: AppointmentAttributes[];
@@ -38,7 +41,7 @@ export const reducer = (
     const newAppointments = [...state.appointments];
     for (const appointment of newAppointments) {
       if (appointment.id === appointment_id) {
-        appointment.status = 'in_progress';
+        appointment.status = AppointmentStatus.in_progress;
       }
     }
     return {
