@@ -1,6 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import { Appointment, AppointmentStatus } from '../models/appointment.model';
+import {
+  Appointment,
+  AppointmentPriority,
+  AppointmentStatus,
+} from '../models/appointment.model';
 import { User } from '../models/user.model';
 import { sequelize } from '../sequelize';
 import {
@@ -27,7 +31,7 @@ function buildTestAppointment(status: AppointmentStatus) {
     address_postal_code: '11211',
     timezone: 'America/New_York',
     timezone_offset: -5,
-    priority: 'P2',
+    priority: AppointmentPriority.P2,
     status,
   });
 }
