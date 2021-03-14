@@ -41,6 +41,8 @@ export interface AppointmentAttributes {
   timezone: string;
   timezone_offset: number;
   coordinates: any;
+  latitude: number;
+  longitude: number;
   timezone_friendly: string;
   duration_minutes: number;
   requires_followup: boolean;
@@ -70,6 +72,8 @@ export type AppointmentCreationAttributes = Omit<
   | 'duration_minutes'
   | 'timezone_friendly'
   | 'coordinates'
+  | 'latitude'
+  | 'longitude'
   | 'requires_followup'
   | 'parent_appointment_id'
   | 'invoice_id'
@@ -97,6 +101,8 @@ export class Appointment
   public timezone!: string;
   public timezone_offset!: number;
   public coordinates!: any;
+  public latitude!: number;
+  public longitude!: number;
   public timezone_friendly!: string;
   public summary!: string;
   public notes: string;
@@ -201,6 +207,22 @@ export const AppointmentModel = Appointment.init(
     coordinates: {
       type: DataTypes.GEOGRAPHY('POINT', 4326),
       allowNull: true,
+    },
+    latitude: {
+      type: DataTypes.VIRTUAL(DataTypes.NUMBER),
+      get: function () {
+        const point = this.getDataValue('coordinates');
+        if (!point?.coordinates) return null;
+        return point.coordinates[0];
+      },
+    },
+    longitude: {
+      type: DataTypes.VIRTUAL(DataTypes.NUMBER),
+      get: function () {
+        const point = this.getDataValue('coordinates');
+        if (!point?.coordinates) return null;
+        return point.coordinates[1];
+      },
     },
     timezone_friendly: {
       type: DataTypes.VIRTUAL,
