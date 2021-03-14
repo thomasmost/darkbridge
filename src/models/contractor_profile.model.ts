@@ -1,7 +1,9 @@
-import { Model, Optional, DataTypes } from 'sequelize';
+import { Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
+import { toUser } from '../helpers/permissioners';
 
 import { sequelize } from '../sequelize';
+import { PermissionedModel } from './_prototypes';
 
 export const PrimaryWork = {
   electrical: 'electrical',
@@ -39,7 +41,7 @@ export type ContractorProfileUpdateAttributes = Omit<
 >;
 
 export class ContractorProfile
-  extends Model<
+  extends PermissionedModel<
     ContractorProfileAttributes,
     ContractorProfileCreationAttributes
   >
@@ -61,7 +63,7 @@ export class ContractorProfile
   public readonly created_at!: number;
 }
 
-export const ContractorProfileModel = ContractorProfile.init(
+export const ContractorProfileModel = ContractorProfile.initWithPermissions(
   {
     // Model attributes are defined here
     id: {
@@ -71,6 +73,7 @@ export const ContractorProfileModel = ContractorProfile.init(
       defaultValue: function () {
         return v4();
       },
+      visible: toUser,
     },
     created_at: {
       type: DataTypes.NUMBER,
@@ -78,38 +81,49 @@ export const ContractorProfileModel = ContractorProfile.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: toUser,
     },
     user_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toUser,
     },
     company_name: {
       type: DataTypes.STRING,
+      visible: toUser,
     },
     license_number: {
       type: DataTypes.STRING,
+      visible: toUser,
     },
     licensing_state: {
       type: DataTypes.STRING,
+      visible: toUser,
     },
     primary_work: {
       type: DataTypes.ENUM,
       values: Object.values(PrimaryWork),
+      visible: toUser,
     },
     appointment_fee: {
       type: DataTypes.NUMBER,
+      visible: toUser,
     },
     hourly_rate: {
       type: DataTypes.NUMBER,
+      visible: toUser,
     },
     daily_rate: {
       type: DataTypes.NUMBER,
+      visible: toUser,
     },
     estimated_yearly_income: {
       type: DataTypes.NUMBER,
+      visible: toUser,
     },
     estimated_yearly_expenses: {
       type: DataTypes.NUMBER,
+      visible: toUser,
     },
   },
   {

@@ -1,7 +1,9 @@
-import { Model, Optional, DataTypes } from 'sequelize';
+import { Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
+import { toServiceProvider } from '../helpers/permissioners';
 
 import { sequelize } from '../sequelize';
+import { PermissionedModel } from './_prototypes';
 
 export enum InvoiceStatus {
   pending = 'pending',
@@ -37,7 +39,7 @@ export type InvoiceCreationAttributes = Optional<
 >;
 
 export class Invoice
-  extends Model<InvoiceAttributes, InvoiceCreationAttributes>
+  extends PermissionedModel<InvoiceAttributes, InvoiceCreationAttributes>
   implements InvoiceAttributes {
   public id!: string;
   public service_provider_user_id!: string;
@@ -58,7 +60,7 @@ export class Invoice
   public readonly created_at!: number;
 }
 
-export const InvoiceModel = Invoice.init(
+export const InvoiceModel = Invoice.initWithPermissions(
   {
     // Model attributes are defined here
     id: {
@@ -68,6 +70,7 @@ export const InvoiceModel = Invoice.init(
       defaultValue: function () {
         return v4();
       },
+      visible: toServiceProvider,
     },
     created_at: {
       type: DataTypes.NUMBER,
@@ -75,57 +78,70 @@ export const InvoiceModel = Invoice.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: toServiceProvider,
     },
     client_profile_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     service_provider_user_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     status: {
       type: DataTypes.ENUM,
       allowNull: false,
       values: Object.values(InvoiceStatus),
+      visible: toServiceProvider,
     },
     payment_method: {
       type: DataTypes.ENUM,
       values: Object.values(InvoicePaymentMethod),
+      visible: toServiceProvider,
     },
     flat_rate: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      visible: toServiceProvider,
     },
     cost_materials: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      visible: toServiceProvider,
     },
     processing_fee: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      visible: toServiceProvider,
     },
     daily_rate: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      visible: toServiceProvider,
     },
     hourly_rate: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      visible: toServiceProvider,
     },
     minutes_billed: {
       type: DataTypes.NUMBER,
       allowNull: false,
       defaultValue: 0,
+      visible: toServiceProvider,
     },
     days_billed: {
       type: DataTypes.NUMBER,
       allowNull: false,
       defaultValue: 0,
+      visible: toServiceProvider,
     },
     currency_code: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
   },
   {

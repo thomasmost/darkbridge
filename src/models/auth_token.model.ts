@@ -1,7 +1,8 @@
-import { Model, DataTypes } from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
+import { PermissionedModel } from './_prototypes';
 
 export const Clients = {
   web: 'web',
@@ -31,7 +32,7 @@ type AuthTokenCreationAttributes = Pick<
 >;
 
 export class AuthToken
-  extends Model<AuthTokenAttributes, AuthTokenCreationAttributes>
+  extends PermissionedModel<AuthTokenAttributes, AuthTokenCreationAttributes>
   implements AuthTokenAttributes {
   public auth_method!: string;
   public disabled_reason: string;
@@ -46,7 +47,7 @@ export class AuthToken
   public readonly disabled_at: number;
 }
 
-AuthToken.init(
+AuthToken.initWithPermissions(
   {
     // Model attributes are defined here
     id: {
@@ -56,6 +57,7 @@ AuthToken.init(
       defaultValue: function () {
         return v4();
       },
+      visible: true,
     },
     created_at: {
       type: DataTypes.NUMBER,
@@ -63,6 +65,7 @@ AuthToken.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: false,
     },
     last_used_at: {
       type: DataTypes.NUMBER,
@@ -70,31 +73,38 @@ AuthToken.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: false,
     },
     disabled_at: {
       type: DataTypes.NUMBER,
       allowNull: true,
+      visible: false,
     },
     auth_method: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
     },
     disabled_reason: {
       type: DataTypes.STRING,
       allowNull: true,
+      visible: false,
     },
     user_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
     },
     client_type: {
       type: DataTypes.ENUM,
       values: Object.values(Clients),
       allowNull: false,
+      visible: false,
     },
     device_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
     },
   },
   {

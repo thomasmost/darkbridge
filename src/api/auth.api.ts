@@ -7,7 +7,7 @@ import validator from 'validator';
 import { AuthenticationError, ValidationError } from '../helpers/error.helper';
 import { AuthToken, ClientType } from '../models/auth_token.model';
 import { issueToken } from '../helpers/auth_token.helper';
-import { permissionUser, User, UserModel } from '../models/user.model';
+import { User, UserModel } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
 import { sendEmail } from '../helpers/email.helper';
 import { ResetPasswordRequest } from '../models/reset_password_request.model';
@@ -468,7 +468,7 @@ export class AuthAPI {
     if (contractor_profile) {
       user.contractor_profile = contractor_profile;
     }
-    ctx.body = permissionUser(user);
+    ctx.body = user;
   }
 
   @request('get', '/logout')

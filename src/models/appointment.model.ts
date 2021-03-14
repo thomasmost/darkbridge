@@ -1,5 +1,5 @@
 import { differenceInMinutes } from 'date-fns';
-import { Model, DataTypes } from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
@@ -8,8 +8,9 @@ import {
   ClientProfileModel,
 } from './client_profile.model';
 import { DateTimeHelper } from '../helpers/datetime.helper';
-import { RelationAttribute } from './types';
+import { PermissionedModel, RelationAttribute } from './_prototypes';
 import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
+import { toServiceProvider } from '../helpers/permissioners';
 
 // These are all the attributes in the Appointment model
 export interface AppointmentAttributes {
@@ -40,7 +41,7 @@ export interface AppointmentAttributes {
   address_postal_code: string;
   timezone: string;
   timezone_offset: number;
-  coordinates: any;
+  coordinates: { type: string; coordinates: number[] };
   latitude: number;
   longitude: number;
   timezone_friendly: string;
@@ -80,7 +81,10 @@ export type AppointmentCreationAttributes = Omit<
 >;
 
 export class Appointment
-  extends Model<AppointmentAttributes, AppointmentCreationAttributes>
+  extends PermissionedModel<
+    AppointmentAttributes,
+    AppointmentCreationAttributes
+  >
   implements AppointmentAttributes {
   public id!: string;
   public service_provider_user_id!: string;
@@ -100,7 +104,7 @@ export class Appointment
   public address_postal_code!: string;
   public timezone!: string;
   public timezone_offset!: number;
-  public coordinates!: any;
+  public coordinates!: { type: string; coordinates: number[] };
   public latitude!: number;
   public longitude!: number;
   public timezone_friendly!: string;
@@ -115,7 +119,7 @@ export class Appointment
   public readonly created_at!: number;
 }
 
-export const AppointmentModel = Appointment.init(
+export const AppointmentModel = Appointment.initWithPermissions(
   {
     // Model attributes are defined here
     id: {
@@ -125,6 +129,7 @@ export const AppointmentModel = Appointment.init(
       defaultValue: function () {
         return v4();
       },
+      visible: toServiceProvider,
     },
     created_at: {
       type: DataTypes.NUMBER,
@@ -132,10 +137,12 @@ export const AppointmentModel = Appointment.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: toServiceProvider,
     },
     service_provider_user_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     status: {
       type: DataTypes.ENUM,
@@ -144,23 +151,28 @@ export const AppointmentModel = Appointment.init(
       defaultValue: function () {
         return AppointmentStatus.scheduled;
       },
+      visible: toServiceProvider,
     },
     priority: {
       type: DataTypes.ENUM,
       allowNull: false,
       values: Object.values(AppointmentPriority),
+      visible: toServiceProvider,
     },
     client_profile_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     datetime_utc: {
       type: DataTypes.DATE,
       allowNull: false,
+      visible: toServiceProvider,
     },
     datetime_end_utc: {
       type: DataTypes.DATE,
       allowNull: false,
+      visible: toServiceProvider,
     },
     datetime_local: {
       type: DataTypes.VIRTUAL,
@@ -169,6 +181,7 @@ export const AppointmentModel = Appointment.init(
         const timezone = this.getDataValue('timezone');
         return DateTimeHelper.toLocal(date, timezone);
       },
+      visible: toServiceProvider,
     },
     datetime_end_local: {
       type: DataTypes.VIRTUAL,
@@ -177,36 +190,44 @@ export const AppointmentModel = Appointment.init(
         const timezone = this.getDataValue('timezone');
         return DateTimeHelper.toLocal(date, timezone);
       },
+      visible: toServiceProvider,
     },
     address_street: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     address_city: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     address_state: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     address_postal_code: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     timezone: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     timezone_offset: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      visible: toServiceProvider,
     },
     // This should not be allowed to be null, but because of this bug: https://github.com/sequelize/sequelize/issues/13086
     // we have to set it separately with a Sequelize query literal.
     coordinates: {
       type: DataTypes.GEOGRAPHY('POINT', 4326),
       allowNull: true,
+      visible: false,
     },
     latitude: {
       type: DataTypes.VIRTUAL(DataTypes.NUMBER),
@@ -215,6 +236,7 @@ export const AppointmentModel = Appointment.init(
         if (!point?.coordinates) return null;
         return point.coordinates[0];
       },
+      visible: toServiceProvider,
     },
     longitude: {
       type: DataTypes.VIRTUAL(DataTypes.NUMBER),
@@ -223,6 +245,7 @@ export const AppointmentModel = Appointment.init(
         if (!point?.coordinates) return null;
         return point.coordinates[1];
       },
+      visible: toServiceProvider,
     },
     timezone_friendly: {
       type: DataTypes.VIRTUAL,
@@ -230,14 +253,17 @@ export const AppointmentModel = Appointment.init(
         const timezone = this.getDataValue('timezone');
         return timezone.replace(/_/, ' ');
       },
+      visible: toServiceProvider,
     },
     summary: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
     },
     notes: {
       type: DataTypes.STRING,
       allowNull: true,
+      visible: toServiceProvider,
     },
     duration_minutes: {
       type: DataTypes.VIRTUAL,
@@ -246,25 +272,32 @@ export const AppointmentModel = Appointment.init(
         const endDate = new Date(this.getDataValue('datetime_end_utc'));
         return differenceInMinutes(endDate, startDate);
       },
+      visible: toServiceProvider,
     },
     requires_followup: {
       type: DataTypes.BOOLEAN,
+      visible: toServiceProvider,
     },
     parent_appointment_id: {
       type: DataTypes.STRING,
+      visible: toServiceProvider,
     },
     invoice_id: {
       type: DataTypes.STRING,
+      visible: toServiceProvider,
     },
     rating_of_client: {
       type: DataTypes.NUMBER,
+      visible: toServiceProvider,
     },
     rating_of_service: {
       type: DataTypes.NUMBER,
+      visible: toServiceProvider,
     },
     client_profile: {
       type: DataTypes.VIRTUAL,
       model: ClientProfileModel,
+      visible: toServiceProvider,
     } as RelationAttribute,
   },
   {

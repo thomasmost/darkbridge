@@ -1,7 +1,8 @@
-import { Model, Optional, DataTypes } from 'sequelize';
+import { Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
+import { PermissionedModel } from './_prototypes';
 
 enum InvoiceItemType {
   materials = 'materials',
@@ -34,7 +35,10 @@ type InvoiceItemCreationAttributes = Optional<
 >;
 
 export class InvoiceItem
-  extends Model<InvoiceItemAttributes, InvoiceItemCreationAttributes>
+  extends PermissionedModel<
+    InvoiceItemAttributes,
+    InvoiceItemCreationAttributes
+  >
   implements InvoiceItemAttributes {
   public id!: string;
   public invoice_id!: string;
@@ -49,7 +53,7 @@ export class InvoiceItem
   public readonly created_at!: number;
 }
 
-InvoiceItem.init(
+InvoiceItem.initWithPermissions(
   {
     // Model attributes are defined here
     id: {
@@ -59,6 +63,7 @@ InvoiceItem.init(
       defaultValue: function () {
         return v4();
       },
+      visible: false,
     },
     created_at: {
       type: DataTypes.NUMBER,
@@ -66,36 +71,44 @@ InvoiceItem.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: false,
     },
     appointment_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
     },
     invoice_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
     },
     type: {
       type: DataTypes.ENUM,
       allowNull: false,
       values: Object.values(InvoiceItemType),
+      visible: false,
     },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
     },
     quantity: {
       type: DataTypes.NUMBER,
       allowNull: false,
-      defaultValue: () => 1,
+      defaultValue: 1,
+      visible: false,
     },
     amount_in_minor_units: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      visible: false,
     },
     currency_code: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
     },
   },
   {

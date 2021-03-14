@@ -1,8 +1,10 @@
-import { Model, Optional, DataTypes } from 'sequelize';
+import { Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
+import { toUser } from '../helpers/permissioners';
 import { NotificationSettingsHelper } from '../helpers/user_settings.helper';
 
 import { sequelize } from '../sequelize';
+import { PermissionedModel } from './_prototypes';
 
 export enum UserNotification {
   daily_kickoff = 'daily_kickoff',
@@ -30,7 +32,7 @@ type UserNotificationSettingCreationAttributes = Optional<
 >;
 
 export class UserNotificationSetting
-  extends Model<
+  extends PermissionedModel<
     UserNotificationSettingAttributes,
     UserNotificationSettingCreationAttributes
   >
@@ -48,7 +50,7 @@ export class UserNotificationSetting
   public updated_at!: number;
 }
 
-export const UserNotificationSettingModel = UserNotificationSetting.init(
+export const UserNotificationSettingModel = UserNotificationSetting.initWithPermissions(
   {
     // Model attributes are defined here
     id: {
@@ -58,6 +60,7 @@ export const UserNotificationSettingModel = UserNotificationSetting.init(
       defaultValue: function () {
         return v4();
       },
+      visible: toUser,
     },
     created_at: {
       type: DataTypes.NUMBER,
@@ -65,6 +68,7 @@ export const UserNotificationSettingModel = UserNotificationSetting.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: toUser,
     },
     updated_at: {
       type: DataTypes.NUMBER,
@@ -72,35 +76,44 @@ export const UserNotificationSettingModel = UserNotificationSetting.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: toUser,
     },
     user_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toUser,
     },
     name: {
       type: DataTypes.VIRTUAL(DataTypes.STRING),
       get: function () {
-        const notification_id = this.getDataValue('notification_id');
+        const notification_id = this.getDataValue(
+          'notification_id',
+        ) as UserNotification;
         return NotificationSettingsHelper.defaults()[notification_id].name;
       },
+      visible: toUser,
     },
     notification_id: {
       type: DataTypes.ENUM(
         ...Object.keys(UserNotification as { [key: string]: string }),
       ),
       allowNull: false,
+      visible: toUser,
     },
     email: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      visible: toUser,
     },
     push: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      visible: toUser,
     },
     text: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      visible: toUser,
     },
   },
   {

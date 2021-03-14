@@ -19,7 +19,6 @@ import {
   ContractorProfile,
   PrimaryWork,
 } from '../models/contractor_profile.model';
-import { permissionUser } from '../models/user.model';
 import {
   baseCodes,
   swaggerRefFromDefinitionName,
@@ -81,7 +80,7 @@ export class OmniAPI {
       if (contractor_profile) {
         user.contractor_profile = contractor_profile;
       }
-      return permissionUser(user);
+      return user;
     });
 
     const [

@@ -1,12 +1,13 @@
-import { Model, Optional, DataTypes } from 'sequelize';
+import { Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
+import { toSelf } from '../helpers/permissioners';
 
 import { sequelize } from '../sequelize';
 import {
   ContractorProfile,
   ContractorProfileModel,
 } from './contractor_profile.model';
-import { RelationAttribute } from './types';
+import { PermissionedModel, RelationAttribute } from './_prototypes';
 
 // These are all the attributes in the User model
 export interface UserAttributes {
@@ -29,7 +30,7 @@ type UserCreationAttributes = Optional<
 >;
 
 export class User
-  extends Model<UserAttributes, UserCreationAttributes>
+  extends PermissionedModel<UserAttributes, UserCreationAttributes>
   implements UserAttributes {
   public password_hash!: string;
   public password_salt!: string;
@@ -47,7 +48,7 @@ export class User
   public contractor_profile?: ContractorProfile;
 }
 
-export const UserModel = User.init(
+export const UserModel = User.initWithPermissions(
   {
     // Model attributes are defined here
     id: {
@@ -57,6 +58,7 @@ export const UserModel = User.init(
       defaultValue: function () {
         return v4();
       },
+      visible: true,
     },
     created_at: {
       type: DataTypes.NUMBER,
@@ -64,35 +66,44 @@ export const UserModel = User.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: true,
     },
     verified_at: {
       type: DataTypes.NUMBER,
       allowNull: true,
+      visible: true,
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toSelf,
     },
     phone: {
       type: DataTypes.STRING,
+      visible: toSelf,
     },
     family_name: {
       type: DataTypes.STRING,
+      visible: toSelf,
     },
     given_name: {
       type: DataTypes.STRING,
+      visible: true,
     },
     password_hash: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
     },
     password_salt: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
     },
     contractor_profile: {
       type: DataTypes.VIRTUAL,
       model: ContractorProfileModel,
+      visible: toSelf,
     } as RelationAttribute,
   },
   {
@@ -103,16 +114,3 @@ export const UserModel = User.init(
     timestamps: false,
   },
 );
-
-export function permissionUser(user: User) {
-  return {
-    id: user.id,
-    email: user.email,
-    phone: user.phone,
-    given_name: user.given_name,
-    family_name: user.family_name,
-    created_at: user.created_at,
-    verified_at: user.verified_at,
-    contractor_profile: user.contractor_profile,
-  };
-}

@@ -24,6 +24,7 @@ import { UserNotificationSettingModel } from './models/user_notification_setting
 import { UserNotificationSettingAPI } from './api/user_notification_setting.api';
 import { InvoiceAPI } from './api/invoice.api';
 import { InvoiceModel } from './models/invoice.model';
+import { permissionData } from './helpers/permissioners';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -50,6 +51,14 @@ const postProcessJson = async (
 
 api.use('/swagger-html', protectDeveloperDocs);
 api.use('/swagger-json', protectDeveloperDocs, postProcessJson);
+
+// Permissioner
+api.use(async (ctx: TeddyRequestContext, next) => {
+  await next();
+  if (ctx.body) {
+    ctx.body = permissionData(ctx.body, ctx.user);
+  }
+});
 
 api.swagger({
   title: 'Teddy Internal API',

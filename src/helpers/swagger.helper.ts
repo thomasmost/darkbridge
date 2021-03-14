@@ -1,5 +1,5 @@
 import { DataTypes, Model, ModelAttributeColumnOptions } from 'sequelize';
-import { RelationAttribute } from '../models/types';
+import { RelationAttribute } from '../models/_prototypes';
 
 type SwaggerProperty = {
   type?: 'string' | 'integer' | 'object';

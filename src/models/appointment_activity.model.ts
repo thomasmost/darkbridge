@@ -1,7 +1,8 @@
-import { Model, Optional, DataTypes } from 'sequelize';
+import { Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
 
 import { sequelize } from '../sequelize';
+import { PermissionedModel } from './_prototypes';
 
 export enum AppointmentAction {
   canceled = 'canceled',
@@ -34,7 +35,7 @@ type AppointmentActivityCreationAttributes = Optional<
 >;
 
 export class AppointmentActivity
-  extends Model<
+  extends PermissionedModel<
     AppointmentActivityAttributes,
     AppointmentActivityCreationAttributes
   >
@@ -52,7 +53,7 @@ export class AppointmentActivity
   public readonly recorded_at!: number;
 }
 
-AppointmentActivity.init(
+AppointmentActivity.initWithPermissions(
   {
     // Model attributes are defined here
     id: {
@@ -62,6 +63,7 @@ AppointmentActivity.init(
       defaultValue: function () {
         return v4();
       },
+      visible: true,
     },
     created_at: {
       type: DataTypes.NUMBER,
@@ -69,6 +71,7 @@ AppointmentActivity.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: true,
     },
     recorded_at: {
       type: DataTypes.NUMBER,
@@ -76,28 +79,34 @@ AppointmentActivity.init(
       defaultValue: function () {
         return Date.now();
       },
+      visible: true,
     },
     acting_user_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: true,
     },
     appointment_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: true,
     },
     action: {
       type: DataTypes.ENUM,
       allowNull: false,
       values: Object.values(AppointmentAction),
+      visible: true,
     },
     note: {
       type: DataTypes.STRING,
+      visible: true,
     },
     metadata_json: {
       type: DataTypes.STRING,
       defaultValue: function () {
         return '{}';
       },
+      visible: false,
     },
   },
   {
