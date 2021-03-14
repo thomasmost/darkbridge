@@ -12,7 +12,7 @@ import {
 import { TeddyRequestContext } from './types';
 import { swaggerRefFromModel } from '../helpers/swagger.helper';
 import { Invoice, InvoiceModel, InvoiceStatus } from '../models/invoice.model';
-import { ValidationError } from 'sequelize';
+import { ValidationError } from '../helpers/error.helper';
 import { loadAndAuthorizeAppointment } from '../helpers/appointment.helper';
 
 type BodyParameter = {
