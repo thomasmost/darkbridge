@@ -9,7 +9,7 @@ import {
 } from './client_profile.model';
 import { DateTimeHelper } from '../helpers/datetime.helper';
 import { RelationAttribute } from './types';
-import { AppointmentStatus } from '../shared/enums';
+import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
 
 // These are all the attributes in the Appointment model
 export interface AppointmentAttributes {

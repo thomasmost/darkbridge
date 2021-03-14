@@ -1,14 +1,11 @@
 import { sequelize } from '../sequelize';
 import { Op } from 'sequelize';
-import {
-  Appointment,
-  AppointmentPriority,
-  AppointmentStatus,
-} from '../models/appointment.model';
+import { Appointment } from '../models/appointment.model';
 import { ClientProfile } from '../models/client_profile.model';
 import { DateTimeHelper } from './datetime.helper';
 import { LogicalError, NotFoundError } from './error.helper';
 import { User } from '../models/user.model';
+import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
 
 export const createAppointmentForClient = async (
   service_provider_user_id: string,

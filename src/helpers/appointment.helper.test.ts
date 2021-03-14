@@ -1,12 +1,9 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import {
-  Appointment,
-  AppointmentPriority,
-  AppointmentStatus,
-} from '../models/appointment.model';
+import { Appointment } from '../models/appointment.model';
 import { User } from '../models/user.model';
 import { sequelize } from '../sequelize';
+import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
 import {
   loadAndAuthorizeAppointment,
   validateAppointmentStatusChange,

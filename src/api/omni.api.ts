@@ -13,7 +13,7 @@ import {
 } from '@callteddy/koa-swagger-decorator';
 
 import { assembleDailyInfo } from './calendar.api';
-import { Appointment, AppointmentPriority } from '../models/appointment.model';
+import { Appointment } from '../models/appointment.model';
 import { ClientProfile } from '../models/client_profile.model';
 import {
   ContractorProfile,
@@ -25,6 +25,7 @@ import {
   swaggerRefFromDefinitionName,
 } from '../helpers/swagger.helper';
 import { NotificationSettingsHelper } from '../helpers/user_settings.helper';
+import { AppointmentPriority } from '../shared/enums';
 
 const omniResponsesV0 = {
   200: {
