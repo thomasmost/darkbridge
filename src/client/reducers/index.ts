@@ -1,8 +1,6 @@
 import React from 'react';
-import {
-  AppointmentAttributes,
-  AppointmentStatus,
-} from '../../models/appointment.model';
+import { AppointmentAttributes } from '../../models/appointment.model';
+import { AppointmentStatus } from '../../shared/enums';
 
 export interface IStateContainer {
   appointments: AppointmentAttributes[];

@@ -11,10 +11,8 @@ import { DateTimeHelper } from '../src/helpers/datetime.helper';
 import { createAppointmentForClient } from '../src/helpers/appointment.helper';
 import { createClientProfileForServiceProvider } from '../src/helpers/client_profile.helper';
 import { format, startOfWeek } from 'date-fns';
-import {
-  Appointment,
-  AppointmentPriority,
-} from '../src/models/appointment.model';
+import { Appointment } from '../src/models/appointment.model';
+import { AppointmentPriority } from '../src/shared/enums';
 
 const CLIENTS_PER_USER = 10;
 const DAYS_OF_APPOINTMENTS = 30;

@@ -1,7 +1,6 @@
 import {
   Appointment,
   AppointmentModel,
-  AppointmentStatus,
   IAppointmentPostBody,
 } from '../models/appointment.model';
 import { getById } from './base.api';
@@ -35,6 +34,7 @@ import {
 } from '../helpers/appointment.helper';
 import { ValidationError } from '../helpers/error.helper';
 import { AppointmentActivity } from '../models/appointment_activity.model';
+import { AppointmentStatus } from '../shared/enums';
 
 const postBodyParams = {
   client_profile_id: {
