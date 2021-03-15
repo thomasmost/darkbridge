@@ -108,6 +108,7 @@ const codeMap: { [code: number]: string } = {
   401: 'Unauthorized',
   404: 'Not Found',
   405: 'Method Not Allowed',
+  409: 'Conflict',
 };
 
 export function baseCodes(codes: number[]) {

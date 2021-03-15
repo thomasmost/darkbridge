@@ -169,6 +169,7 @@ async function createAppointmentsForUserDay(
     const randomPriority = AppointmentPriority.P2;
     const randomDuration = 60;
     const promise = createAppointmentForClient(
+      true,
       user_id,
       randomClient.id,
       datetimeLocal,

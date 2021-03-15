@@ -32,6 +32,14 @@ export class LogicalError extends RoutineError {
   }
 }
 
+export class ConflictError extends RoutineError {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+    this.status = 409;
+  }
+}
+
 export class AuthenticationError extends RoutineError {
   constructor(message: string) {
     super(message);

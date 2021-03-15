@@ -38,6 +38,12 @@ import { AppointmentActivity } from '../models/appointment_activity.model';
 import { AppointmentStatus } from '../shared/enums';
 
 const postBodyParams = {
+  override_warnings: {
+    type: 'boolean',
+    required: false,
+    description:
+      'set to true to override logical warnings and create the appointment regardless',
+  },
   client_profile_id: {
     type: 'string',
     required: true,
@@ -74,6 +80,13 @@ export class AppointmentAPI {
   @operation('apiAppointment_create')
   @summary('create a new appointment for the logged in service provider')
   @body(postBodyParams)
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(AppointmentModel),
+    },
+    ...baseCodes([401, 405, 409]),
+  })
   public static async createAppointment(ctx: TeddyRequestContext) {
     if (!ctx.user) {
       ctx.status = 401;
@@ -81,6 +94,7 @@ export class AppointmentAPI {
     }
 
     const {
+      override_warnings,
       client_profile_id,
       datetime_local,
       duration_minutes,
@@ -92,6 +106,7 @@ export class AppointmentAPI {
     const service_provider_user_id = ctx.user.id;
 
     ctx.body = await createAppointmentForClient(
+      override_warnings,
       service_provider_user_id,
       client_profile_id,
       datetime_local,

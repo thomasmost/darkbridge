@@ -3,12 +3,13 @@ import { Op } from 'sequelize';
 import { Appointment } from '../models/appointment.model';
 import { ClientProfile } from '../models/client_profile.model';
 import { DateTimeHelper } from './datetime.helper';
-import { LogicalError, NotFoundError } from './error.helper';
+import { ConflictError, LogicalError, NotFoundError } from './error.helper';
 import { User } from '../models/user.model';
 import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
 import { AppointmentActivity } from '../models/appointment_activity.model';
 
 export const createAppointmentForClient = async (
+  override_warnings: boolean,
   service_provider_user_id: string,
   client_profile_id: string,
   datetime_local: string,
@@ -44,8 +45,10 @@ export const createAppointmentForClient = async (
     datetime_end_utc,
   );
 
-  if (conflictingAppointments.length) {
-    throw new LogicalError('An existing appointment conflicts');
+  if (conflictingAppointments.length && !override_warnings) {
+    throw new ConflictError(
+      `${conflictingAppointments.length} existing appointments overlap with this one.`,
+    );
   }
 
   const status = AppointmentStatus.scheduled;

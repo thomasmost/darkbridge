@@ -53,6 +53,7 @@ export interface AppointmentAttributes {
 }
 
 export interface IAppointmentPostBody {
+  override_warnings: boolean;
   client_profile_id: string;
   datetime_local: string;
   duration_minutes: number;
