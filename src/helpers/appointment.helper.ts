@@ -24,17 +24,12 @@ export const createAppointmentForClient = async (
   const timezone_offset = client_profile.timezone_offset;
   const coordinates = client_profile.coordinates;
 
-  const datetime_utc = DateTimeHelper.toUTC(
-    datetime_local,
-    timezone,
-  ).toISOString();
-  const date_utc = new Date(datetime_utc);
-  const date_end_utc = DateTimeHelper.add(
-    date_utc,
+  const datetime_utc = DateTimeHelper.toUTC(datetime_local, timezone);
+  const datetime_end_utc = DateTimeHelper.add(
+    datetime_utc,
     duration_minutes,
     'minutes',
   );
-  const datetime_end_utc = date_end_utc.toISOString();
 
   const {
     address_street,
@@ -96,17 +91,12 @@ export async function rescheduleAppointment(
   }
   const timezone = client_profile.timezone;
 
-  const datetime_utc = DateTimeHelper.toUTC(
-    datetime_local,
-    timezone,
-  ).toISOString();
-  const date_utc = new Date(datetime_utc);
-  const date_end_utc = DateTimeHelper.add(
-    date_utc,
+  const datetime_utc = DateTimeHelper.toUTC(datetime_local, timezone);
+  const datetime_end_utc = DateTimeHelper.add(
+    datetime_utc,
     duration_minutes,
     'minutes',
   );
-  const datetime_end_utc = date_end_utc.toISOString();
 
   validateAppointmentStatusChange(appointment, AppointmentStatus.scheduled);
   appointment.status = AppointmentStatus.scheduled;
@@ -124,10 +114,10 @@ export async function rescheduleAppointment(
 
 export async function getConflictingAppointments(
   service_provider_user_id: string,
-  datetime_utc: string,
-  datetime_end_utc: string,
+  datetime_utc: Date,
+  datetime_end_utc: Date,
 ) {
-  return Appointment.findAll({
+  const overlappingAppointments = await Appointment.findAll({
     where: {
       status: 'scheduled',
       service_provider_user_id,
@@ -146,7 +136,15 @@ export async function getConflictingAppointments(
         },
       ],
     },
+    order: [['datetime_utc', 'ASC']],
   });
+
+  for (const appointment of overlappingAppointments) {
+    if (DateTimeHelper.checkEquality(appointment.datetime_utc, datetime_utc)) {
+      throw new LogicalError('Appointments may not begin at the same time');
+    }
+  }
+  return overlappingAppointments;
 }
 
 const LEGAL_STATUS_TRANSITIONS: Record<

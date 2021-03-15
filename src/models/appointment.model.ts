@@ -30,9 +30,9 @@ export interface AppointmentAttributes {
   summary: string;
   notes: string;
   datetime_local: string;
-  datetime_utc: string;
+  datetime_utc: Date;
   datetime_end_local: string;
-  datetime_end_utc: string;
+  datetime_end_utc: Date;
   // Address fields will be copied from the client_profile
   // since the client could move, but the appointment's address should remain the same
   address_street: string;
@@ -94,9 +94,9 @@ export class Appointment
   public status!: AppointmentStatus;
   public priority!: AppointmentPriority;
   public datetime_local!: string;
-  public datetime_utc!: string;
+  public datetime_utc!: Date;
   public datetime_end_local!: string;
-  public datetime_end_utc!: string;
+  public datetime_end_utc!: Date;
   public address_street!: string;
   public address_city!: string;
   public address_state!: string;

@@ -3,11 +3,15 @@ import format from 'date-fns/format';
 import add from 'date-fns/add';
 import sub from 'date-fns/sub';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
-import { differenceInMinutes, isAfter, isBefore } from 'date-fns';
+import { differenceInMinutes, isAfter, isBefore, isEqual } from 'date-fns';
 
 const DATETIME_LOCAL_REGEX = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (00|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/;
 
 export class DateTimeHelper {
+  static checkEquality(date1: Date, date2: Date) {
+    return isEqual(date1, date2);
+  }
+
   static parseISO(datestring: string) {
     return parseISO(datestring);
   }

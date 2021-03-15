@@ -5,21 +5,19 @@ import { User } from '../models/user.model';
 import { sequelize } from '../sequelize';
 import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
 import {
+  getConflictingAppointments,
   loadAndAuthorizeAppointment,
   validateAppointmentStatusChange,
 } from './appointment.helper';
 import { DateTimeHelper } from './datetime.helper';
-import { NotFoundError } from './error.helper';
+import { LogicalError, NotFoundError } from './error.helper';
 
-function buildTestAppointment(status: AppointmentStatus) {
+function buildTestAppointment(status: AppointmentStatus, date?: string) {
+  const startDate = date ? new Date(date) : new Date();
   return Appointment.build({
     client_profile_id: 'test_client_id',
-    datetime_utc: new Date().toUTCString(),
-    datetime_end_utc: DateTimeHelper.add(
-      new Date(),
-      60,
-      'minutes',
-    ).toUTCString(),
+    datetime_utc: startDate,
+    datetime_end_utc: DateTimeHelper.add(startDate, 60, 'minutes'),
     service_provider_user_id: 'test_user_id',
     summary: 'leaky faucet',
     address_street: '101 Castle Street',
@@ -50,6 +48,24 @@ describe('Appointment Helpers', () => {
   });
   // beforeAll(async () => {
   // });
+
+  describe('getConflictingAppointments', () => {
+    test('creating appointments with identical start times should fail', async (done) => {
+      expect.assertions(1);
+      const original = buildTestAppointment(
+        AppointmentStatus.scheduled,
+        '2099-01-01 10:30:00',
+      );
+      await original.save();
+      const conflictingDate = new Date('2099-01-01 10:30:00');
+      const endDate = DateTimeHelper.add(conflictingDate, 60, 'minutes');
+      await expect(
+        getConflictingAppointments('test_user_id', conflictingDate, endDate),
+      ).rejects.toThrow(LogicalError);
+      done();
+    });
+  });
+
   describe('loadAndAuthorizeAppointment', () => {
     let appointmentId: string;
     let authorizedUser: User;
