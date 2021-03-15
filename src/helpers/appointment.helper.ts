@@ -45,9 +45,14 @@ export const createAppointmentForClient = async (
     datetime_end_utc,
   );
 
+  const pluralizedSubjectVerb =
+    conflictingAppointments.length === 1
+      ? 'appointment overlaps'
+      : 'appointments overlap';
+
   if (conflictingAppointments.length && !override_warnings) {
     throw new ConflictError(
-      `${conflictingAppointments.length} existing appointments overlap with this one.`,
+      `${conflictingAppointments.length} existing ${pluralizedSubjectVerb} with this one.`,
     );
   }
 
