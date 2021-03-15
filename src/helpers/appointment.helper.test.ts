@@ -43,6 +43,9 @@ function buildTestUser(id?: string) {
 
 // eslint-disable-next-line max-lines-per-function
 describe('Appointment Helpers', () => {
+  beforeAll(() => {
+    Appointment.destroy({ truncate: true });
+  });
   afterAll(() => {
     sequelize.close();
   });
@@ -50,18 +53,76 @@ describe('Appointment Helpers', () => {
   // });
 
   describe('getConflictingAppointments', () => {
-    test('creating appointments with identical start times should fail', async (done) => {
+    test('conflicting appointments with identical start times should throw an error', async (done) => {
+      const identicalDateTimeString = '2099-01-01 10:30:00';
       expect.assertions(1);
       const original = buildTestAppointment(
         AppointmentStatus.scheduled,
-        '2099-01-01 10:30:00',
+        identicalDateTimeString,
       );
       await original.save();
-      const conflictingDate = new Date('2099-01-01 10:30:00');
+      const conflictingDate = new Date(identicalDateTimeString);
       const endDate = DateTimeHelper.add(conflictingDate, 60, 'minutes');
       await expect(
         getConflictingAppointments('test_user_id', conflictingDate, endDate),
       ).rejects.toThrow(LogicalError);
+      done();
+    });
+    test('should return overlapping appointments with non-identical start times', async (done) => {
+      expect.assertions(2);
+      const original = buildTestAppointment(
+        AppointmentStatus.scheduled,
+        '2099-01-02 10:30:00',
+      );
+      await original.save();
+      const conflictingDate = new Date('2099-01-02 11:00:00');
+      const endDate = DateTimeHelper.add(conflictingDate, 60, 'minutes');
+      const conflicts = await getConflictingAppointments(
+        'test_user_id',
+        conflictingDate,
+        endDate,
+      );
+      expect(conflicts.length).toBe(1);
+      expect(
+        DateTimeHelper.checkEquality(
+          conflicts[0].datetime_utc,
+          new Date('2099-01-02 10:30:00'),
+        ),
+      ).toBe(true);
+      done();
+    });
+    test('should return an overlapping appointment whose end time is identical to the new start time', async (done) => {
+      expect.assertions(1);
+      const original = buildTestAppointment(
+        AppointmentStatus.scheduled,
+        '2099-01-03 10:30:00',
+      );
+      await original.save();
+      const conflictingDate = new Date('2099-01-03 11:30:00');
+      const endDate = DateTimeHelper.add(conflictingDate, 60, 'minutes');
+      const conflicts = await getConflictingAppointments(
+        'test_user_id',
+        conflictingDate,
+        endDate,
+      );
+      expect(conflicts.length).toBe(1);
+      done();
+    });
+    test('should not return overlapping appointments if none exist', async (done) => {
+      expect.assertions(1);
+      const original = buildTestAppointment(
+        AppointmentStatus.scheduled,
+        '2099-01-03 10:30:00',
+      );
+      await original.save();
+      const conflictingDate = new Date('2099-01-03 11:31:00');
+      const endDate = DateTimeHelper.add(conflictingDate, 60, 'minutes');
+      const conflicts = await getConflictingAppointments(
+        'test_user_id',
+        conflictingDate,
+        endDate,
+      );
+      expect(conflicts.length).toBe(0);
       done();
     });
   });
