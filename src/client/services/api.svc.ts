@@ -8,7 +8,7 @@ export interface ApiResultFailure {
   error: Error;
 }
 
-const routineErrorCodes = [400, 405];
+const routineErrorCodes = [400, 405, 409];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function apiRequest<TData = any>(
