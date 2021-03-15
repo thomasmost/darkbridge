@@ -7,7 +7,7 @@ import {
 } from 'sequelize';
 import { Permissioner } from '../helpers/permissioners';
 
-interface PermissionedModelAttributeColumnOptions<M>
+export interface PermissionedModelAttributeColumnOptions
   extends ModelAttributeColumnOptions {
   visible: Permissioner;
 }
@@ -21,7 +21,7 @@ type PermissionedModelAttributes<
    */
   [name in keyof TCreationAttributes]:
     | DataType
-    | PermissionedModelAttributeColumnOptions<M>;
+    | PermissionedModelAttributeColumnOptions;
 };
 
 export abstract class PermissionedModel<
@@ -41,4 +41,4 @@ export abstract class PermissionedModel<
 
 export type RelationAttribute<
   T extends Model = Model
-> = PermissionedModelAttributeColumnOptions<T> & { model: Model };
+> = PermissionedModelAttributeColumnOptions & { model: Model };

@@ -1,7 +1,11 @@
-import { DataTypes, Model, ModelAttributeColumnOptions } from 'sequelize';
-import { RelationAttribute } from '../models/_prototypes';
+import { DataTypes, Model } from 'sequelize';
+import {
+  PermissionedModelAttributeColumnOptions,
+  RelationAttribute,
+} from '../models/_prototypes';
 
 type SwaggerProperty = {
+  $ref?: string;
   type?: 'string' | 'integer' | 'object';
   example?: string;
   format?: 'uuid' | 'email';
@@ -18,9 +22,15 @@ export const swaggerSchemaFromModel = (model: Model) => {
   // Below casting is obviously sub-optimal, but the sequelize types don't
   // seem to believe that rawAttributes are accessible on an initialized model
   const { rawAttributes } = (model as unknown) as {
-    rawAttributes: { [attribute: string]: ModelAttributeColumnOptions };
+    rawAttributes: {
+      [attribute: string]: PermissionedModelAttributeColumnOptions;
+    };
   };
   for (const key in rawAttributes) {
+    if (!rawAttributes[key].visible) {
+      // Skip attributes that will never be permissioned for the client
+      continue;
+    }
     swaggerProperties[key] = swaggerPropertyFromAttribute(rawAttributes[key]);
   }
   return {
@@ -30,7 +40,7 @@ export const swaggerSchemaFromModel = (model: Model) => {
 };
 
 export const swaggerPropertyFromAttribute = (
-  attribute: ModelAttributeColumnOptions<Model>,
+  attribute: PermissionedModelAttributeColumnOptions,
 ) => {
   let swaggerProperty: SwaggerProperty = {};
   if (attribute.primaryKey) {
@@ -60,7 +70,7 @@ export const swaggerPropertyFromAttribute = (
         break;
       case 'VIRTUAL':
         if ((attribute as RelationAttribute).model) {
-          swaggerProperty = swaggerSchemaFromModel(
+          swaggerProperty = swaggerRefFromModel(
             (attribute as RelationAttribute).model,
           );
           break;
