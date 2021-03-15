@@ -142,6 +142,22 @@ export async function getConflictingAppointments(
             [Op.lte]: datetime_end_utc,
           },
         },
+        {
+          datetime_utc: {
+            [Op.gte]: datetime_utc,
+          },
+          datetime_end_utc: {
+            [Op.lte]: datetime_end_utc,
+          },
+        },
+        {
+          datetime_utc: {
+            [Op.lte]: datetime_utc,
+          },
+          datetime_end_utc: {
+            [Op.gte]: datetime_end_utc,
+          },
+        },
       ],
     },
     order: [['datetime_utc', 'ASC']],
