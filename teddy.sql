@@ -49,6 +49,8 @@ create table `auth_token` (
 create table `appointment` (
   id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
+  started_at BIGINT NULL,
+  completed_at BIGINT NULL,
   service_provider_user_id VARCHAR(255) NOT NULL,
   client_profile_id VARCHAR(255) NOT NULL,
   parent_appointment_id VARCHAR(255) NULL,
@@ -151,6 +153,7 @@ create table `contractor_profile` (
   daily_rate INT NULL,
   estimated_yearly_income INT NULL,
   estimated_yearly_expenses INT NULL,
+  onboarding_completed TINYINT DEFAULT 0,
   UNIQUE KEY(user_id)
 );
 
