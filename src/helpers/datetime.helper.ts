@@ -58,7 +58,7 @@ export class DateTimeHelper {
         "Expected a local datetime to exactly match the following format: 'YYYY-MM-DD HH:MM:SS'",
       );
     }
-    return zonedTimeToUtc(datetime_local, timezone);
+    return this.roundOffSeconds(zonedTimeToUtc(datetime_local, timezone));
   }
 
   static isBefore(first: Date, second: Date) {
@@ -66,5 +66,10 @@ export class DateTimeHelper {
   }
   static isAfter(first: Date, second: Date) {
     return isAfter(first, second);
+  }
+
+  static roundOffSeconds(date: Date) {
+    const coeff = 1000 * 60;
+    return new Date(Math.round(date.getTime() / coeff) * coeff);
   }
 }
