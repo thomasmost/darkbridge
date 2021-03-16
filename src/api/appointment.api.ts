@@ -241,6 +241,7 @@ export class AppointmentAPI {
 
     validateAppointmentStatusChange(appointment, AppointmentStatus.in_progress);
     appointment.status = AppointmentStatus.in_progress;
+    appointment.started_at = Date.now();
     await appointment.save();
     await AppointmentActivity.create({
       appointment_id: id,
@@ -375,6 +376,7 @@ export class AppointmentAPI {
 
     validateAppointmentStatusChange(appointment, AppointmentStatus.completed);
     appointment.status = AppointmentStatus.completed;
+    appointment.completed_at = Date.now();
     appointment.requires_followup = followup_needed;
     await appointment.save();
     await AppointmentActivity.create({

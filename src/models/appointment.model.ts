@@ -16,6 +16,8 @@ import { toServiceProvider } from '../helpers/permissioners';
 export interface AppointmentAttributes {
   id: string;
   created_at: number;
+  started_at: number;
+  completed_at: number;
   // (future) in the future appointment requests might also be stored in this table;
   // we might then want a separate 'created_by_user_id' field
   service_provider_user_id: string;
@@ -66,6 +68,8 @@ export type AppointmentCreationAttributes = Omit<
   AppointmentAttributes,
   | 'id'
   | 'created_at'
+  | 'started_at'
+  | 'completed_at'
   | 'rating_of_client'
   | 'rating_of_service'
   | 'notes'
@@ -118,6 +122,8 @@ export class Appointment
 
   // timestamps!
   public readonly created_at!: number;
+  public started_at!: number;
+  public completed_at!: number;
 }
 
 export const AppointmentModel = Appointment.initWithPermissions(
@@ -138,6 +144,14 @@ export const AppointmentModel = Appointment.initWithPermissions(
       defaultValue: function () {
         return Date.now();
       },
+      visible: toServiceProvider,
+    },
+    started_at: {
+      type: DataTypes.NUMBER,
+      visible: toServiceProvider,
+    },
+    completed_at: {
+      type: DataTypes.NUMBER,
       visible: toServiceProvider,
     },
     service_provider_user_id: {
