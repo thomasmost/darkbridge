@@ -27,6 +27,7 @@ export interface ContractorProfileAttributes {
   daily_rate: number;
   estimated_yearly_income: number;
   estimated_yearly_expenses: number;
+  onboarding_completed: boolean;
 }
 
 // Some attributes are optional in `ContractorProfile.build` and `ContractorProfile.create` calls
@@ -58,6 +59,8 @@ export class ContractorProfile
   public daily_rate: number;
   public estimated_yearly_income: number;
   public estimated_yearly_expenses: number;
+
+  public onboarding_completed!: boolean;
 
   // timestamps!
   public readonly created_at!: number;
@@ -123,6 +126,10 @@ export const ContractorProfileModel = ContractorProfile.initWithPermissions(
     },
     estimated_yearly_expenses: {
       type: DataTypes.NUMBER,
+      visible: toUser,
+    },
+    onboarding_completed: {
+      type: DataTypes.BOOLEAN,
       visible: toUser,
     },
   },

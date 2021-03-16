@@ -15,7 +15,7 @@ import {
 } from '../models/contractor_profile.model';
 
 type BodyParameter = {
-  type: 'string' | 'number';
+  type: 'string' | 'number' | 'boolean';
   description: string;
 };
 
@@ -60,6 +60,10 @@ const updateAttributes: Record<
     type: 'number',
     description: "the provider's estimated yearly expenses",
   },
+  onboarding_completed: {
+    type: 'boolean',
+    description: 'set to true when the onboarding data has been completed',
+  },
 };
 
 @prefix('/contractor_profile')
@@ -98,6 +102,7 @@ export class ContractorProfileAPI {
       hourly_rate,
       estimated_yearly_income,
       estimated_yearly_expenses,
+      onboarding_completed,
     } = ctx.request.body as Partial<ContractorProfileUpdateAttributes>;
 
     const [profile] = await ContractorProfile.findOrCreate({
@@ -132,6 +137,9 @@ export class ContractorProfileAPI {
     }
     if (estimated_yearly_income) {
       profile.estimated_yearly_income = estimated_yearly_income;
+    }
+    if (onboarding_completed) {
+      profile.onboarding_completed = onboarding_completed;
     }
 
     await profile.save();
