@@ -17,14 +17,10 @@ import { AppointmentPriority } from '../src/shared/enums';
 const CLIENTS_PER_USER = 10;
 const DAYS_OF_APPOINTMENTS = 30;
 
-const commonTimes = [
-  '09:00:00',
-  '10:30:00',
-  '12:00:00',
-  '13:30:00',
-  '15:00:00',
-  '16:30:00',
-  '18:00:00',
+const timeConfigurations = [
+  ['01:30:00', '16:00:00'],
+  ['10:30:00', '12:00:00', '15:00:00'],
+  ['10:30:00', '12:00:00', '15:00:00', '17:00:00'],
 ];
 const summaries = [
   'fix door',
@@ -38,19 +34,19 @@ const summaries = [
   'no heat',
 ];
 const americanTimezones = [
-  'America/Anchorage',
-  'America/Los_Angeles',
-  'America/Vancouver',
-  'America/Creston',
-  'America/Dawson_Creek',
-  'America/Hermosillo',
-  'America/Phoenix',
-  'America/Denver',
-  'America/Chicago',
-  'America/North_Dakota/Beulah',
-  'America/North_Dakota/Center',
-  'America/North_Dakota/New_Salem',
-  'America/Detroit',
+  // 'America/Anchorage',
+  // 'America/Los_Angeles',
+  // 'America/Vancouver',
+  // 'America/Creston',
+  // 'America/Dawson_Creek',
+  // 'America/Hermosillo',
+  // 'America/Phoenix',
+  // 'America/Denver',
+  // 'America/Chicago',
+  // 'America/North_Dakota/Beulah',
+  // 'America/North_Dakota/Center',
+  // 'America/North_Dakota/New_Salem',
+  // 'America/Detroit',
   'America/New_York',
   'America/Toronto',
 ];
@@ -158,12 +154,12 @@ async function createAppointmentsForUserDay(
   date: string,
 ) {
   const promises = [];
-  const appointmentsForDay = Math.floor(Math.random() * 5);
-  for (let i = 0; i < appointmentsForDay; i++) {
-    const randomTime =
-      commonTimes[Math.floor(Math.random() * commonTimes.length)];
+  const appointmentsForDay =
+    timeConfigurations[Math.floor(Math.random() * timeConfigurations.length)];
+  for (let i = 0; i < appointmentsForDay.length; i++) {
+    const apptTime = appointmentsForDay[i];
     const randomClient = clients[Math.floor(Math.random() * clients.length)];
-    const datetimeLocal = date + ' ' + randomTime;
+    const datetimeLocal = date + ' ' + apptTime;
     const randomSummary =
       summaries[Math.floor(Math.random() * summaries.length)];
     const randomPriority = AppointmentPriority.P2;
