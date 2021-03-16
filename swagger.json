@@ -1,0 +1,1080 @@
+{
+  "info": {
+    "title": "Teddy Internal API",
+    "description": "API DOC for Teddy's internal-facing API, serving the web and mobile clients",
+    "version": "0.1.3"
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "summary": "Log in, retrieving a new token as well as the user object",
+        "description": "Log in, retrieving a new token as well as the user object",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/AuthLoginPostBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/AuthenticationResult" }
+          },
+          "400": { "description": "Bad Request" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["auth"],
+        "operationId": "apiAuth_login",
+        "security": []
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "description": "Register a new user",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/AuthRegisterPostBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/AuthenticationResult" }
+          },
+          "400": { "description": "Bad Request" }
+        },
+        "tags": ["auth"],
+        "operationId": "apiAuth_register",
+        "security": []
+      }
+    },
+    "/api/auth/request_password_reset": {
+      "post": {
+        "summary": "Request a password reset",
+        "description": "Request a password reset",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/AuthRequestPasswordResetPostBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "400": { "description": "Bad Request" }
+        },
+        "tags": ["auth"],
+        "operationId": "apiAuth_requestPasswordReset",
+        "security": []
+      }
+    },
+    "/api/auth/verify_password_reset": {
+      "post": {
+        "summary": "Verify a password reset and change the password",
+        "description": "Verify a password reset and change the password",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/AuthVerifyPasswordResetPostBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "400": { "description": "Bad Request" }
+        },
+        "tags": ["auth"],
+        "operationId": "apiAuth_verifyPasswordReset",
+        "security": []
+      }
+    },
+    "/api/auth/verify_email": {
+      "get": {
+        "summary": "Verify an email address",
+        "description": "Verify an email address",
+        "parameters": [
+          {
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "the unique id of the verification record, consumed after first use",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "302": { "description": "Redirect" },
+          "400": { "description": "Bad Request" }
+        },
+        "tags": ["auth"],
+        "operationId": "apiAuth_verifyEmail",
+        "security": []
+      }
+    },
+    "/api/auth/current_user": {
+      "get": {
+        "summary": "Get the currently logged in user",
+        "description": "Get the currently logged in user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/User" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["auth"],
+        "operationId": "apiAuth_getCurrentUser",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/auth/logout": {
+      "get": {
+        "summary": "Log out, voiding the current token and clearing the cookie",
+        "description": "Log out, voiding the current token and clearing the cookie",
+        "parameters": [],
+        "responses": {
+          "204": { "description": "Success" },
+          "400": { "description": "Bad Request" }
+        },
+        "tags": ["auth"],
+        "operationId": "apiAuth_logout",
+        "security": []
+      }
+    },
+    "/api/appointment": {
+      "post": {
+        "summary": "create a new appointment for the logged in service provider",
+        "description": "create a new appointment for the logged in service provider",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/AppointmentPostBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/Appointment" }
+          },
+          "401": { "description": "Unauthorized" },
+          "405": { "description": "Method Not Allowed" },
+          "409": { "description": "Conflict" }
+        },
+        "tags": ["appointments"],
+        "operationId": "apiAppointment_create",
+        "security": [{ "token": [] }]
+      },
+      "get": {
+        "summary": "query the logged in service provider's appointments",
+        "description": "query the logged in service provider's appointments",
+        "parameters": [
+          {
+            "name": "ids",
+            "type": "array",
+            "items": { "type": "string" },
+            "in": "query"
+          },
+          { "name": "before", "type": "string", "in": "query" },
+          { "name": "after", "type": "string", "in": "query" },
+          { "name": "beforeMs", "type": "number", "in": "query" },
+          { "name": "afterMs", "type": "number", "in": "query" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Appointment" }
+            }
+          },
+          "400": { "description": "Bad Request" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["appointments"],
+        "operationId": "apiAppointment_query",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/appointment/{id}": {
+      "get": {
+        "summary": "get a single appointment by primary key",
+        "description": "get a single appointment by primary key",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/Appointment" }
+          },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" }
+        },
+        "tags": ["appointments"],
+        "operationId": "apiAppointment_getById",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/appointment/{id}/start": {
+      "put": {
+        "summary": "start an appointment",
+        "description": "For now, only service providers can start their appointments.",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/AppointmentStartPutBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" },
+          "405": { "description": "Method Not Allowed" }
+        },
+        "tags": ["appointments"],
+        "operationId": "apiAppointment_start",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/appointment/{id}/reschedule": {
+      "put": {
+        "summary": "reschedule an appointment by the service provider",
+        "description": "For now, only service providers can reschedule their appointments. We'll need to support client requests soon enough",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/AppointmentReschedulePutBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" },
+          "405": { "description": "Method Not Allowed" }
+        },
+        "tags": ["appointments"],
+        "operationId": "apiAppointment_reschedule",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/appointment/{id}/cancel": {
+      "put": {
+        "summary": "cancel an appointment by the service provider",
+        "description": "For now, only service providers can cancel their appointments. We'll need to support client cancellations soon enough",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/AppointmentCancelPutBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" },
+          "405": { "description": "Method Not Allowed" }
+        },
+        "tags": ["appointments"],
+        "operationId": "apiAppointment_cancel",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/appointment/{id}/complete": {
+      "put": {
+        "summary": "complete an appointment by the service provider",
+        "description": "For now, only service providers can complete their appointments.",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/AppointmentCompletePutBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" },
+          "405": { "description": "Method Not Allowed" }
+        },
+        "tags": ["appointments"],
+        "operationId": "apiAppointment_complete",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/appointment/{id}/rate_service": {
+      "put": {
+        "summary": "rate the service on an appointment",
+        "description": "This endpoint will be used by a client to rate their experience with the Teddy service provider. Currently, the action can only be performed once.",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/AppointmentRateServicePutBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "404": { "description": "Not Found" },
+          "405": { "description": "Already rated" }
+        },
+        "tags": ["appointments"],
+        "operationId": "apiAppointment_rateService",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/appointment/{id}/rate_client": {
+      "put": {
+        "summary": "rate the client on an appointment",
+        "description": "This endpoint will be used by a Teddy service provider to rate their experience with the client. Currently, the action can only be performed once.",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/AppointmentRateClientPutBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "404": { "description": "Not Found" },
+          "405": { "description": "Already rated" }
+        },
+        "tags": ["appointments"],
+        "operationId": "apiAppointment_rateClient",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/contractor_profile": {
+      "put": {
+        "summary": "update the logged in contractor profile with a subset of valid fields",
+        "description": "update the logged in contractor profile with a subset of valid fields",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/ContractorProfilePutBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["contractorProfile"],
+        "operationId": "apiContractorProfile_update",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/user/self": {
+      "put": {
+        "summary": "update currently logged in user",
+        "description": "update currently logged in user",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/UserSelfPutBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["users"],
+        "operationId": "apiUser_update",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/client_profile": {
+      "post": {
+        "summary": "create a new client profile",
+        "description": "create a new client profile",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/ClientProfilePostBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/ClientProfile" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["clientProfile"],
+        "operationId": "apiClientProfile_create",
+        "security": [{ "token": [] }]
+      },
+      "get": {
+        "summary": "query the client profiles by name partial, typically during appointment creation",
+        "description": "query the client profiles by name partial, typically during appointment creation",
+        "parameters": [{ "name": "name", "type": "string", "in": "query" }],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/ClientProfile" }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["clientProfile"],
+        "operationId": "apiClientProfile_query",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/calendar/daily": {
+      "get": {
+        "summary": "get the day's appointments, the next appointment, and a summary of the user's day so far",
+        "description": "get the day's appointments, the next appointment, and a summary of the user's day so far",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/DailyInfo" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["calendar"],
+        "operationId": "apiCalendar_getDailyInfo",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/omni/v0/service": {
+      "get": {
+        "summary": "query all the data required to use the app as a service provider/contractor",
+        "description": "This endpoint will be used to immediately load all the data the app is likely to need for an average session. This includes the full current user with contractor profile, all appointments from one month in the past to one month in the future, the daily calendar data, and all client profiles created by the logged in user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/OmniResponseV0" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["omni"],
+        "operationId": "apiOmni_getV0",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/user_notification_setting": {
+      "get": {
+        "summary": "get the full list of a user's notification settings",
+        "description": "get the full list of a user's notification settings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/UserNotificationSetting" }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["userNotificationSetting"],
+        "operationId": "apiUserNotificationSetting_get",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/user_notification_setting/single": {
+      "put": {
+        "summary": "update a specific notification setting for the user",
+        "description": "update a specific notification setting for the user",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/UserNotificationSettingSinglePutBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["userNotificationSetting"],
+        "operationId": "apiUserNotificationSetting_updateSingle",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/invoice": {
+      "post": {
+        "summary": "create a new invoice",
+        "description": "create a new invoice",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/InvoicePostBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/Invoice" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["invoice"],
+        "operationId": "apiInvoice_create",
+        "security": [{ "token": [] }]
+      }
+    }
+  },
+  "responses": {},
+  "definitions": {
+    "Appointment": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "created_at": { "type": "integer" },
+        "started_at": { "type": "integer" },
+        "completed_at": { "type": "integer" },
+        "service_provider_user_id": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": [
+            "requested",
+            "scheduled",
+            "missed",
+            "canceled",
+            "in_progress",
+            "pending_resolution",
+            "completed"
+          ]
+        },
+        "priority": { "type": "string", "enum": ["P0", "P1", "P2", "P3"] },
+        "client_profile_id": { "type": "string" },
+        "datetime_utc": { "type": "string" },
+        "datetime_end_utc": { "type": "string" },
+        "datetime_local": { "type": "string" },
+        "datetime_end_local": { "type": "string" },
+        "address_street": { "type": "string" },
+        "address_city": { "type": "string" },
+        "address_state": { "type": "string" },
+        "address_postal_code": { "type": "string" },
+        "timezone": { "type": "string" },
+        "timezone_offset": { "type": "integer" },
+        "latitude": { "type": "string" },
+        "longitude": { "type": "string" },
+        "timezone_friendly": { "type": "string" },
+        "summary": { "type": "string" },
+        "notes": { "type": "string" },
+        "duration_minutes": { "type": "string" },
+        "requires_followup": { "type": "boolean" },
+        "parent_appointment_id": { "type": "string" },
+        "invoice_id": { "type": "string" },
+        "rating_of_client": { "type": "integer" },
+        "rating_of_service": { "type": "integer" },
+        "client_profile": { "$ref": "#/definitions/ClientProfile" }
+      }
+    },
+    "ClientProfile": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "created_at": { "type": "integer" },
+        "created_by_user_id": { "type": "string" },
+        "email": { "type": "string" },
+        "full_name": { "type": "string" },
+        "phone": { "type": "string" },
+        "address_street": { "type": "string" },
+        "address_city": { "type": "string" },
+        "address_state": { "type": "string" },
+        "address_postal_code": { "type": "string" },
+        "timezone": { "type": "string" },
+        "timezone_offset": { "type": "integer" }
+      }
+    },
+    "ContractorProfile": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "created_at": { "type": "integer" },
+        "user_id": { "type": "string" },
+        "company_name": { "type": "string" },
+        "license_number": { "type": "string" },
+        "licensing_state": { "type": "string" },
+        "primary_work": {
+          "type": "string",
+          "enum": ["electrical", "hvac", "plumbing", "carpentry", "handiwork"]
+        },
+        "appointment_fee": { "type": "integer" },
+        "hourly_rate": { "type": "integer" },
+        "daily_rate": { "type": "integer" },
+        "estimated_yearly_income": { "type": "integer" },
+        "estimated_yearly_expenses": { "type": "integer" },
+        "onboarding_completed": { "type": "boolean" }
+      }
+    },
+    "Invoice": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "created_at": { "type": "integer" },
+        "client_profile_id": { "type": "string" },
+        "service_provider_user_id": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "paid"] },
+        "payment_method": { "type": "string", "enum": ["cash", "credit_card"] },
+        "flat_rate": { "type": "integer" },
+        "cost_materials": { "type": "integer" },
+        "processing_fee": { "type": "integer" },
+        "daily_rate": { "type": "integer" },
+        "hourly_rate": { "type": "integer" },
+        "minutes_billed": { "type": "integer" },
+        "days_billed": { "type": "integer" },
+        "currency_code": { "type": "string" }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "created_at": { "type": "integer" },
+        "verified_at": { "type": "integer" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "family_name": { "type": "string" },
+        "given_name": { "type": "string" },
+        "contractor_profile": { "$ref": "#/definitions/ContractorProfile" }
+      }
+    },
+    "UserNotificationSetting": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "created_at": { "type": "integer" },
+        "updated_at": { "type": "integer" },
+        "user_id": { "type": "string" },
+        "name": { "type": "string" },
+        "notification_id": {
+          "type": "string",
+          "enum": [
+            "daily_kickoff",
+            "appointment_reminder",
+            "start_work_reminder"
+          ]
+        },
+        "email": { "type": "boolean" },
+        "push": { "type": "boolean" },
+        "text": { "type": "boolean" }
+      }
+    },
+    "AuthenticationResult": {
+      "type": "object",
+      "properties": {
+        "token": { "type": "string" },
+        "user": { "$ref": "#/definitions/User" }
+      }
+    },
+    "DailyInfo": {
+      "type": "object",
+      "properties": {
+        "appointments": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Appointment" }
+        },
+        "nextAppointment": { "$ref": "#/definitions/Appointment" },
+        "summary": {
+          "type": "string",
+          "example": "Looks like you don't have any appointments today. Time to kick back! (Alternatively, you can head over to your Calendar to add a new job)"
+        }
+      }
+    },
+    "OmniResponseV0": {
+      "type": "object",
+      "properties": {
+        "allAppointmentsWithinMonth": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Appointment" }
+        },
+        "clients": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ClientProfile" }
+        },
+        "currentUser": { "$ref": "#/definitions/User" },
+        "userNotificationSettings": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/UserNotificationSetting" }
+        },
+        "dailyInfo": { "$ref": "#/definitions/DailyInfo" },
+        "enums": {
+          "type": "object",
+          "properties": {
+            "primary_work": { "type": "array", "items": { "type": "string" } },
+            "appointment_priority": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "AuthLoginPostBody": {
+      "type": "object",
+      "required": ["email", "password"],
+      "properties": {
+        "email": { "type": "string", "description": "username" },
+        "password": { "type": "string", "description": "password" }
+      }
+    },
+    "AuthRegisterPostBody": {
+      "type": "object",
+      "required": ["email", "password", "confirm_password"],
+      "properties": {
+        "email": { "type": "string", "description": "username" },
+        "password": { "type": "string", "description": "password" },
+        "confirm_password": { "type": "string", "description": "password" }
+      }
+    },
+    "AuthRequestPasswordResetPostBody": {
+      "type": "object",
+      "required": ["email"],
+      "properties": { "email": { "type": "string", "description": "username" } }
+    },
+    "AuthVerifyPasswordResetPostBody": {
+      "type": "object",
+      "required": ["token", "password", "confirm_password"],
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "the unique id for the request, consumed after first use"
+        },
+        "password": { "type": "string", "description": "password" },
+        "confirm_password": { "type": "string", "description": "password" }
+      }
+    },
+    "AppointmentPostBody": {
+      "type": "object",
+      "required": [
+        "client_profile_id",
+        "datetime_local",
+        "duration_minutes",
+        "summary",
+        "priority"
+      ],
+      "properties": {
+        "override_warnings": {
+          "type": "boolean",
+          "description": "set to true to override logical warnings and create the appointment regardless"
+        },
+        "client_profile_id": {
+          "type": "string",
+          "description": "the id of the ClientProfile associated with this appointment"
+        },
+        "datetime_local": {
+          "type": "string",
+          "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
+          "example": "2021-03-16 14:37:35"
+        },
+        "duration_minutes": {
+          "type": "number",
+          "description": "the length of the appointment"
+        },
+        "summary": {
+          "type": "string",
+          "description": "short description of the appointment"
+        },
+        "priority": {
+          "type": "string",
+          "description": "The appointment priority, from P0 to P3"
+        }
+      }
+    },
+    "AppointmentStartPutBody": {
+      "type": "object",
+      "required": ["cause"],
+      "properties": {
+        "cause": {
+          "type": "string",
+          "enum": ["geofence_arrival", "manual"],
+          "description": "indicate whether the appointment was auto-started or manually started"
+        }
+      }
+    },
+    "AppointmentReschedulePutBody": {
+      "type": "object",
+      "required": ["datetime_local", "duration_minutes"],
+      "properties": {
+        "datetime_local": {
+          "type": "string",
+          "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
+          "example": "2021-03-16 14:37:35"
+        },
+        "duration_minutes": {
+          "type": "number",
+          "description": "the length of the appointment"
+        },
+        "reason_for_reschedule": {
+          "type": "string",
+          "description": "optional explanation for the reschedule"
+        }
+      }
+    },
+    "AppointmentCancelPutBody": {
+      "type": "object",
+      "required": ["cancelation_reason"],
+      "properties": {
+        "cancelation_reason": {
+          "type": "string",
+          "description": "free text explaining the cancelation"
+        }
+      }
+    },
+    "AppointmentCompletePutBody": {
+      "type": "object",
+      "required": ["followup_needed"],
+      "properties": {
+        "followup_needed": {
+          "type": "boolean",
+          "description": "true if another appointment must be scheduled"
+        }
+      }
+    },
+    "AppointmentRateServicePutBody": {
+      "type": "object",
+      "required": ["rating"],
+      "properties": {
+        "rating": { "type": "number", "description": "from 1 to 5" }
+      }
+    },
+    "AppointmentRateClientPutBody": {
+      "type": "object",
+      "required": ["rating"],
+      "properties": {
+        "rating": { "type": "number", "description": "from 1 to 5" }
+      }
+    },
+    "ContractorProfilePutBody": {
+      "type": "object",
+      "properties": {
+        "company_name": {
+          "type": "string",
+          "description": "the service provider's legal entity"
+        },
+        "license_number": {
+          "type": "string",
+          "description": "the service provider's professional license number"
+        },
+        "licensing_state": {
+          "type": "string",
+          "description": "the state that issued the service provider's license"
+        },
+        "primary_work": {
+          "type": "string",
+          "description": "the service provider's primary area of expertise, currently limited to one of the following: electrical, hvac, plumbing, carpentry, or handiwork"
+        },
+        "appointment_fee": {
+          "type": "number",
+          "description": "a flat rate per appointment"
+        },
+        "daily_rate": {
+          "type": "number",
+          "description": "a rate charged per day"
+        },
+        "hourly_rate": {
+          "type": "number",
+          "description": "a rate charged per hour"
+        },
+        "estimated_yearly_income": {
+          "type": "number",
+          "description": "the provider's estimated yearly earnings, before expenses"
+        },
+        "estimated_yearly_expenses": {
+          "type": "number",
+          "description": "the provider's estimated yearly expenses"
+        },
+        "onboarding_completed": {
+          "type": "boolean",
+          "description": "set to true when the onboarding data has been completed"
+        }
+      }
+    },
+    "UserSelfPutBody": {
+      "type": "object",
+      "required": ["phone", "given_name", "family_name"],
+      "properties": {
+        "phone": { "type": "string", "description": "user's phone number" },
+        "given_name": {
+          "type": "string",
+          "description": "user's given (usually first) name"
+        },
+        "family_name": {
+          "type": "string",
+          "description": "user's family (usually last) name"
+        }
+      }
+    },
+    "ClientProfilePostBody": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "the contact email address"
+        },
+        "phone": {
+          "type": "string",
+          "description": "the contact phone number"
+        },
+        "full_name": {
+          "type": "string",
+          "description": "the client's full name"
+        },
+        "address_street": {
+          "type": "string",
+          "description": "the street address for the client"
+        },
+        "address_city": {
+          "type": "string",
+          "description": "the city of the client's primary address"
+        },
+        "address_state": {
+          "type": "string",
+          "description": "the state of client's primary address"
+        },
+        "address_postal_code": {
+          "type": "string",
+          "description": "the postal code for the client's primary address"
+        }
+      }
+    },
+    "UserNotificationSettingSinglePutBody": {
+      "type": "object",
+      "required": ["notification_id", "email", "push", "text"],
+      "properties": {
+        "notification_id": {
+          "type": "string",
+          "enum": [
+            "daily_kickoff",
+            "appointment_reminder",
+            "start_work_reminder"
+          ]
+        },
+        "email": { "type": "boolean" },
+        "push": { "type": "boolean" },
+        "text": { "type": "boolean" }
+      }
+    },
+    "InvoicePostBody": {
+      "type": "object",
+      "properties": {
+        "appointment_id": {
+          "type": "string",
+          "description": "the id of the billed appointment"
+        },
+        "flat_rate": {
+          "type": "number",
+          "description": "a flat rate to be billed (should default to the value in their contractor profile)"
+        },
+        "hourly_rate": {
+          "type": "number",
+          "description": "the hourly rate billed for this invoice (should default to the value in their contractor profile)"
+        },
+        "daily_rate": {
+          "type": "number",
+          "description": "the daily rate billed for this invoice (should default to the value in their contractor profile)"
+        },
+        "minutes_billed": {
+          "type": "number",
+          "description": "the number of minutes to bill at the hourly rate (otherwise leave as 0)"
+        },
+        "days_billed": {
+          "type": "number",
+          "description": "the number of days to bill at the daily rate (otherwise leave as 0)"
+        },
+        "cost_materials": {
+          "type": "number",
+          "description": "the cost of materials"
+        },
+        "currency_code": {
+          "type": "string",
+          "enum": ["USD"],
+          "description": "Should always be USD to start"
+        }
+      }
+    }
+  },
+  "tags": [],
+  "swagger": "2.0",
+  "securityDefinitions": {
+    "token": { "type": "apiKey", "in": "header", "name": "teddy_web_token" }
+  }
+}
