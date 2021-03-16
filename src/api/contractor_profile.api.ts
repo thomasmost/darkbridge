@@ -138,7 +138,7 @@ export class ContractorProfileAPI {
     if (estimated_yearly_income) {
       profile.estimated_yearly_income = estimated_yearly_income;
     }
-    if (onboarding_completed) {
+    if (onboarding_completed !== undefined) {
       profile.onboarding_completed = onboarding_completed;
     }
 
