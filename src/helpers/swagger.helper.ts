@@ -6,7 +6,7 @@ import {
 
 type SwaggerProperty = {
   $ref?: string;
-  type?: 'string' | 'integer' | 'object';
+  type?: 'string' | 'integer' | 'object' | 'boolean';
   example?: string;
   format?: 'uuid' | 'email';
   enum?: readonly string[];
@@ -61,6 +61,9 @@ export const swaggerPropertyFromAttribute = (
     switch (typeString) {
       case 'VARCHAR(255)':
         swaggerProperty.type = 'string';
+        break;
+      case 'TINYINT(1)':
+        swaggerProperty.type = 'boolean';
         break;
       case 'NUMBER':
         swaggerProperty.type = 'integer';
