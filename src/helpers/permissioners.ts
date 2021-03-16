@@ -11,7 +11,7 @@ export type Permissioner =
 
 export const toUser: Permissioner = {
   execute: (permissioningData, user) => {
-    return permissioningData.created_by_user_id === user.id;
+    return permissioningData.user_id === user.id;
   },
   attributes: ['user_id'],
 };
