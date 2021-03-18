@@ -285,7 +285,10 @@
           }
         ],
         "responses": {
-          "204": { "description": "Success" },
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/Appointment" }
+          },
           "401": { "description": "Unauthorized" },
           "404": { "description": "Not Found" },
           "405": { "description": "Method Not Allowed" }
@@ -843,7 +846,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-16 14:37:35"
+          "example": "2021-03-18 16:34:59"
         },
         "duration_minutes": {
           "type": "number",
@@ -877,7 +880,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-16 14:37:35"
+          "example": "2021-03-18 16:34:59"
         },
         "duration_minutes": {
           "type": "number",
