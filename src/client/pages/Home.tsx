@@ -35,12 +35,15 @@ const WrapperLink = styled(Link)`
 
 export const renderAppointmentInfo = (
   appointment: AppointmentAttributes | null,
+  current = false,
 ) => {
   if (!appointment) {
     return <div>No upcoming appointments!</div>;
   }
   return (
-    <WrapperLink to="/next-appointment">
+    <WrapperLink
+      to={current ? `/job/${appointment.id}/working` : '/next-appointment'}
+    >
       <AppointmentCard appointment={appointment} interactive />
     </WrapperLink>
   );
@@ -65,6 +68,10 @@ export const Home: React.FC<RouteComponentProps> = () => {
     nextAppointment,
     setNextAppointment,
   ] = useState<AppointmentAttributes | null>(null);
+  const [
+    currentAppointment,
+    setCurrentAppointment,
+  ] = useState<AppointmentAttributes | null>(null);
 
   useEffect(() => {
     getDailyInfo().then((result) => {
@@ -74,6 +81,7 @@ export const Home: React.FC<RouteComponentProps> = () => {
       dispatch({ type: 'SET_APPOINTMENTS', data: result.data.appointments });
       setSummary(result.data.summary);
       setNextAppointment(result.data.nextAppointment);
+      setCurrentAppointment(result.data.currentAppointment);
     });
   }, []);
 
@@ -91,6 +99,12 @@ export const Home: React.FC<RouteComponentProps> = () => {
     <div>
       <HeadingText>{greeting}</HeadingText>
       <Summary>{summary}</Summary>
+      {Boolean(currentAppointment) && (
+        <>
+          <NextAppointmentHeader>Current appointment</NextAppointmentHeader>
+          {renderAppointmentInfo(currentAppointment, true)}
+        </>
+      )}
       {Boolean(nextAppointment) && (
         <>
           <NextAppointmentHeader>Next appointment</NextAppointmentHeader>

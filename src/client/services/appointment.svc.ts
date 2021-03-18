@@ -11,6 +11,7 @@ export function getDailyInfo() {
     summary: string;
     appointments: AppointmentAttributes[];
     nextAppointment: AppointmentAttributes;
+    currentAppointment: AppointmentAttributes;
   }>('calendar/daily', 'json');
 }
 

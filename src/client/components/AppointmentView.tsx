@@ -21,7 +21,6 @@ const CancelCard = styled(Card)`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: 20px;
   margin: 50px 0;
   color: ${theme.warningColor};
 `;
@@ -125,7 +124,7 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
   // const startDate = new Date(appointment.datetime_utc);
   // const now = new Date();
   const isCanceled = appointment.status === 'canceled';
-  const isStartable = false;
+  const isStartable = true;
   // appointment.status === 'scheduled' &&
   // Math.abs(DateTimeHelper.differenceInMinutes(startDate, now)) < 12000;
   return (
@@ -133,8 +132,8 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
       <HeadingText>{header}</HeadingText>
       {renderAppointmentInfo(appointment)}
       {isStartable && renderStartCard(appointment.id, dispatch)}
+      {renderCustomerInfo(appointment)}{' '}
       {isCanceled ? renderCanceledCard() : renderCancelCard(appointment.id)}
-      {renderCustomerInfo(appointment)}
     </div>
   );
 };

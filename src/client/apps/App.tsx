@@ -56,7 +56,7 @@ const App = () => {
     display: block;
     margin: auto;
     max-width: 1000px;
-    padding: 25px 25px 0px;
+    padding: 25px 25px 50px;
     width: 100%;
   `;
   const ScrollWrapper = styled.div`

@@ -98,6 +98,7 @@ const dailyInfoFromData = (
 
   let completed = 0;
   let nextAppointment = null;
+  let currentAppointment = null;
 
   const appointmentsWithProfiles = appointments.map((appointment) => {
     appointment.client_profile =
@@ -109,8 +110,11 @@ const dailyInfoFromData = (
     if (appointment.status === 'completed') {
       completed++;
     }
-    if (appointment.status === 'scheduled' && nextAppointment === null) {
+    if (appointment.status === 'scheduled' && !nextAppointment) {
       nextAppointment = appointment;
+    }
+    if (appointment.status === 'in_progress') {
+      currentAppointment = appointment;
     }
   }
 
@@ -119,12 +123,14 @@ const dailyInfoFromData = (
     return {
       appointments: appointmentsWithProfiles,
       nextAppointment,
+      currentAppointment,
       summary: `Today you have ${countAppointments} ${noun}, within a 15 mile radius. You should be done by ${doneBy}.`,
     };
   }
   return {
     appointments: appointmentsWithProfiles,
     nextAppointment,
+    currentAppointment,
     summary: `Today you have ${countAppointments} ${noun}, within a 15 mile radius. You've already knocked out ${completed}! You should be done by ${doneBy} this evening.`,
   };
 };

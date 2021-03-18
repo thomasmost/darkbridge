@@ -62,7 +62,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
             Date and time
           </CardHeading>
           <CardInfo>
-            {format(new Date(appointment.datetime_local), 'yyyy/MM/dd h:mm')}—
+            {format(new Date(appointment.datetime_local), 'LLLL do h:mm')}—
             {format(new Date(appointment.datetime_end_local), 'h:mm a')}{' '}
             {showTimezone && `(${appointment.timezone_friendly})`}
           </CardInfo>
