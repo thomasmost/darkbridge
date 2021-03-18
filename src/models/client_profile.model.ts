@@ -19,7 +19,10 @@ export interface ClientProfileAttributes {
   address_postal_code: string;
   timezone: string;
   timezone_offset: number;
-  coordinates: { type: string; coordinates: number[] };
+  coordinates: Readonly<{
+    type: string;
+    coordinates: Readonly<Readonly<number>[]>;
+  }>;
 }
 
 // Some attributes are optional in `ClientProfile.build` and `ClientProfile.create` calls

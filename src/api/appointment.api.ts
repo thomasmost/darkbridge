@@ -279,7 +279,13 @@ export class AppointmentAPI {
   @description(
     "For now, only service providers can reschedule their appointments. We'll need to support client requests soon enough",
   )
-  @responses(baseCodes([204, 401, 404, 405]))
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(AppointmentModel),
+    },
+    ...baseCodes([401, 404, 405]),
+  })
   public static async rescheduleAppointment(ctx: TeddyRequestContext) {
     if (!ctx.user) {
       ctx.status = 401;

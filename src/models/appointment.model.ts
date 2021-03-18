@@ -43,7 +43,10 @@ export interface AppointmentAttributes {
   address_postal_code: string;
   timezone: string;
   timezone_offset: number;
-  coordinates: { type: string; coordinates: number[] };
+  coordinates: Readonly<{
+    type: string;
+    coordinates: Readonly<Readonly<number>[]>;
+  }>;
   latitude: number;
   longitude: number;
   timezone_friendly: string;
@@ -51,7 +54,7 @@ export interface AppointmentAttributes {
   requires_followup: boolean;
   rating_of_service: number;
   rating_of_client: number;
-  client_profile?: ClientProfileAttributes;
+  client_profile?: Readonly<ClientProfileAttributes>;
 }
 
 export interface IAppointmentPostBody {

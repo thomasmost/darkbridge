@@ -80,7 +80,6 @@ export const RescheduleAppointment: React.FC<
   }, [register]);
 
   const { appointment_id } = props;
-
   const currentAppointment = appointments?.find(
     (appointment) => appointment.id === appointment_id,
   );
@@ -97,7 +96,10 @@ export const RescheduleAppointment: React.FC<
       if (result.error) {
         return;
       }
-      dispatch({ type: 'SET_APPOINTMENTS', data: result.data });
+      dispatch({
+        type: 'SET_APPOINTMENTS',
+        data: result.data,
+      });
     });
   }, []);
 
@@ -124,6 +126,7 @@ export const RescheduleAppointment: React.FC<
     );
     if (!result.error) {
       toast.success('Appointment Rescheduled');
+      dispatch({ type: 'RESCHEDULE_APPOINTMENT_SUCCESS', data: result.data });
       navigate(`/appointment/${currentAppointment.id}`);
     }
   };

@@ -42,7 +42,9 @@ const Count = styled.label`
   margin-right: 10px;
 `;
 
-const mapAppointmentsToDays = (appointments: AppointmentAttributes[]) => {
+const mapAppointmentsToDays = (
+  appointments: Readonly<Readonly<AppointmentAttributes>[]>,
+) => {
   const byDay: Record<string, AppointmentAttributes[]> = {};
   for (const appointment of appointments) {
     if (appointment.status === 'canceled') {
@@ -59,7 +61,7 @@ const mapAppointmentsToDays = (appointments: AppointmentAttributes[]) => {
 
 const CalendarDay: React.FC<{
   headerUnixStr: string;
-  appointments: AppointmentAttributes[];
+  appointments: Readonly<Readonly<AppointmentAttributes>[]>;
 }> = ({ headerUnixStr, appointments }) => {
   const isToday = headerUnixStr === startOfDay(new Date()).valueOf().toString();
   const [expanded, setExpanded] = useState<boolean>(isToday);

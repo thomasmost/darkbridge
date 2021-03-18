@@ -2,16 +2,16 @@ import React from 'react';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { AppointmentStatus } from '../../shared/enums';
 
+import produce from 'immer';
+
 export interface IStateContainer {
   appointments: AppointmentAttributes[];
 }
-
-export class StateContainer implements IStateContainer {
-  public appointments: AppointmentAttributes[];
-  constructor() {
-    this.appointments = [];
-  }
+export interface IImmutableStateContainer {
+  readonly appointments: Readonly<Readonly<AppointmentAttributes>[]>;
 }
+
+export const newStateContainer = () => ({ appointments: [] });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface Action<T = any> {
@@ -19,33 +19,33 @@ export interface Action<T = any> {
   data: T;
 }
 
-export const StateContext = React.createContext(new StateContainer());
+export const StateContext = React.createContext<IImmutableStateContainer>(
+  newStateContainer() as IImmutableStateContainer,
+);
 export const DispatchContext = React.createContext<React.Dispatch<Action>>(
   () => null,
 );
 
-export const reducer = (
-  state: StateContainer,
-  action: Action,
-): StateContainer => {
+const immerReducer = (draft: IStateContainer, action: Action): void => {
   if (action.type === 'SET_APPOINTMENTS') {
-    return {
-      ...state,
-      appointments: action.data,
-    };
+    draft.appointments = action.data;
   }
   if (action.type === 'START_APPOINTMENT') {
     const { appointment_id } = action.data;
-    const newAppointments = [...state.appointments];
-    for (const appointment of newAppointments) {
+    for (const appointment of draft.appointments) {
       if (appointment.id === appointment_id) {
         appointment.status = AppointmentStatus.in_progress;
       }
     }
-    return {
-      ...state,
-      appointments: newAppointments,
-    };
   }
-  return state;
+  if (action.type === 'RESCHEDULE_APPOINTMENT_SUCCESS') {
+    const newAppointment = action.data;
+    for (let i = 0; i < draft.appointments.length; i++) {
+      if (draft.appointments[i].id === newAppointment.id) {
+        draft.appointments[i] = newAppointment;
+      }
+    }
+  }
 };
+
+export const reducer = produce(immerReducer);
