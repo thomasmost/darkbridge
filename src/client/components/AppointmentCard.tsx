@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { utcToZonedTime, format } from 'date-fns-tz';
+import { format } from 'date-fns-tz';
 import React from 'react';
-import { DateTimeHelper } from '../../helpers/datetime.helper';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { Card } from '../elements/Card';
 import { Icon } from '../elements/Icon';

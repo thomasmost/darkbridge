@@ -96,30 +96,20 @@ const dailyInfoFromData = (
   const lastAppointment = appointments[countAppointments - 1];
   const doneBy = format(new Date(lastAppointment.datetime_end_utc), 'h:mm a');
 
-  let completed = 0;
-  let nextAppointment = null;
-  let currentAppointment = null;
-
   const appointmentsWithProfiles = appointments.map((appointment) => {
     appointment.client_profile =
       clientProfilesById[appointment.client_profile_id];
     return appointment;
   });
 
-  for (const appointment of appointmentsWithProfiles) {
-    if (appointment.status === 'completed') {
-      completed++;
-    }
-    if (appointment.status === 'scheduled' && !nextAppointment) {
-      nextAppointment = appointment;
-    }
-    if (appointment.status === 'in_progress') {
-      currentAppointment = appointment;
-    }
-  }
+  const {
+    countCompleted,
+    currentAppointment,
+    nextAppointment,
+  } = breakdownFromSortedListOfAppointments(appointmentsWithProfiles);
 
   const noun = countAppointments === 1 ? 'appointment' : 'appointments';
-  if (completed === 0) {
+  if (countCompleted === 0) {
     return {
       appointments: appointmentsWithProfiles,
       nextAppointment,
@@ -131,6 +121,25 @@ const dailyInfoFromData = (
     appointments: appointmentsWithProfiles,
     nextAppointment,
     currentAppointment,
-    summary: `Today you have ${countAppointments} ${noun}, within a 15 mile radius. You've already knocked out ${completed}! You should be done by ${doneBy} this evening.`,
+    summary: `Today you have ${countAppointments} ${noun}, within a 15 mile radius. You've already knocked out ${countCompleted}! You should be done by ${doneBy} this evening.`,
   };
+};
+
+const breakdownFromSortedListOfAppointments = (appointments: Appointment[]) => {
+  let countCompleted = 0;
+  let nextAppointment = null;
+  let currentAppointment = null;
+
+  for (const appointment of appointments) {
+    if (appointment.status === 'completed') {
+      countCompleted++;
+    }
+    if (appointment.status === 'scheduled' && !nextAppointment) {
+      nextAppointment = appointment;
+    }
+    if (appointment.status === 'in_progress') {
+      currentAppointment = appointment;
+    }
+  }
+  return { countCompleted, currentAppointment, nextAppointment };
 };

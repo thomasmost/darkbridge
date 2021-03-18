@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { RouteComponentProps } from '@reach/router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { DateTimeHelper } from '../../helpers/datetime.helper';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { Button } from '../elements/Button';

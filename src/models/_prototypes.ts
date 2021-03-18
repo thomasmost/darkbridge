@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   DataType,
   InitOptions,
@@ -12,10 +14,7 @@ export interface PermissionedModelAttributeColumnOptions
   visible: Permissioner;
 }
 
-type PermissionedModelAttributes<
-  M extends Model = Model,
-  TCreationAttributes = any
-> = {
+type PermissionedModelAttributes<TCreationAttributes = any> = {
   /**
    * The description of a database column
    */
@@ -32,7 +31,7 @@ export abstract class PermissionedModel<
 > extends Model<TModelAttributes, TCreationAttributes> {
   public static initWithPermissions<M extends Model>(
     this: ModelStatic<M>,
-    attributes: PermissionedModelAttributes<M, M['_attributes']>,
+    attributes: PermissionedModelAttributes<M['_attributes']>,
     options: InitOptions<M>,
   ) {
     return (this as any).init(attributes, options);
