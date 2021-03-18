@@ -43,15 +43,6 @@ const FlexRow = styled.div`
 const RUNNING_LATE = 'running late';
 const EMERGENCY = 'emergency';
 
-export const renderAppointmentInfo = (
-  appointment: AppointmentAttributes | null,
-) => {
-  if (!appointment) {
-    return <div>No upcoming appointments!</div>;
-  }
-  return <AppointmentCard appointment={appointment} warning />;
-};
-
 export const renderCustomerInfo = (
   appointment: AppointmentAttributes | null,
 ) => {
@@ -194,7 +185,7 @@ export const CancelAppointment: React.FC<
   }
   return (
     <div>
-      {renderAppointmentInfo(currentAppointment)}
+      <AppointmentCard appointment={currentAppointment} warning />
       <WarningHeader>Are you sure?</WarningHeader>
       <p>
         In general, you shouldn&apos;t cancel an appointment day-of unless

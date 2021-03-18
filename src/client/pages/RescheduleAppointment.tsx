@@ -34,15 +34,6 @@ const StyledPicker = styled(DateTimePicker)`
   }
 `;
 
-export const renderAppointmentInfo = (
-  appointment: AppointmentAttributes | null,
-) => {
-  if (!appointment) {
-    return <div>No upcoming appointments!</div>;
-  }
-  return <AppointmentCard appointment={appointment} warning />;
-};
-
 export const renderCustomerInfo = (
   appointment: AppointmentAttributes | null,
 ) => {
@@ -67,8 +58,14 @@ const Label = styled.label`
   margin-bottom: 10px;
 `;
 
+const Spacer = styled.div`
+  width: 100%;
+  height: 20px;
+`;
+
 export const RescheduleAppointment: React.FC<
   RouteComponentProps<{ appointment_id: string }>
+  // eslint-disable-next-line sonarjs/cognitive-complexity
 > = (props) => {
   const { appointments } = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
@@ -136,8 +133,8 @@ export const RescheduleAppointment: React.FC<
   }
   return (
     <div>
-      {renderAppointmentInfo(currentAppointment)}
-
+      <AppointmentCard appointment={currentAppointment} warning />
+      <Spacer />
       <FlexColumns>
         <div>
           <Label>Time</Label>

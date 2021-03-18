@@ -26,6 +26,7 @@ export const DispatchContext = React.createContext<React.Dispatch<Action>>(
   () => null,
 );
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 const immerReducer = (draft: IStateContainer, action: Action): void => {
   if (action.type === 'SET_APPOINTMENTS') {
     draft.appointments = action.data;
