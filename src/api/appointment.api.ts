@@ -285,6 +285,7 @@ export class AppointmentAPI {
       ctx.status = 401;
       return;
     }
+    console.log('here we are');
     const user = ctx.user;
 
     const { id } = ctx.validatedParams;

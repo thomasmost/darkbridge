@@ -189,6 +189,7 @@ const LEGAL_STATUS_TRANSITIONS: Record<
       AppointmentStatus.missed,
       AppointmentStatus.canceled,
       AppointmentStatus.requested,
+      AppointmentStatus.scheduled,
     ],
   },
   canceled: {

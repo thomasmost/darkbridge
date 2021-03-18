@@ -60,6 +60,17 @@ export const renderCancelCard = (appointment_id: string) => (
   </Link>
 );
 
+export const renderRescheduleCard = (appointment_id: string) => (
+  <Link to={`/reschedule-appointment/${appointment_id}`}>
+    <CancelCard>
+      <div>Reschedule Appointment</div>
+      <CardArrow>
+        <Icon name="Arrow-Right-2" />
+      </CardArrow>
+    </CancelCard>
+  </Link>
+);
+
 const startAppointment = async (
   appointment_id: string,
   dispatch: Dispatch<Action<{ appointment_id: string }>>,
@@ -124,6 +135,8 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
   // const startDate = new Date(appointment.datetime_utc);
   // const now = new Date();
   const isCanceled = appointment.status === 'canceled';
+  const canBeRescheduled =
+    appointment.status !== 'in_progress' && appointment.status !== 'completed';
   const isStartable = true;
   // appointment.status === 'scheduled' &&
   // Math.abs(DateTimeHelper.differenceInMinutes(startDate, now)) < 12000;
@@ -133,6 +146,7 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
       {renderAppointmentInfo(appointment)}
       {isStartable && renderStartCard(appointment.id, dispatch)}
       {renderCustomerInfo(appointment)}{' '}
+      {canBeRescheduled && renderRescheduleCard(appointment.id)}
       {isCanceled ? renderCanceledCard() : renderCancelCard(appointment.id)}
     </div>
   );
