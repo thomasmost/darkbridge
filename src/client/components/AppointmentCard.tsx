@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
-import { format } from 'date-fns';
+import { utcToZonedTime, format } from 'date-fns-tz';
 import React from 'react';
+import { DateTimeHelper } from '../../helpers/datetime.helper';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { Card } from '../elements/Card';
 import { Icon } from '../elements/Icon';
@@ -43,7 +44,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     color: ${warning ? theme.warningColor : theme.textColor};
   `;
 
-  const userOffset = new Date().getTimezoneOffset();
+  const userOffset = -(new Date().getTimezoneOffset() / 60);
   const showTimezone = userOffset !== appointment.timezone_offset;
   return (
     <StyledCard>
@@ -62,9 +63,12 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
             Date and time
           </CardHeading>
           <CardInfo>
-            {format(new Date(appointment.datetime_local), 'LLLL do h:mm')}—
+            {format(new Date(appointment.datetime_local), 'LLLL do, h:mm')}—
             {format(new Date(appointment.datetime_end_local), 'h:mm a')}{' '}
-            {showTimezone && `(${appointment.timezone_friendly})`}
+            {showTimezone &&
+              format(new Date(appointment.datetime_utc), 'z', {
+                timeZone: appointment.timezone,
+              })}
           </CardInfo>
         </div>
         <div>
