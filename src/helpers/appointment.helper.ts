@@ -133,29 +133,29 @@ export async function getConflictingAppointments(
         {
           datetime_utc: {
             [Op.gte]: datetime_utc,
-            [Op.lte]: datetime_end_utc,
+            [Op.lt]: datetime_end_utc,
           },
         },
         {
           datetime_end_utc: {
-            [Op.gte]: datetime_utc,
-            [Op.lte]: datetime_end_utc,
-          },
-        },
-        {
-          datetime_utc: {
-            [Op.gte]: datetime_utc,
-          },
-          datetime_end_utc: {
+            [Op.gt]: datetime_utc,
             [Op.lte]: datetime_end_utc,
           },
         },
         {
           datetime_utc: {
-            [Op.lte]: datetime_utc,
+            [Op.gt]: datetime_utc,
           },
           datetime_end_utc: {
-            [Op.gte]: datetime_end_utc,
+            [Op.lt]: datetime_end_utc,
+          },
+        },
+        {
+          datetime_utc: {
+            [Op.lt]: datetime_utc,
+          },
+          datetime_end_utc: {
+            [Op.gt]: datetime_end_utc,
           },
         },
       ],
