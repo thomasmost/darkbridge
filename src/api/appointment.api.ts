@@ -358,9 +358,12 @@ export class AppointmentAPI {
     id: { type: 'string', required: true, description: 'id' },
   })
   @body({
+    notes: {
+      type: 'string',
+      description: 'any notes taken during the appointment',
+    },
     followup_needed: {
       type: 'boolean',
-      required: true,
       description: 'true if another appointment must be scheduled',
     },
   })
@@ -376,7 +379,7 @@ export class AppointmentAPI {
     }
     const user = ctx.user;
 
-    const { followup_needed } = ctx.request.body;
+    const { followup_needed, notes } = ctx.request.body;
 
     const { id } = ctx.validatedParams;
     const appointment = await loadAndAuthorizeAppointment(id, user);
@@ -385,6 +388,7 @@ export class AppointmentAPI {
     appointment.status = AppointmentStatus.completed;
     appointment.completed_at = Date.now();
     appointment.requires_followup = followup_needed;
+    appointment.notes = notes;
     await appointment.save();
     await AppointmentActivity.create({
       appointment_id: id,
