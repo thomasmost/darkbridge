@@ -25,6 +25,7 @@ import { UserNotificationSettingAPI } from './api/user_notification_setting.api'
 import { InvoiceAPI } from './api/invoice.api';
 import { InvoiceModel } from './models/invoice.model';
 import { permissionData } from './helpers/permissioners';
+import { InvoiceItemModel } from './models/invoice_item.model';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -80,6 +81,7 @@ api.swagger({
         ClientProfileModel,
         ContractorProfileModel,
         InvoiceModel,
+        InvoiceItemModel,
         UserModel,
         UserNotificationSettingModel,
       ]),

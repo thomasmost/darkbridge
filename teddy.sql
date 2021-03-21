@@ -101,6 +101,7 @@ create table `invoice` (
   processing_fee INT NULL,
   minutes_billed INT NULL,
   days_billed INT NULL,
+  total_from_line_items INT NOT NULL DEFAULT 0,
   currency_code VARCHAR(255) NOT NULL,
   INDEX(service_provider_user_id),
   INDEX(client_profile_id)
@@ -110,7 +111,8 @@ create table `invoice_item` (
   id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,
   invoice_id VARCHAR(255) NOT NULL,
-  appointment_id VARCHAR(255) NOT NULL,
+  service_provider_user_id VARCHAR(255) NOT NULL,
+  client_profile_id VARCHAR(255) NOT NULL,
   type VARCHAR(255) NOT NULL,
   description VARCHAR(255) NOT NULL,
   amount_in_minor_units INT NOT NULL,

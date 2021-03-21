@@ -14,6 +14,11 @@ import { swaggerRefFromModel } from '../helpers/swagger.helper';
 import { Invoice, InvoiceModel, InvoiceStatus } from '../models/invoice.model';
 import { ValidationError } from '../helpers/error.helper';
 import { loadAndAuthorizeAppointment } from '../helpers/appointment.helper';
+import {
+  InvoiceItem,
+  InvoiceItemAttributes,
+  InvoiceItemModel,
+} from '../models/invoice_item.model';
 
 type BodyParameter = {
   type: 'string' | 'number';
@@ -51,14 +56,14 @@ const postParams = {
     description:
       'the number of days to bill at the daily rate (otherwise leave as 0)',
   },
-  cost_materials: {
-    type: 'number',
-    description: 'the cost of materials',
-  },
   currency_code: {
     type: 'string',
     enum: ['USD'],
     description: 'Should always be USD to start',
+  },
+  invoice_items: {
+    type: 'array',
+    items: swaggerRefFromModel(InvoiceItemModel),
   },
 };
 
@@ -94,7 +99,7 @@ export class InvoiceAPI {
       daily_rate,
       minutes_billed,
       days_billed,
-      cost_materials,
+      invoice_items,
       currency_code,
     } = ctx.request.body;
 
@@ -114,8 +119,9 @@ export class InvoiceAPI {
 
     // This is obviously a placeholder
     const processing_fee = 100;
+    let total_from_line_items = 0;
 
-    const invoice = await Invoice.create({
+    const unsaved_invoice = await Invoice.build({
       service_provider_user_id,
       client_profile_id,
       status,
@@ -124,11 +130,43 @@ export class InvoiceAPI {
       daily_rate,
       minutes_billed,
       days_billed,
-      cost_materials,
       currency_code,
       processing_fee,
+      total_from_line_items,
     });
 
+    const item_promises = [];
+    for (const item of invoice_items as InvoiceItemAttributes[]) {
+      const {
+        amount_in_minor_units,
+        currency_code,
+        description,
+        quantity,
+        type,
+      } = item;
+
+      const invoice_id = unsaved_invoice.id;
+
+      if (currency_code !== 'USD') {
+        throw new ValidationError('Non-USD currencies not yet supported');
+      }
+
+      total_from_line_items += amount_in_minor_units * quantity;
+      const item_promise = InvoiceItem.create({
+        invoice_id,
+        service_provider_user_id,
+        client_profile_id,
+        amount_in_minor_units,
+        currency_code,
+        description,
+        quantity,
+        type,
+      });
+      item_promises.push(item_promise);
+    }
+    unsaved_invoice.total_from_line_items = total_from_line_items;
+    const invoice = await unsaved_invoice.save();
+    const items = await Promise.all(item_promises);
     ctx.status = 200;
     ctx.body = invoice;
   }

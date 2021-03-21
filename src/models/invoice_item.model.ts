@@ -1,5 +1,6 @@
 import { Optional, DataTypes } from 'sequelize';
 import { v4 } from 'uuid';
+import { toServiceProvider } from '../helpers/permissioners';
 
 import { sequelize } from '../sequelize';
 import { PermissionedModel } from './_prototypes';
@@ -16,11 +17,12 @@ enum InvoiceItemType {
   amount_in_minor_units INT NOT NULL,
   currency_code VARCHAR(10) NOT NULL DEFAULT 'USD',
   quantity INT NOT NULL DEFAULT 1, */
-interface InvoiceItemAttributes {
+export interface InvoiceItemAttributes {
   id: string;
   created_at: number;
   invoice_id: string;
-  appointment_id: string;
+  service_provider_user_id: string;
+  client_profile_id: string;
   type: InvoiceItemType;
   description: string;
   amount_in_minor_units: number;
@@ -42,7 +44,8 @@ export class InvoiceItem
   implements InvoiceItemAttributes {
   public id!: string;
   public invoice_id!: string;
-  public appointment_id!: string;
+  public service_provider_user_id!: string;
+  public client_profile_id!: string;
   public type!: InvoiceItemType;
   public description!: string;
   public amount_in_minor_units!: number;
@@ -53,7 +56,7 @@ export class InvoiceItem
   public readonly created_at!: number;
 }
 
-InvoiceItem.initWithPermissions(
+export const InvoiceItemModel = InvoiceItem.initWithPermissions(
   {
     // Model attributes are defined here
     id: {
@@ -63,7 +66,7 @@ InvoiceItem.initWithPermissions(
       defaultValue: function () {
         return v4();
       },
-      visible: false,
+      visible: toServiceProvider,
     },
     created_at: {
       type: DataTypes.NUMBER,
@@ -71,51 +74,56 @@ InvoiceItem.initWithPermissions(
       defaultValue: function () {
         return Date.now();
       },
-      visible: false,
+      visible: toServiceProvider,
     },
-    appointment_id: {
+    service_provider_user_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      visible: false,
+      visible: toServiceProvider,
+    },
+    client_profile_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      visible: toServiceProvider,
     },
     invoice_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      visible: false,
+      visible: toServiceProvider,
     },
     type: {
       type: DataTypes.ENUM,
       allowNull: false,
       values: Object.values(InvoiceItemType),
-      visible: false,
+      visible: toServiceProvider,
     },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
-      visible: false,
+      visible: toServiceProvider,
     },
     quantity: {
       type: DataTypes.NUMBER,
       allowNull: false,
       defaultValue: 1,
-      visible: false,
+      visible: toServiceProvider,
     },
     amount_in_minor_units: {
       type: DataTypes.NUMBER,
       allowNull: false,
-      visible: false,
+      visible: toServiceProvider,
     },
     currency_code: {
       type: DataTypes.STRING,
       allowNull: false,
-      visible: false,
+      visible: toServiceProvider,
     },
   },
   {
     // Other model options go here
     sequelize,
     modelName: 'InvoiceItem',
-    tableName: 'invoice',
+    tableName: 'invoice_item',
     timestamps: false,
   },
 );

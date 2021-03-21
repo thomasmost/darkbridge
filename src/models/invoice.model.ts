@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 import { toServiceProvider } from '../helpers/permissioners';
 
 import { sequelize } from '../sequelize';
+import { InvoiceItemModel } from './invoice_item.model';
 import { PermissionedModel } from './_prototypes';
 
 export enum InvoiceStatus {
@@ -22,13 +23,13 @@ interface InvoiceAttributes {
   client_profile_id: string;
   status: InvoiceStatus;
   payment_method: InvoicePaymentMethod;
-  cost_materials: number;
   flat_rate: number;
   processing_fee: number;
   hourly_rate: number;
   daily_rate: number;
   minutes_billed: number;
   days_billed: number;
+  total_from_line_items: number;
   currency_code: string;
 }
 
@@ -54,6 +55,7 @@ export class Invoice
   public daily_rate!: number;
   public minutes_billed!: number;
   public days_billed!: number;
+  public total_from_line_items!: number;
   public currency_code!: string;
 
   // timestamps!
@@ -106,11 +108,6 @@ export const InvoiceModel = Invoice.initWithPermissions(
       allowNull: false,
       visible: toServiceProvider,
     },
-    cost_materials: {
-      type: DataTypes.NUMBER,
-      allowNull: false,
-      visible: toServiceProvider,
-    },
     processing_fee: {
       type: DataTypes.NUMBER,
       allowNull: false,
@@ -140,6 +137,11 @@ export const InvoiceModel = Invoice.initWithPermissions(
     },
     currency_code: {
       type: DataTypes.STRING,
+      allowNull: false,
+      visible: toServiceProvider,
+    },
+    total_from_line_items: {
+      type: DataTypes.NUMBER,
       allowNull: false,
       visible: toServiceProvider,
     },
