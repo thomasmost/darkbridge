@@ -26,6 +26,7 @@ import { InvoiceAPI } from './api/invoice.api';
 import { InvoiceModel } from './models/invoice.model';
 import { permissionData } from './helpers/permissioners';
 import { InvoiceItemModel } from './models/invoice_item.model';
+import { TaxableLaborType } from './data/taxes';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -105,6 +106,61 @@ api.swagger({
           },
         },
       },
+      /**
+  state: string;
+  state_sales_tax: number;
+  rank_state: number;
+  avg_local_sales_tax: number;
+  combined_avg_sales_tax_rate: number;
+  rank_combined: number;
+  max_local_sales_tax: number;
+  taxable_labor: TaxableLaborType[]; */
+      StateTaxInfo: {
+        type: 'object',
+        properties: {
+          state: {
+            type: 'string',
+            example: 'Alabama',
+          },
+          state_sales_tax: {
+            type: 'number',
+            example: '4.22',
+            description: 'State sales tax in percent',
+          },
+          rank_state: {
+            type: 'number',
+            example: '15',
+            description: `State's rank by tax rate`,
+          },
+          avg_local_sales_tax: {
+            type: 'number',
+            example: '4.22',
+            description: 'Average local sales tax in percent',
+          },
+          combined_avg_sales_tax_rate: {
+            type: 'number',
+            example: '8.22',
+            description: 'Average combined total sales tax in percent',
+          },
+          rank_combined: {
+            type: 'number',
+            example: '15',
+            description: `State's rank by combined average tax rate`,
+          },
+          max_local_sales_tax: {
+            type: 'number',
+            example: '5.44',
+            description: 'Greatest local tax rate in percent',
+          },
+          taxable_labor: {
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: Object.values(TaxableLaborType),
+            },
+          },
+        },
+      },
       OmniResponseV0: {
         type: 'object',
         properties: {
@@ -129,6 +185,10 @@ api.swagger({
                 },
               },
             },
+          },
+          state_taxes: {
+            type: 'array',
+            items: swaggerRefFromDefinitionName('StateTaxInfo'),
           },
         },
       },

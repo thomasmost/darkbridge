@@ -25,6 +25,7 @@ import {
 } from '../helpers/swagger.helper';
 import { NotificationSettingsHelper } from '../helpers/user_settings.helper';
 import { AppointmentPriority } from '../shared/enums';
+import { stateTaxes } from '../data/taxes';
 
 const omniResponsesV0 = {
   200: {
@@ -102,6 +103,8 @@ export class OmniAPI {
       appointment_priority: Object.values(AppointmentPriority),
     };
 
+    const state_taxes = stateTaxes();
+
     ctx.body = {
       allAppointmentsWithinMonth,
       clients,
@@ -109,6 +112,7 @@ export class OmniAPI {
       userNotificationSettings,
       dailyInfo,
       enums,
+      state_taxes,
     };
   }
 }
