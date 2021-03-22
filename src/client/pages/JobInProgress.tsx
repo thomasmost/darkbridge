@@ -60,7 +60,7 @@ export const JobInProgress: React.FC<JobInProgressProps> = ({
       },
     );
     if (!error) {
-      navigate(`/job/${appointment.id}/invoice`);
+      navigate(`/payment/${appointment.id}/invoice`);
     }
   };
 
