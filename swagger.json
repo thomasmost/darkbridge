@@ -600,6 +600,32 @@
         "operationId": "apiInvoice_create",
         "security": [{ "token": [] }]
       }
+    },
+    "/api/invoice/{id}": {
+      "get": {
+        "summary": "get a single invoice by primary key",
+        "description": "get a single invoice by primary key",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/Invoice" }
+          },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" }
+        },
+        "tags": ["invoice"],
+        "operationId": "apiInvoice_getById",
+        "security": [{ "token": [] }]
+      }
     }
   },
   "responses": {},
@@ -698,12 +724,28 @@
         "status": { "type": "string", "enum": ["pending", "paid"] },
         "payment_method": { "type": "string", "enum": ["cash", "credit_card"] },
         "flat_rate": { "type": "integer" },
-        "cost_materials": { "type": "integer" },
         "processing_fee": { "type": "integer" },
         "daily_rate": { "type": "integer" },
         "hourly_rate": { "type": "integer" },
         "minutes_billed": { "type": "integer" },
         "days_billed": { "type": "integer" },
+        "currency_code": { "type": "string" },
+        "total_from_line_items": { "type": "integer" },
+        "invoice_items": { "type": "string" }
+      }
+    },
+    "InvoiceItem": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "created_at": { "type": "integer" },
+        "service_provider_user_id": { "type": "string" },
+        "client_profile_id": { "type": "string" },
+        "invoice_id": { "type": "string" },
+        "type": { "type": "string", "enum": ["materials", "tax"] },
+        "description": { "type": "string" },
+        "quantity": { "type": "integer" },
+        "amount_in_minor_units": { "type": "integer" },
         "currency_code": { "type": "string" }
       }
     },
@@ -762,6 +804,56 @@
         }
       }
     },
+    "StateTaxInfo": {
+      "type": "object",
+      "properties": {
+        "state": { "type": "string", "example": "Alabama" },
+        "state_sales_tax": {
+          "type": "number",
+          "example": "4.22",
+          "description": "State sales tax in percent"
+        },
+        "rank_state": {
+          "type": "number",
+          "example": "15",
+          "description": "State's rank by tax rate"
+        },
+        "avg_local_sales_tax": {
+          "type": "number",
+          "example": "4.22",
+          "description": "Average local sales tax in percent"
+        },
+        "combined_avg_sales_tax_rate": {
+          "type": "number",
+          "example": "8.22",
+          "description": "Average combined total sales tax in percent"
+        },
+        "rank_combined": {
+          "type": "number",
+          "example": "15",
+          "description": "State's rank by combined average tax rate"
+        },
+        "max_local_sales_tax": {
+          "type": "number",
+          "example": "5.44",
+          "description": "Greatest local tax rate in percent"
+        },
+        "taxable_labor": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "recreation",
+              "services_to_tpp",
+              "services_to_real_property",
+              "business_services",
+              "personal_services",
+              "professional_services"
+            ]
+          }
+        }
+      }
+    },
     "OmniResponseV0": {
       "type": "object",
       "properties": {
@@ -788,6 +880,10 @@
               "items": { "type": "string" }
             }
           }
+        },
+        "state_taxes": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/StateTaxInfo" }
         }
       }
     },
@@ -846,7 +942,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-18 16:34:59"
+          "example": "2021-03-22 03:40:36"
         },
         "duration_minutes": {
           "type": "number",
@@ -880,7 +976,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-18 16:34:59"
+          "example": "2021-03-22 03:40:36"
         },
         "duration_minutes": {
           "type": "number",
@@ -904,8 +1000,11 @@
     },
     "AppointmentCompletePutBody": {
       "type": "object",
-      "required": ["followup_needed"],
       "properties": {
+        "notes": {
+          "type": "string",
+          "description": "any notes taken during the appointment"
+        },
         "followup_needed": {
           "type": "boolean",
           "description": "true if another appointment must be scheduled"
@@ -1063,14 +1162,14 @@
           "type": "number",
           "description": "the number of days to bill at the daily rate (otherwise leave as 0)"
         },
-        "cost_materials": {
-          "type": "number",
-          "description": "the cost of materials"
-        },
         "currency_code": {
           "type": "string",
           "enum": ["USD"],
           "description": "Should always be USD to start"
+        },
+        "invoice_items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/InvoiceItem" }
         }
       }
     }
