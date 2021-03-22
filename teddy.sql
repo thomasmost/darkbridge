@@ -119,7 +119,8 @@ create table `invoice_item` (
   currency_code VARCHAR(10) NOT NULL DEFAULT 'USD',
   quantity INT NOT NULL DEFAULT 1,
   INDEX(invoice_id),
-  INDEX(appointment_id)
+  INDEX(service_provider_user_id),
+  INDEX(client_profile_id)
 );
 
 create table `client_profile` (
