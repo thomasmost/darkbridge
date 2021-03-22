@@ -2,9 +2,6 @@ import styled from '@emotion/styled';
 import { Accordion } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Icon } from '../elements/Icon';
-import { Input } from '../elements/Input';
-import { Label } from '../elements/Label';
-import { apiRequest } from '../services/api.svc';
 import { theme } from '../theme';
 
 const InvoiceSectionHeader = styled.div`

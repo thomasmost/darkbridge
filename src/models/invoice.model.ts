@@ -4,6 +4,7 @@ import { toServiceProvider } from '../helpers/permissioners';
 
 import { sequelize } from '../sequelize';
 import { InvoicePaymentMethod } from '../shared/enums';
+import { InvoiceItemAttributes } from './invoice_item.model';
 // import { InvoiceItemModel } from './invoice_item.model';
 import { PermissionedModel } from './_prototypes';
 
@@ -27,12 +28,13 @@ interface InvoiceAttributes {
   days_billed: number;
   total_from_line_items: number;
   currency_code: string;
+  invoice_items: InvoiceItemAttributes[];
 }
 
 // Some attributes are optional in `Invoice.build` and `Invoice.create` calls
 export type InvoiceCreationAttributes = Optional<
   InvoiceAttributes,
-  'id' | 'created_at' | 'payment_method'
+  'id' | 'created_at' | 'payment_method' | 'invoice_items'
 >;
 
 export class Invoice
@@ -53,6 +55,7 @@ export class Invoice
   public days_billed!: number;
   public total_from_line_items!: number;
   public currency_code!: string;
+  public invoice_items: InvoiceItemAttributes[];
 
   // timestamps!
   public readonly created_at!: number;
@@ -102,6 +105,7 @@ export const InvoiceModel = Invoice.initWithPermissions(
     flat_rate: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      defaultValue: 0,
       visible: toServiceProvider,
     },
     processing_fee: {
@@ -112,11 +116,13 @@ export const InvoiceModel = Invoice.initWithPermissions(
     daily_rate: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      defaultValue: 0,
       visible: toServiceProvider,
     },
     hourly_rate: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      defaultValue: 0,
       visible: toServiceProvider,
     },
     minutes_billed: {
@@ -139,6 +145,10 @@ export const InvoiceModel = Invoice.initWithPermissions(
     total_from_line_items: {
       type: DataTypes.NUMBER,
       allowNull: false,
+      visible: toServiceProvider,
+    },
+    invoice_items: {
+      type: DataTypes.VIRTUAL,
       visible: toServiceProvider,
     },
   },

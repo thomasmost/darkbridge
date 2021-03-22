@@ -167,6 +167,7 @@ export class InvoiceAPI {
     unsaved_invoice.total_from_line_items = total_from_line_items;
     const invoice = await unsaved_invoice.save();
     const items = await Promise.all(item_promises);
+    invoice.invoice_items = items;
     ctx.status = 200;
     ctx.body = invoice;
   }

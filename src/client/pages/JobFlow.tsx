@@ -5,7 +5,6 @@ import { DispatchContext, StateContext } from '../reducers';
 import { JobInProgress } from './JobInProgress';
 import styled from '@emotion/styled';
 import { theme } from '../theme';
-import { InvoiceForm } from './InvoiceForm';
 
 const HeadingText = styled.h2`
   margin-bottom: 20px;

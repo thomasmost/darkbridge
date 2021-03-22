@@ -6,7 +6,8 @@ import styled from '@emotion/styled';
 import { theme } from '../theme';
 import { InvoiceForm } from './InvoiceForm';
 import { InvoiceReview } from './InvoiceReview';
-import { InvoiceCreationAttributes } from '../../models/invoice.model';
+import { IInvoicePostBody } from '../../shared/invoice.dto';
+import { PaymentSuccess } from './PaymentSuccess';
 
 const HeadingText = styled.h2`
   margin-bottom: 20px;
@@ -20,9 +21,7 @@ export const PaymentFlow: React.FC<
   const { appointments } = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const navigate = useNavigate();
-  const [invoice, setInvoice] = useState<InvoiceCreationAttributes | null>(
-    null,
-  );
+  const [invoice, setInvoice] = useState<IInvoicePostBody | null>(null);
 
   const { appointment_id } = props;
 
@@ -66,6 +65,11 @@ export const PaymentFlow: React.FC<
           appointment={currentAppointment}
           invoice={invoice}
           path="review"
+        />
+        <PaymentSuccess
+          appointment={currentAppointment}
+          invoice={invoice}
+          path="success"
         />
       </Router>
     </div>

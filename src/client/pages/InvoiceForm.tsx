@@ -1,40 +1,22 @@
 import styled from '@emotion/styled';
 import Switch from '@material-ui/core/Switch';
 
-import { navigate, RouteComponentProps, useNavigate } from '@reach/router';
+import { RouteComponentProps, useNavigate } from '@reach/router';
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { DateTimeHelper } from '../../helpers/datetime.helper';
 import { AppointmentAttributes } from '../../models/appointment.model';
-import { InvoiceCreationAttributes } from '../../models/invoice.model';
 import { InvoicePaymentMethod } from '../../shared/enums';
+import { IInvoicePostBody } from '../../shared/invoice.dto';
 import { InvoiceSection } from '../components/InvoiceSection';
 import { TimeCard } from '../components/TimeCard';
 import { Button } from '../elements/Button';
-import { Icon } from '../elements/Icon';
 import { Input } from '../elements/Input';
 import { Label } from '../elements/Label';
-import { apiRequest } from '../services/api.svc';
-import { theme } from '../theme';
-
-const InvoiceSectionHeader = styled.div`
-  font-weight: 600;
-  font-size: 1em;
-  display: flex;
-  justify-content: space-between;
-  padding: 15px 20px;
-  cursor: pointer;
-  * {
-    cursor: pointer;
-  }
-  span {
-    color: ${theme.lightIconColor};
-  }
-`;
 
 type InvoiceFormProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
-  setInvoice: Dispatch<SetStateAction<any>>;
+  setInvoice: Dispatch<SetStateAction<IInvoicePostBody | null>>;
 };
 
 type FormValues = {
@@ -77,14 +59,15 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
     defaultValues: {
       minutes_billed: minutesLogged,
       hourly_rate: 50,
+      processing_fee: 0,
       payment_method: InvoicePaymentMethod.credit_card,
     },
   });
   // const navigate = useNavigate();
   useEffect(() => {
     register('payment_method');
+    register('processing_fee');
   }, []);
-
   const {
     flat_rate,
     processing_fee,

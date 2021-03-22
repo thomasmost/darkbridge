@@ -2,29 +2,28 @@ import React from 'react';
 
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import { AppointmentAttributes } from '../../models/appointment.model';
-import { InvoiceCreationAttributes } from '../../models/invoice.model';
 import { Button } from '../elements/Button';
 import { Label } from '../elements/Label';
 import { InvoiceSection } from '../components/InvoiceSection';
+import styled from '@emotion/styled';
+import { IInvoicePostBody } from '../../shared/invoice.dto';
+import { theme } from '../theme';
+import { apiRequest } from '../services/api.svc';
 
-// const InvoiceSectionHeader = styled.div`
-//   font-weight: 600;
-//   font-size: 1em;
-//   display: flex;
-//   justify-content: space-between;
-//   padding: 15px 20px;
-//   cursor: pointer;
-//   * {
-//     cursor: pointer;
-//   }
-//   span {
-//     color: ${theme.lightIconColor};
-//   }
-// `;
+const InfoContainer = styled.div`
+  margin: 20px;
+  * {
+    line-height: 2em;
+    font-weight: 600;
+    span {
+      color: ${theme.buttonColorPassive};
+    }
+  }
+`;
 
 type InvoiceReviewProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
-  invoice: InvoiceCreationAttributes | null;
+  invoice: IInvoicePostBody | null;
 };
 
 export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
@@ -36,14 +35,40 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
     navigate('invoice');
     return null;
   }
-  const { payment_method, minutes_billed, hourly_rate } = invoice;
-  const hourlyTotal = ((hourly_rate * minutes_billed) / 60).toFixed(2);
+  const {
+    payment_method,
+    minutes_billed,
+    hourly_rate,
+    processing_fee,
+    invoice_items,
+  } = invoice;
+  const hourlyTotalInMinorUnits = ((hourly_rate * minutes_billed) / 60) * 100;
+  const total_from_items = (invoice_items || []).reduce<number>(
+    (item_total, item) =>
+      item_total + item.amount_in_minor_units * item.quantity,
+    0,
+  );
 
-  // const onSubmit = async (values: FormValues) => {
-  //   navigate();
-  // };
+  const total = (
+    (hourlyTotalInMinorUnits + processing_fee + total_from_items) /
+    100
+  ).toFixed(2);
 
-  const onSubmit = () => alert(JSON.stringify(invoice));
+  const onSubmit = async () => {
+    invoice.appointment_id = appointment.id;
+    invoice.currency_code = 'USD';
+    invoice.invoice_items = invoice.invoice_items || [];
+    const { error } = await apiRequest('invoice', 'json', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(invoice),
+    });
+    if (!error) {
+      navigate('success');
+    }
+  };
 
   return (
     <div>
@@ -51,7 +76,7 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
       <InvoiceSection
         readonly
         label="Standard hourly"
-        total={hourlyTotal}
+        total={(hourlyTotalInMinorUnits / 100).toFixed(2)}
       ></InvoiceSection>
       <InvoiceSection readonly label="Parts" total={'0.00'} />
       <InvoiceSection readonly label="Taxes" total={'0.00'} />
@@ -68,6 +93,13 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
           information, see our Terms of Service.
         </Label>
       </InvoiceSection>
+
+      <InfoContainer>
+        <label>
+          Total: <span>${total}</span>
+        </label>
+        <div>Paid by {payment_method === 'cash' ? 'cash' : 'card'}</div>
+      </InfoContainer>
 
       <Button onClick={onSubmit}>Confirm Payment</Button>
       {/* </form> */}

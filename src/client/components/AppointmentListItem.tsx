@@ -49,12 +49,6 @@ const StyledLink = styled(Link)`
   max-height: 40px;
 `;
 
-const Block = styled.div`
-  background-color: ${theme.blockColorDefault};
-  border-bottom: 1px solid white;
-  padding: 20px;
-`;
-
 export const AppointmentListItem: React.FC<AppointmentCardProps> = ({
   appointment,
 }) => {

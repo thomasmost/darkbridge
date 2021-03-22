@@ -6,11 +6,10 @@ import { AppointmentAttributes } from '../../models/appointment.model';
 import { AppointmentCard } from './AppointmentCard';
 import { ClientCard } from './ClientCard';
 import { Icon } from '../elements/Icon';
-import { Link, useNavigate } from '@reach/router';
+import { Link } from '@reach/router';
 import { Card } from '../elements/Card';
 import { apiRequest } from '../services/api.svc';
 import { Action, DispatchContext } from '../reducers';
-import { AppointmentStatus } from '../../shared/enums';
 
 const HeadingText = styled.h2`
   margin-bottom: 20px;
