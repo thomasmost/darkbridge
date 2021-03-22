@@ -161,6 +161,26 @@ api.swagger({
           },
         },
       },
+      IsoState: {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string',
+            example: 'Alabama',
+            description: 'the subdivision name',
+          },
+          code: {
+            type: 'string',
+            example: 'US-AL',
+            description: 'the subdivision code',
+          },
+          subdivision_category: {
+            type: 'string',
+            example: 'state',
+            description: 'the subdivision category',
+          },
+        },
+      },
       OmniResponseV0: {
         type: 'object',
         properties: {
@@ -189,6 +209,10 @@ api.swagger({
           state_taxes: {
             type: 'array',
             items: swaggerRefFromDefinitionName('StateTaxInfo'),
+          },
+          iso_states: {
+            type: 'array',
+            items: swaggerRefFromDefinitionName('IsoState'),
           },
         },
       },

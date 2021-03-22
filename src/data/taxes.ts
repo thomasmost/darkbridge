@@ -78,7 +78,7 @@ export function stateTaxes(): StateTaxInfo[] {
       taxable_labor: [TaxableLaborType.recreation],
     },
     {
-      state: 'Utah (b)',
+      state: 'Utah',
       state_sales_tax: 6.1,
       rank_state: 16,
       avg_local_sales_tax: 1.09,
@@ -98,7 +98,7 @@ export function stateTaxes(): StateTaxInfo[] {
       taxable_labor: [],
     },
     {
-      state: 'California (b)',
+      state: 'California',
       state_sales_tax: 7.25,
       rank_state: 1,
       avg_local_sales_tax: 1.43,
@@ -178,7 +178,7 @@ export function stateTaxes(): StateTaxInfo[] {
       taxable_labor: [],
     },
     {
-      state: 'Montana (d)',
+      state: 'Montana',
       state_sales_tax: 0.0,
       rank_state: 46,
       avg_local_sales_tax: 0.0,
@@ -244,7 +244,7 @@ export function stateTaxes(): StateTaxInfo[] {
       taxable_labor: [TaxableLaborType.services_to_tpp],
     },
     {
-      state: 'Virginia (b)',
+      state: 'Virginia',
       state_sales_tax: 5.3,
       rank_state: 31,
       avg_local_sales_tax: 0.43,
@@ -598,7 +598,7 @@ export function stateTaxes(): StateTaxInfo[] {
       ],
     },
     {
-      state: 'New Jersey (e)',
+      state: 'New Jersey',
       state_sales_tax: 6.63,
       rank_state: 8,
       avg_local_sales_tax: -0.03,

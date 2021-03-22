@@ -26,6 +26,7 @@ import {
 import { NotificationSettingsHelper } from '../helpers/user_settings.helper';
 import { AppointmentPriority } from '../shared/enums';
 import { stateTaxes } from '../data/taxes';
+import { isoStates } from '../data/iso_states';
 
 const omniResponsesV0 = {
   200: {
@@ -104,6 +105,7 @@ export class OmniAPI {
     };
 
     const state_taxes = stateTaxes();
+    const iso_states = isoStates();
 
     ctx.body = {
       allAppointmentsWithinMonth,
@@ -113,6 +115,7 @@ export class OmniAPI {
       dailyInfo,
       enums,
       state_taxes,
+      iso_states,
     };
   }
 }
