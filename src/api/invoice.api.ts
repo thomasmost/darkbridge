@@ -7,10 +7,11 @@ import {
   tagsAll,
   responses,
   operation,
+  path,
 } from '@callteddy/koa-swagger-decorator';
 
 import { TeddyRequestContext } from './types';
-import { swaggerRefFromModel } from '../helpers/swagger.helper';
+import { baseCodes, swaggerRefFromModel } from '../helpers/swagger.helper';
 import { Invoice, InvoiceModel, InvoiceStatus } from '../models/invoice.model';
 import { ValidationError } from '../helpers/error.helper';
 import { loadAndAuthorizeAppointment } from '../helpers/appointment.helper';
@@ -19,6 +20,7 @@ import {
   InvoiceItemAttributes,
   InvoiceItemModel,
 } from '../models/invoice_item.model';
+import { getById } from './base.api';
 
 type BodyParameter = {
   type: 'string' | 'number';
@@ -106,7 +108,6 @@ export class InvoiceAPI {
     if (currency_code !== 'USD') {
       throw new ValidationError('Only USD invoices currently supported');
     }
-
     if (minutes_billed && days_billed) {
       throw new ValidationError('Billing for both hours and days is invalid');
     }
@@ -146,7 +147,6 @@ export class InvoiceAPI {
       } = item;
 
       const invoice_id = unsaved_invoice.id;
-
       if (currency_code !== 'USD') {
         throw new ValidationError('Non-USD currencies not yet supported');
       }
@@ -167,8 +167,45 @@ export class InvoiceAPI {
     unsaved_invoice.total_from_line_items = total_from_line_items;
     const invoice = await unsaved_invoice.save();
     const items = await Promise.all(item_promises);
+    await appointment.update({ invoice_id: invoice.id });
     invoice.invoice_items = items;
     ctx.status = 200;
+    ctx.body = invoice;
+  }
+
+  @request('get', '/{id}')
+  @operation('apiInvoice_getById')
+  @summary('get a single invoice by primary key')
+  @path({
+    id: { type: 'string', required: true, description: 'id' },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(InvoiceModel),
+    },
+    ...baseCodes([401, 404]),
+  })
+  public static async getInvoiceById(ctx: TeddyRequestContext) {
+    if (!ctx.user) {
+      ctx.status = 401;
+      return;
+    }
+    const { id } = ctx.validatedParams;
+    const invoicePromise = Invoice.findByPk(id);
+    const itemPromise = InvoiceItem.findAll({
+      where: {
+        invoice_id: id,
+      },
+    });
+    const [invoice, items] = await Promise.all([invoicePromise, itemPromise]);
+
+    if (!invoice || invoice.service_provider_user_id !== ctx.user.id) {
+      ctx.body = null;
+      ctx.status = 404;
+      return;
+    }
+    invoice.invoice_items = items;
     ctx.body = invoice;
   }
 }
