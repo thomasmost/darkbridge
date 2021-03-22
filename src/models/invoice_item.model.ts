@@ -7,6 +7,7 @@ import { PermissionedModel } from './_prototypes';
 
 enum InvoiceItemType {
   materials = 'materials',
+  tax = 'tax',
 }
 
 /**
