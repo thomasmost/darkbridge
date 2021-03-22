@@ -4,12 +4,8 @@ import { RouteComponentProps, useNavigate } from '@reach/router';
 import { theme } from '../theme';
 import { useForm } from 'react-hook-form';
 import { Select, IGenericOption } from '../components/Select';
-import {
-  H3,
-  Label,
-  Instruction,
-  OnboardingNav,
-} from '../elements/OnboardingElements';
+import { Label } from '../elements/Label';
+import { H3, Instruction, OnboardingNav } from '../elements/OnboardingElements';
 import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
 

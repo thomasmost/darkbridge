@@ -6,10 +6,11 @@ import { AppointmentAttributes } from '../../models/appointment.model';
 import { AppointmentCard } from './AppointmentCard';
 import { ClientCard } from './ClientCard';
 import { Icon } from '../elements/Icon';
-import { Link } from '@reach/router';
+import { Link, useNavigate } from '@reach/router';
 import { Card } from '../elements/Card';
 import { apiRequest } from '../services/api.svc';
 import { Action, DispatchContext } from '../reducers';
+import { AppointmentStatus } from '../../shared/enums';
 
 const HeadingText = styled.h2`
   margin-bottom: 20px;
@@ -29,7 +30,6 @@ const StartCard = styled(Card)`
   display: flex;
   justify-content: space-between;
   padding: 20px;
-  margin-top: 50px;
   margin-bottom: 50px;
   color: ${theme.buttonColorActive};
 `;
@@ -132,12 +132,15 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
   header,
 }) => {
   const dispatch = useContext(DispatchContext);
-  // const startDate = new Date(appointment.datetime_utc);
-  // const now = new Date();
   const isCanceled = appointment.status === 'canceled';
   const canBeRescheduled =
     appointment.status !== 'in_progress' && appointment.status !== 'completed';
-  const isStartable = true;
+  const canBeCanceled =
+    appointment.status !== 'in_progress' &&
+    appointment.status !== 'completed' &&
+    appointment.status !== 'canceled';
+  const isStartable =
+    appointment.status !== 'in_progress' && appointment.status !== 'completed';
   // appointment.status === 'scheduled' &&
   // Math.abs(DateTimeHelper.differenceInMinutes(startDate, now)) < 12000;
   return (
@@ -147,7 +150,8 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
       {isStartable && renderStartCard(appointment.id, dispatch)}
       {renderCustomerInfo(appointment)}{' '}
       {canBeRescheduled && renderRescheduleCard(appointment.id)}
-      {isCanceled ? renderCanceledCard() : renderCancelCard(appointment.id)}
+      {canBeCanceled && renderCancelCard(appointment.id)}
+      {isCanceled && renderCanceledCard()}
     </div>
   );
 };

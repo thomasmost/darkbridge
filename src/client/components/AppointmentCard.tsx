@@ -34,6 +34,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     cursor: ${interactive ? 'pointer' : 'default'};
     display: flex;
     justify-content: space-between;
+    margin-bottom: 50px;
   `;
 
   const CardInfo = styled.div`

@@ -2,12 +2,8 @@ import React from 'react';
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import { FlexColumns } from '../elements/FlexColumns';
 import { useForm } from 'react-hook-form';
-import {
-  H3,
-  Label,
-  Instruction,
-  OnboardingNav,
-} from '../elements/OnboardingElements';
+import { Label } from '../elements/Label';
+import { H3, Instruction, OnboardingNav } from '../elements/OnboardingElements';
 import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
 import { apiRequest } from '../services/api.svc';

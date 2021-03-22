@@ -3,10 +3,11 @@ import React from 'react';
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
-import { H3, Label, OnboardingNav, P } from '../elements/OnboardingElements';
+import { H3, OnboardingNav, P } from '../elements/OnboardingElements';
 import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
 import { apiRequest } from '../services/api.svc';
+import { Label } from '../elements/Label';
 
 const Logo = styled.img`
   display: block;

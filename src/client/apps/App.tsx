@@ -26,6 +26,7 @@ import { StateProvider } from '../StateProvider';
 import { CancelAppointment } from '../pages/CancelAppointment';
 import { JobFlow } from '../pages/JobFlow';
 import { RescheduleAppointment } from '../pages/RescheduleAppointment';
+import { PaymentFlow } from '../pages/PaymentFlow';
 
 const muiTheme = createMuiTheme({
   palette: {
@@ -99,6 +100,7 @@ const App = () => {
                     <RescheduleAppointment path="reschedule-appointment/:appointment_id" />
                     <AddAppointment path="calendar/add-appointment" />
                     <JobFlow path="job/:appointment_id/*" />
+                    <PaymentFlow path="payment/:appointment_id/*" />
                     <NextAppointment path="next-appointment" />
                     <AddClientProfile path="add-client" />
                     <ApiSandbox path="sandbox" />

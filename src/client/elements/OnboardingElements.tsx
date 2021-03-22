@@ -4,6 +4,7 @@ import React from 'react';
 import { Dots } from '../components/Dots';
 import { theme } from '../theme';
 import { Icon } from './Icon';
+import { Label } from './Label';
 
 export const P = styled.p`
   color: ${theme.darkModeTextColor};
@@ -14,12 +15,6 @@ export const H3 = styled.h3`
   display: block;
   font-size: 1.4em;
   margin: 50px 0 30px;
-`;
-
-export const Label = styled.label`
-  color: ${theme.subheaderTextColor};
-  display: block;
-  margin-bottom: 10px;
 `;
 
 export const Logo = styled.img`

@@ -3,17 +3,13 @@ import { v4 } from 'uuid';
 import { toServiceProvider } from '../helpers/permissioners';
 
 import { sequelize } from '../sequelize';
-import { InvoiceItemModel } from './invoice_item.model';
+import { InvoicePaymentMethod } from '../shared/enums';
+// import { InvoiceItemModel } from './invoice_item.model';
 import { PermissionedModel } from './_prototypes';
 
 export enum InvoiceStatus {
   pending = 'pending',
   paid = 'paid',
-}
-
-export enum InvoicePaymentMethod {
-  cash = 'cash',
-  credit_card = 'credit_card',
 }
 
 interface InvoiceAttributes {

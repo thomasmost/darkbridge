@@ -2,9 +2,12 @@
 
 const teddyBlueLight = '#45A3F7';
 const teddyBlueDark = '#101042';
+const bluePastel = '#daedfd';
 const charcoal = '#060622';
 const red = '#F7655E';
+const redPastel = '#F4B8B8';
 const green = '#23C38A';
+const greenPastel = '#BDEFDA';
 // const black = '#000';
 const white = '#fff';
 const paperWhite = '#f9f9f9';
@@ -20,6 +23,10 @@ export const theme = {
   activePageColor: teddyBlueLight,
   applicationBackgroundColor: white,
   applicationTextColor: darkGray,
+  blockColorActive: greenPastel,
+  blockColorDefault: bluePastel,
+  blockColorInactive: lightGray,
+  blockColorWarning: redPastel,
   boxShadowColor: lightGray,
   buttonColorActive: teddyBlueLight,
   buttonColorActiveSecondary: mediumGray,

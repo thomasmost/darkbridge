@@ -14,3 +14,8 @@ export enum AppointmentPriority {
   P2 = 'P2',
   P3 = 'P3',
 }
+
+export enum InvoicePaymentMethod {
+  cash = 'cash',
+  credit_card = 'credit_card',
+}

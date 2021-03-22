@@ -1,11 +1,12 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { RouteComponentProps, Router, useNavigate } from '@reach/router';
 import { queryAppointments } from '../services/appointment.svc';
 import { DispatchContext, StateContext } from '../reducers';
-import { JobInProgress } from './JobInProgress';
 import styled from '@emotion/styled';
 import { theme } from '../theme';
 import { InvoiceForm } from './InvoiceForm';
+import { InvoiceReview } from './InvoiceReview';
+import { InvoiceCreationAttributes } from '../../models/invoice.model';
 
 const HeadingText = styled.h2`
   margin-bottom: 20px;
@@ -13,12 +14,15 @@ const HeadingText = styled.h2`
   color: ${theme.pageHeaderColor};
 `;
 
-export const JobFlow: React.FC<
+export const PaymentFlow: React.FC<
   RouteComponentProps<{ appointment_id: string }>
 > = (props) => {
   const { appointments } = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const navigate = useNavigate();
+  const [invoice, setInvoice] = useState<InvoiceCreationAttributes | null>(
+    null,
+  );
 
   const { appointment_id } = props;
 
@@ -45,7 +49,7 @@ export const JobFlow: React.FC<
   if (!currentAppointment) {
     return null;
   }
-  if (currentAppointment.status !== 'in_progress') {
+  if (currentAppointment.status !== 'completed') {
     navigate(`/appointment/${currentAppointment.id}`);
     return null;
   }
@@ -53,7 +57,16 @@ export const JobFlow: React.FC<
     <div>
       <HeadingText>{currentAppointment.summary}</HeadingText>
       <Router>
-        <JobInProgress appointment={currentAppointment} path="working" />
+        <InvoiceForm
+          appointment={currentAppointment}
+          setInvoice={setInvoice}
+          path="invoice"
+        />
+        <InvoiceReview
+          appointment={currentAppointment}
+          invoice={invoice}
+          path="review"
+        />
       </Router>
     </div>
   );
