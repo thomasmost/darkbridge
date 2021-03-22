@@ -105,7 +105,7 @@ describe('Appointment Helpers', () => {
         conflictingDate,
         endDate,
       );
-      expect(conflicts.length).toBe(1);
+      expect(conflicts.length).toBe(0);
       done();
     });
     test('should not return overlapping appointments if none exist', async (done) => {
