@@ -11,6 +11,7 @@ create table `user` (
   family_name VARCHAR(255) NULL,
   password_hash varchar(255) NULL,
   password_salt varchar(255) NULL,
+  stripe_express_account_id varchar(255) NULL,
   UNIQUE KEY(email),
   UNIQUE KEY(recovery_email)
 );
