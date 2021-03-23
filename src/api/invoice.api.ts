@@ -20,7 +20,6 @@ import {
   InvoiceItemAttributes,
   InvoiceItemModel,
 } from '../models/invoice_item.model';
-import { getById } from './base.api';
 
 type BodyParameter = {
   type: 'string' | 'number';
@@ -93,7 +92,6 @@ export class InvoiceAPI {
     }
     const user = ctx.user;
     const service_provider_user_id = user.id;
-
     const {
       appointment_id,
       flat_rate,
@@ -144,6 +142,7 @@ export class InvoiceAPI {
         description,
         quantity,
         type,
+        metadata,
       } = item;
 
       const invoice_id = unsaved_invoice.id;
@@ -161,6 +160,7 @@ export class InvoiceAPI {
         description,
         quantity,
         type,
+        metadata,
       });
       item_promises.push(item_promise);
     }

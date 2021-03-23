@@ -12,6 +12,7 @@ import { Permissioner } from '../helpers/permissioners';
 export interface PermissionedModelAttributeColumnOptions
   extends ModelAttributeColumnOptions {
   visible: Permissioner;
+  swagger_definition_name?: string;
 }
 
 type PermissionedModelAttributes<TCreationAttributes = any> = {

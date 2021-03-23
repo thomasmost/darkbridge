@@ -18,6 +18,16 @@ enum InvoiceItemType {
   amount_in_minor_units INT NOT NULL,
   currency_code VARCHAR(10) NOT NULL DEFAULT 'USD',
   quantity INT NOT NULL DEFAULT 1, */
+
+type TaxMetadata = {
+  suggested_rate: number;
+  entered_rate: number;
+};
+
+type MaterialMetadata = {
+  manufacturer?: string;
+};
+
 export interface InvoiceItemAttributes {
   id: string;
   created_at: number;
@@ -29,12 +39,14 @@ export interface InvoiceItemAttributes {
   amount_in_minor_units: number;
   currency_code: string;
   quantity: number;
+  metadata_json: string;
+  metadata: TaxMetadata | MaterialMetadata;
 }
 
 // Some attributes are optional in `InvoiceItem.build` and `InvoiceItem.create` calls
 type InvoiceItemCreationAttributes = Optional<
   InvoiceItemAttributes,
-  'id' | 'created_at'
+  'id' | 'created_at' | 'metadata_json'
 >;
 
 export class InvoiceItem
@@ -52,6 +64,8 @@ export class InvoiceItem
   public amount_in_minor_units!: number;
   public currency_code!: string;
   public quantity!: number;
+  public metadata_json!: string;
+  public metadata!: TaxMetadata | MaterialMetadata;
 
   // timestamps!
   public readonly created_at!: number;
@@ -117,6 +131,24 @@ export const InvoiceItemModel = InvoiceItem.initWithPermissions(
     currency_code: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toServiceProvider,
+    },
+    metadata_json: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '{}',
+      visible: toServiceProvider,
+    },
+    metadata: {
+      type: DataTypes.VIRTUAL,
+      get: function () {
+        const json = this.getDataValue('metadata_json');
+        return JSON.parse(json);
+      },
+      set(value) {
+        this.setDataValue('metadata_json', JSON.stringify(value));
+      },
+      swagger_definition_name: 'InvoiceItemMetadata',
       visible: toServiceProvider,
     },
   },

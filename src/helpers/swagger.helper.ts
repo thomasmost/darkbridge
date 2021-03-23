@@ -78,6 +78,16 @@ export const swaggerPropertyFromAttribute = (
           );
           break;
         }
+        if (
+          (attribute as PermissionedModelAttributeColumnOptions)
+            .swagger_definition_name
+        ) {
+          swaggerProperty = swaggerRefFromDefinitionName(
+            (attribute as PermissionedModelAttributeColumnOptions)
+              .swagger_definition_name as string,
+          );
+          break;
+        }
         swaggerProperty.type = 'string';
         break;
       default:
