@@ -626,6 +626,37 @@
         "operationId": "apiInvoice_getById",
         "security": [{ "token": [] }]
       }
+    },
+    "/api/stripe/onboard": {
+      "post": {
+        "summary": "onboards currently logged in user with Stripe Express account",
+        "description": "onboards currently logged in user with Stripe Express account",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/StripeAccountResponse" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["stripe"],
+        "operationId": "apiStripe_onboard",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/stripe/refresh": {
+      "get": {
+        "summary": "refreshes and redirects to the express account url",
+        "description": "refreshes and redirects to the express account url",
+        "parameters": [],
+        "responses": {
+          "302": { "description": "Redirect" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["stripe"],
+        "operationId": "apiStripe_refresh",
+        "security": [{ "token": [] }]
+      }
     }
   },
   "responses": {},
@@ -746,7 +777,9 @@
         "description": { "type": "string" },
         "quantity": { "type": "integer" },
         "amount_in_minor_units": { "type": "integer" },
-        "currency_code": { "type": "string" }
+        "currency_code": { "type": "string" },
+        "metadata_json": { "type": "string" },
+        "metadata": { "$ref": "#/definitions/InvoiceItemMetadata" }
       }
     },
     "User": {
@@ -854,6 +887,45 @@
         }
       }
     },
+    "IsoState": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Alabama",
+          "description": "the subdivision name"
+        },
+        "code": {
+          "type": "string",
+          "example": "US-AL",
+          "description": "the subdivision code"
+        },
+        "subdivision_category": {
+          "type": "string",
+          "example": "state",
+          "description": "the subdivision category"
+        }
+      }
+    },
+    "InvoiceItemMetadata": {
+      "type": "object",
+      "properties": {
+        "suggested_tax_rate": {
+          "type": "number",
+          "example": "4.5",
+          "description": "the suggested tax rate as represented by this line item"
+        },
+        "entered_tax_rate": {
+          "type": "number",
+          "example": "4.9",
+          "description": "the user-agreed-upon tax rate as represented by this line item"
+        }
+      }
+    },
+    "StripeAccountResponse": {
+      "type": "object",
+      "properties": { "url": { "type": "string" } }
+    },
     "OmniResponseV0": {
       "type": "object",
       "properties": {
@@ -884,6 +956,10 @@
         "state_taxes": {
           "type": "array",
           "items": { "$ref": "#/definitions/StateTaxInfo" }
+        },
+        "iso_states": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/IsoState" }
         }
       }
     },
@@ -942,7 +1018,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-22 03:40:36"
+          "example": "2021-03-23 07:26:04"
         },
         "duration_minutes": {
           "type": "number",
@@ -976,7 +1052,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-22 03:40:36"
+          "example": "2021-03-23 07:26:04"
         },
         "duration_minutes": {
           "type": "number",
