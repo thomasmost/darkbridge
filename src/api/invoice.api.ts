@@ -21,12 +21,6 @@ import {
   InvoiceItemModel,
 } from '../models/invoice_item.model';
 
-type BodyParameter = {
-  type: 'string' | 'number';
-  enum?: string[];
-  description: string;
-};
-
 const postParams = {
   appointment_id: {
     type: 'string',
