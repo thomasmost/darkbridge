@@ -119,6 +119,7 @@ create table `invoice_item` (
   amount_in_minor_units INT NOT NULL,
   currency_code VARCHAR(10) NOT NULL DEFAULT 'USD',
   quantity INT NOT NULL DEFAULT 1,
+  metadata_json TEXT NULL,
   INDEX(invoice_id),
   INDEX(service_provider_user_id),
   INDEX(client_profile_id)
