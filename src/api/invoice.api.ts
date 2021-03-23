@@ -27,27 +27,27 @@ const postParams = {
     description: 'the id of the billed appointment',
   },
   flat_rate: {
-    type: 'number',
+    type: 'integer',
     description:
       'a flat rate to be billed (should default to the value in their contractor profile)',
   },
   hourly_rate: {
-    type: 'number',
+    type: 'integer',
     description:
       'the hourly rate billed for this invoice (should default to the value in their contractor profile)',
   },
   daily_rate: {
-    type: 'number',
+    type: 'integer',
     description:
       'the daily rate billed for this invoice (should default to the value in their contractor profile)',
   },
   minutes_billed: {
-    type: 'number',
+    type: 'integer',
     description:
       'the number of minutes to bill at the hourly rate (otherwise leave as 0)',
   },
   days_billed: {
-    type: 'number',
+    type: 'integer',
     description:
       'the number of days to bill at the daily rate (otherwise leave as 0)',
   },

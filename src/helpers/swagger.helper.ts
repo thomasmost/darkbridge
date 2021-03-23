@@ -39,6 +39,29 @@ export const swaggerSchemaFromModel = (model: Model) => {
   } as SwaggerProperty;
 };
 
+const swaggerPropertyFromVirtual = (
+  attribute: PermissionedModelAttributeColumnOptions,
+) => {
+  if ((attribute as RelationAttribute).model) {
+    return swaggerRefFromModel((attribute as RelationAttribute).model);
+  }
+  if (attribute.swagger_type) {
+    return {
+      type: attribute.swagger_type,
+    };
+  }
+  if (
+    (attribute as PermissionedModelAttributeColumnOptions)
+      .swagger_definition_name
+  ) {
+    return swaggerRefFromDefinitionName(
+      (attribute as PermissionedModelAttributeColumnOptions)
+        .swagger_definition_name as string,
+    );
+  }
+  return { type: 'string' } as SwaggerProperty;
+};
+
 export const swaggerPropertyFromAttribute = (
   attribute: PermissionedModelAttributeColumnOptions,
 ) => {
@@ -72,23 +95,7 @@ export const swaggerPropertyFromAttribute = (
         swaggerProperty.type = 'string';
         break;
       case 'VIRTUAL':
-        if ((attribute as RelationAttribute).model) {
-          swaggerProperty = swaggerRefFromModel(
-            (attribute as RelationAttribute).model,
-          );
-          break;
-        }
-        if (
-          (attribute as PermissionedModelAttributeColumnOptions)
-            .swagger_definition_name
-        ) {
-          swaggerProperty = swaggerRefFromDefinitionName(
-            (attribute as PermissionedModelAttributeColumnOptions)
-              .swagger_definition_name as string,
-          );
-          break;
-        }
-        swaggerProperty.type = 'string';
+        swaggerProperty = swaggerPropertyFromVirtual(attribute);
         break;
       default:
         swaggerProperty.type = 'string';

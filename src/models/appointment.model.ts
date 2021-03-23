@@ -290,6 +290,7 @@ export const AppointmentModel = Appointment.initWithPermissions(
         const endDate = new Date(this.getDataValue('datetime_end_utc'));
         return differenceInMinutes(endDate, startDate);
       },
+      swagger_type: 'integer',
       visible: toServiceProvider,
     },
     requires_followup: {

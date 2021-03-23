@@ -57,7 +57,7 @@ const postBodyParams = {
     example: DateTimeHelper.formatToPureDateTime(new Date()),
   },
   duration_minutes: {
-    type: 'number',
+    type: 'integer',
     required: true,
     description: 'the length of the appointment',
   },
@@ -134,10 +134,10 @@ export class AppointmentAPI {
       type: 'string',
     },
     beforeMs: {
-      type: 'number',
+      type: 'integer',
     },
     afterMs: {
-      type: 'number',
+      type: 'integer',
     },
   })
   @responses({
@@ -266,7 +266,7 @@ export class AppointmentAPI {
       example: DateTimeHelper.formatToPureDateTime(new Date()),
     },
     duration_minutes: {
-      type: 'number',
+      type: 'integer',
       required: true,
       description: 'the length of the appointment',
     },
@@ -410,7 +410,7 @@ export class AppointmentAPI {
   )
   @body({
     rating: {
-      type: 'number',
+      type: 'integer',
       required: true,
       description: 'from 1 to 5',
     },
@@ -451,7 +451,7 @@ export class AppointmentAPI {
   )
   @body({
     rating: {
-      type: 'number',
+      type: 'integer',
       required: true,
       description: 'from 1 to 5',
     },

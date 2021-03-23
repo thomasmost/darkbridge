@@ -15,7 +15,7 @@ import {
 } from '../models/contractor_profile.model';
 
 type BodyParameter = {
-  type: 'string' | 'number' | 'boolean';
+  type: 'string' | 'integer' | 'boolean';
   description: string;
 };
 
@@ -41,23 +41,23 @@ const updateAttributes: Record<
       "the service provider's primary area of expertise, currently limited to one of the following: electrical, hvac, plumbing, carpentry, or handiwork",
   },
   appointment_fee: {
-    type: 'number',
+    type: 'integer',
     description: 'a flat rate per appointment',
   },
   daily_rate: {
-    type: 'number',
+    type: 'integer',
     description: 'a rate charged per day',
   },
   hourly_rate: {
-    type: 'number',
+    type: 'integer',
     description: 'a rate charged per hour',
   },
   estimated_yearly_income: {
-    type: 'number',
+    type: 'integer',
     description: "the provider's estimated yearly earnings, before expenses",
   },
   estimated_yearly_expenses: {
-    type: 'number',
+    type: 'integer',
     description: "the provider's estimated yearly expenses",
   },
   onboarding_completed: {

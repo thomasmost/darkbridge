@@ -22,7 +22,7 @@ import { createClientProfileForServiceProvider } from '../helpers/client_profile
 import { arrayOf, swaggerRefFromModel } from '../helpers/swagger.helper';
 
 type BodyParameter = {
-  type: 'string' | 'number';
+  type: 'string' | 'integer';
   description: string;
 };
 

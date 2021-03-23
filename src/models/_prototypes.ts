@@ -13,6 +13,7 @@ export interface PermissionedModelAttributeColumnOptions
   extends ModelAttributeColumnOptions {
   visible: Permissioner;
   swagger_definition_name?: string;
+  swagger_type?: 'string' | 'integer' | 'object' | 'boolean';
 }
 
 type PermissionedModelAttributes<TCreationAttributes = any> = {
