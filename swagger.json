@@ -190,8 +190,8 @@
           },
           { "name": "before", "type": "string", "in": "query" },
           { "name": "after", "type": "string", "in": "query" },
-          { "name": "beforeMs", "type": "number", "in": "query" },
-          { "name": "afterMs", "type": "number", "in": "query" }
+          { "name": "beforeMs", "type": "integer", "in": "query" },
+          { "name": "afterMs", "type": "integer", "in": "query" }
         ],
         "responses": {
           "200": {
@@ -698,7 +698,7 @@
         "timezone_friendly": { "type": "string" },
         "summary": { "type": "string" },
         "notes": { "type": "string" },
-        "duration_minutes": { "type": "string" },
+        "duration_minutes": { "type": "integer" },
         "requires_followup": { "type": "boolean" },
         "parent_appointment_id": { "type": "string" },
         "invoice_id": { "type": "string" },
@@ -1018,10 +1018,10 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-23 07:26:04"
+          "example": "2021-03-23 11:13:11"
         },
         "duration_minutes": {
-          "type": "number",
+          "type": "integer",
           "description": "the length of the appointment"
         },
         "summary": {
@@ -1052,10 +1052,10 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-23 07:26:04"
+          "example": "2021-03-23 11:13:11"
         },
         "duration_minutes": {
-          "type": "number",
+          "type": "integer",
           "description": "the length of the appointment"
         },
         "reason_for_reschedule": {
@@ -1091,14 +1091,14 @@
       "type": "object",
       "required": ["rating"],
       "properties": {
-        "rating": { "type": "number", "description": "from 1 to 5" }
+        "rating": { "type": "integer", "description": "from 1 to 5" }
       }
     },
     "AppointmentRateClientPutBody": {
       "type": "object",
       "required": ["rating"],
       "properties": {
-        "rating": { "type": "number", "description": "from 1 to 5" }
+        "rating": { "type": "integer", "description": "from 1 to 5" }
       }
     },
     "ContractorProfilePutBody": {
@@ -1121,23 +1121,23 @@
           "description": "the service provider's primary area of expertise, currently limited to one of the following: electrical, hvac, plumbing, carpentry, or handiwork"
         },
         "appointment_fee": {
-          "type": "number",
+          "type": "integer",
           "description": "a flat rate per appointment"
         },
         "daily_rate": {
-          "type": "number",
+          "type": "integer",
           "description": "a rate charged per day"
         },
         "hourly_rate": {
-          "type": "number",
+          "type": "integer",
           "description": "a rate charged per hour"
         },
         "estimated_yearly_income": {
-          "type": "number",
+          "type": "integer",
           "description": "the provider's estimated yearly earnings, before expenses"
         },
         "estimated_yearly_expenses": {
-          "type": "number",
+          "type": "integer",
           "description": "the provider's estimated yearly expenses"
         },
         "onboarding_completed": {
@@ -1219,23 +1219,23 @@
           "description": "the id of the billed appointment"
         },
         "flat_rate": {
-          "type": "number",
+          "type": "integer",
           "description": "a flat rate to be billed (should default to the value in their contractor profile)"
         },
         "hourly_rate": {
-          "type": "number",
+          "type": "integer",
           "description": "the hourly rate billed for this invoice (should default to the value in their contractor profile)"
         },
         "daily_rate": {
-          "type": "number",
+          "type": "integer",
           "description": "the daily rate billed for this invoice (should default to the value in their contractor profile)"
         },
         "minutes_billed": {
-          "type": "number",
+          "type": "integer",
           "description": "the number of minutes to bill at the hourly rate (otherwise leave as 0)"
         },
         "days_billed": {
-          "type": "number",
+          "type": "integer",
           "description": "the number of days to bill at the daily rate (otherwise leave as 0)"
         },
         "currency_code": {
