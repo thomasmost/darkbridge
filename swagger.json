@@ -693,8 +693,8 @@
         "address_postal_code": { "type": "string" },
         "timezone": { "type": "string" },
         "timezone_offset": { "type": "integer" },
-        "latitude": { "type": "string" },
-        "longitude": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
         "timezone_friendly": { "type": "string" },
         "summary": { "type": "string" },
         "notes": { "type": "string" },
@@ -1018,7 +1018,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-23 11:13:11"
+          "example": "2021-03-23 11:22:40"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1052,7 +1052,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-23 11:13:11"
+          "example": "2021-03-23 11:22:40"
         },
         "duration_minutes": {
           "type": "integer",
