@@ -7,7 +7,7 @@ import {
   ContractorProfile,
   ContractorProfileModel,
 } from './contractor_profile.model';
-import { PermissionedModel, RelationAttribute } from './_prototypes';
+import { PermissionedModel } from './_prototypes';
 
 // These are all the attributes in the User model
 export interface UserAttributes {
@@ -116,7 +116,7 @@ export const UserModel = User.initWithPermissions(
       type: DataTypes.VIRTUAL,
       model: ContractorProfileModel,
       visible: toSelf,
-    } as RelationAttribute,
+    },
   },
   {
     // Other model options go here

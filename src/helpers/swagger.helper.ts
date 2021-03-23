@@ -1,12 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
-import {
-  PermissionedModelAttributeColumnOptions,
-  RelationAttribute,
-} from '../models/_prototypes';
+import { PermissionedModelAttributeColumnOptions } from '../models/_prototypes';
 
 type SwaggerProperty = {
   $ref?: string;
-  type?: 'string' | 'integer' | 'object' | 'boolean';
+  type?: 'string' | 'integer' | 'number' | 'object' | 'boolean';
   example?: string;
   format?: 'uuid' | 'email';
   enum?: readonly string[];
@@ -42,8 +39,8 @@ export const swaggerSchemaFromModel = (model: Model) => {
 const swaggerPropertyFromVirtual = (
   attribute: PermissionedModelAttributeColumnOptions,
 ) => {
-  if ((attribute as RelationAttribute).model) {
-    return swaggerRefFromModel((attribute as RelationAttribute).model);
+  if (attribute.model) {
+    return swaggerRefFromModel(attribute.model);
   }
   if (attribute.swagger_type) {
     return {

@@ -8,7 +8,7 @@ import {
   ClientProfileModel,
 } from './client_profile.model';
 import { DateTimeHelper } from '../helpers/datetime.helper';
-import { PermissionedModel, RelationAttribute } from './_prototypes';
+import { PermissionedModel } from './_prototypes';
 import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
 import { toServiceProvider } from '../helpers/permissioners';
 
@@ -254,6 +254,7 @@ export const AppointmentModel = Appointment.initWithPermissions(
         if (!point?.coordinates) return null;
         return point.coordinates[0];
       },
+      swagger_type: 'number',
       visible: toServiceProvider,
     },
     longitude: {
@@ -263,6 +264,7 @@ export const AppointmentModel = Appointment.initWithPermissions(
         if (!point?.coordinates) return null;
         return point.coordinates[1];
       },
+      swagger_type: 'number',
       visible: toServiceProvider,
     },
     timezone_friendly: {
@@ -317,7 +319,7 @@ export const AppointmentModel = Appointment.initWithPermissions(
       type: DataTypes.VIRTUAL,
       model: ClientProfileModel,
       visible: toServiceProvider,
-    } as RelationAttribute,
+    },
   },
   {
     // Other model options go here

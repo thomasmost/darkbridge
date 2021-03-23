@@ -12,8 +12,9 @@ import { Permissioner } from '../helpers/permissioners';
 export interface PermissionedModelAttributeColumnOptions
   extends ModelAttributeColumnOptions {
   visible: Permissioner;
+  model?: Model;
   swagger_definition_name?: string;
-  swagger_type?: 'string' | 'integer' | 'object' | 'boolean';
+  swagger_type?: 'string' | 'integer' | 'number' | 'object' | 'boolean';
 }
 
 type PermissionedModelAttributes<TCreationAttributes = any> = {
@@ -39,7 +40,3 @@ export abstract class PermissionedModel<
     return (this as any).init(attributes, options);
   }
 }
-
-export type RelationAttribute<
-  T extends Model = Model
-> = PermissionedModelAttributeColumnOptions & { model: Model };
