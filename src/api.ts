@@ -185,13 +185,13 @@ api.swagger({
       InvoiceItemMetadata: {
         type: 'object',
         properties: {
-          suggested_rate: {
+          suggested_tax_rate: {
             type: 'number',
             example: '4.5',
             description:
               'the suggested tax rate as represented by this line item',
           },
-          entered_rate: {
+          entered_tax_rate: {
             type: 'number',
             example: '4.9',
             description:

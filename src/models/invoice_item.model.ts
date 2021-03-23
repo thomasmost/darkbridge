@@ -20,8 +20,8 @@ enum InvoiceItemType {
   quantity INT NOT NULL DEFAULT 1, */
 
 type TaxMetadata = {
-  suggested_rate: number;
-  entered_rate: number;
+  suggested_tax_rate: number;
+  entered_tax_rate: number;
 };
 
 type MaterialMetadata = {
