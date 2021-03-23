@@ -27,6 +27,7 @@ import { InvoiceModel } from './models/invoice.model';
 import { permissionData } from './helpers/permissioners';
 import { InvoiceItemModel } from './models/invoice_item.model';
 import { TaxableLaborType } from './data/taxes';
+import { StripeAPI } from './api/stripe.api';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -181,6 +182,14 @@ api.swagger({
           },
         },
       },
+      StripeAccountResponse: {
+        type: 'object',
+        properties: {
+          url: {
+            type: 'string',
+          },
+        },
+      },
       OmniResponseV0: {
         type: 'object',
         properties: {
@@ -236,6 +245,7 @@ api.map(ContractorProfileAPI, {});
 api.map(ClientProfileAPI, {});
 api.map(AuthAPI, {});
 api.map(OmniAPI, {});
+api.map(StripeAPI, {});
 
 api.get('/test_crash', () => {
   process.exit(1);

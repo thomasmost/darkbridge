@@ -8,6 +8,10 @@ import { Label } from './Label';
 
 export const P = styled.p`
   color: ${theme.darkModeTextColor};
+  a {
+    display: inline-block;
+    color: ${theme.buttonColorPassive};
+  }
 `;
 
 export const H3 = styled.h3`

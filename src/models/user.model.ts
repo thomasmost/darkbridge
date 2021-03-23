@@ -19,6 +19,7 @@ export interface UserAttributes {
   phone: string;
   password_hash: string;
   password_salt: string;
+  stripe_express_account_id: string;
   verified_at: number;
   contractor_profile?: ContractorProfile;
 }
@@ -26,7 +27,13 @@ export interface UserAttributes {
 // Some attributes are optional in `User.build` and `User.create` calls
 type UserCreationAttributes = Optional<
   UserAttributes,
-  'id' | 'created_at' | 'verified_at' | 'family_name' | 'given_name' | 'phone'
+  | 'id'
+  | 'created_at'
+  | 'verified_at'
+  | 'family_name'
+  | 'given_name'
+  | 'phone'
+  | 'stripe_express_account_id'
 >;
 
 export class User
@@ -39,6 +46,7 @@ export class User
   public id!: string; // Note that the `null assertion` `!` is required in strict mode.
   public family_name!: string;
   public given_name!: string; // for nullable fields
+  public stripe_express_account_id!: string;
 
   // timestamps
   public readonly created_at!: number;
@@ -98,6 +106,10 @@ export const UserModel = User.initWithPermissions(
     password_salt: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: false,
+    },
+    stripe_express_account_id: {
+      type: DataTypes.STRING,
       visible: false,
     },
     contractor_profile: {
