@@ -24,6 +24,7 @@ import { arrayOf, swaggerRefFromModel } from '../helpers/swagger.helper';
 type BodyParameter = {
   type: 'string' | 'integer';
   description: string;
+  required?: boolean;
 };
 
 const postParams: Record<
@@ -40,30 +41,42 @@ const postParams: Record<
 > = {
   email: {
     type: 'string',
+    required: true,
     description: 'the contact email address',
   },
   phone: {
     type: 'string',
+    required: true,
     description: 'the contact phone number',
   },
-  full_name: {
+  given_name: {
     type: 'string',
-    description: "the client's full name",
+    required: true,
+    description: "the client's first name",
+  },
+  family_name: {
+    type: 'string',
+    required: true,
+    description: "the client's last name",
   },
   address_street: {
     type: 'string',
+    required: true,
     description: 'the street address for the client',
   },
   address_city: {
     type: 'string',
+    required: true,
     description: "the city of the client's primary address",
   },
   address_state: {
     type: 'string',
+    required: true,
     description: "the state of client's primary address",
   },
   address_postal_code: {
     type: 'string',
+    required: true,
     description: "the postal code for the client's primary address",
   },
 };
@@ -94,31 +107,22 @@ export class ClientProfileAPI {
 
     const {
       email,
-      full_name,
+      given_name,
+      family_name,
       phone,
       address_street,
       address_city,
       address_state,
       address_postal_code,
-    } = ctx.request.body as Partial<ClientProfileAttributes>;
+    } = ctx.request.body as ClientProfileCreationAttributes;
 
-    if (
-      !email ||
-      !full_name ||
-      !phone ||
-      !address_street ||
-      !address_city ||
-      !address_state ||
-      !address_postal_code
-    ) {
-      throw Error('Missing required fields!');
-    }
     const created_by_user_id = user.id;
 
     const profile = await createClientProfileForServiceProvider(
       created_by_user_id,
       email,
-      full_name,
+      given_name,
+      family_name,
       phone,
       address_street,
       address_city,
@@ -163,8 +167,15 @@ export class ClientProfileAPI {
     };
 
     if (name) {
-      where.full_name = {
-        [Op.like]: `%${name}%`,
+      (where as { [Op.or]: WhereAttributeHash<ClientProfileAttributes> })[
+        Op.or
+      ] = {
+        given_name: {
+          [Op.like]: `%${name}%`,
+        },
+        family_name: {
+          [Op.like]: `%${name}%`,
+        },
       };
     }
 

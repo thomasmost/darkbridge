@@ -95,22 +95,26 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Label>Name</Label>
-        <Input
-          name="full_name"
-          // defaultValue={}
-          ref={register({ required: true })}
-        />
-        <div>
+        <FlexColumns>
+          <div className="expand">
+            <Label>First Name</Label>
+            <Input name="given_name" ref={register({ required: true })} />
+          </div>
+          <div className="expand">
+            <Label>Last Name</Label>
+            <Input name="family_name" ref={register({ required: true })} />
+          </div>
+        </FlexColumns>
+        <div className="expand">
           <Label>Street Address</Label>
           <Input name="address_street" ref={register()} />
         </div>
         <FlexColumns>
-          <div>
+          <div className="expand">
             <Label>City</Label>
             <Input name="address_city" ref={register()} />
           </div>
-          <div style={{ width: '25%' }}>
+          <div className="expand">
             <Label>State</Label>
             <Select
               getOptionLabel={(item) => item.name}
@@ -122,7 +126,7 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
               }
             />
           </div>
-          <div>
+          <div className="expand">
             <Label>Postal Code</Label>
             <Input
               name="address_postal_code"
@@ -132,21 +136,13 @@ export const AddClientProfile: React.FC<RouteComponentProps> = () => {
           </div>
         </FlexColumns>
         <FlexColumns>
-          <div>
+          <div className="expand">
             <Label>Email</Label>
-            <Input
-              name="email"
-              // defaultValue={profile.email}
-              ref={register()}
-            />
+            <Input name="email" ref={register()} />
           </div>
-          <div>
+          <div className="expand">
             <Label>Phone</Label>
-            <Input
-              name="phone"
-              // defaultValue={profile.email}
-              ref={register()}
-            />
+            <Input name="phone" ref={register()} />
           </div>
         </FlexColumns>
         <Button onClick={handleSubmit(onSubmit)}>Add Client</Button>

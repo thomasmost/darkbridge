@@ -7,6 +7,9 @@ export const FlexColumns = styled.div`
   * {
     margin-right: 10px;
   }
+  .expand {
+    width: 100%;
+  }
   *:last-child {
     margin-right: 0;
   }

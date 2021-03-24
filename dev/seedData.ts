@@ -110,7 +110,9 @@ async function createClients(created_by_user_id: string) {
     }
     // const timezone_offset = static_timezone?.offset || 0;
     const email = faker.internet.email();
-    const full_name = faker.name.findName();
+    const name = faker.name.findName();
+    const given_name = name.split(' ')[0];
+    const family_name = name.split(' ')[1];
     const phone = faker.phone.phoneNumber();
     const address_street = faker.address.streetAddress();
     const address_city = faker.address.city();
@@ -121,7 +123,8 @@ async function createClients(created_by_user_id: string) {
       createClientProfileForServiceProvider(
         created_by_user_id,
         email,
-        full_name,
+        given_name,
+        family_name,
         phone,
         address_street,
         address_city,

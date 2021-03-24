@@ -29,7 +29,8 @@ describe('Appointment Api', () => {
 
   beforeAll(async () => {
     const email = 'foo@bar.com';
-    const full_name = 'foo';
+    const given_name = 'foo';
+    const family_name = 'bar';
     const phone = 'foo';
     const address_street = 'foo';
     const address_city = 'foo';
@@ -39,7 +40,8 @@ describe('Appointment Api', () => {
     profile = await createClientProfileForServiceProvider(
       testUserId,
       email,
-      full_name,
+      given_name,
+      family_name,
       phone,
       address_street,
       address_city,

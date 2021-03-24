@@ -11,7 +11,9 @@ export interface ClientProfileAttributes {
   created_at: number;
   created_by_user_id: string;
   email: string;
-  full_name: string;
+  given_name: string;
+  family_name: string;
+  readonly full_name: string;
   phone: string;
   address_street: string;
   address_city: string;
@@ -26,9 +28,9 @@ export interface ClientProfileAttributes {
 }
 
 // Some attributes are optional in `ClientProfile.build` and `ClientProfile.create` calls
-export type ClientProfileCreationAttributes = Optional<
-  ClientProfileAttributes,
-  'id' | 'created_at' | 'coordinates'
+export type ClientProfileCreationAttributes = Omit<
+  Optional<ClientProfileAttributes, 'id' | 'created_at' | 'coordinates'>,
+  'full_name'
 >;
 export class ClientProfile
   extends PermissionedModel<
@@ -39,7 +41,9 @@ export class ClientProfile
   public id!: string;
   public created_by_user_id!: string;
   public email!: string;
-  public full_name: string;
+  public given_name: string;
+  public family_name: string;
+  public readonly full_name: string;
   public phone!: string;
   public address_street!: string;
   public address_city!: string;
@@ -83,9 +87,26 @@ export const ClientProfileModel = ClientProfile.initWithPermissions(
       allowNull: false,
       visible: toCreator,
     },
-    full_name: {
+    given_name: {
       type: DataTypes.STRING,
       allowNull: false,
+      visible: toCreator,
+    },
+    family_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      visible: toCreator,
+    },
+    full_name: {
+      type: DataTypes.VIRTUAL,
+      get: function () {
+        const given_name = this.getDataValue('given_name');
+        const family_name = this.getDataValue('family_name');
+        return `${given_name} ${family_name}`;
+      },
+      set: function () {
+        throw Error(`full_name is a VIRTUAL; it should not be set directly`);
+      },
       visible: toCreator,
     },
     phone: {

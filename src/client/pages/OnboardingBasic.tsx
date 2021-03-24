@@ -17,7 +17,8 @@ const Logo = styled.img`
 `;
 
 type BasicFormFields = {
-  full_name: string;
+  given_name: string;
+  family_name: string;
   phone: string;
   company_name: string;
 };
@@ -31,10 +32,7 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data: BasicFormFields) => {
-    const { full_name, phone, company_name } = data;
-    const nameParts = full_name.split(' ');
-    const family_name = nameParts.pop();
-    const given_name = nameParts.join(' ');
+    const { given_name, family_name, phone, company_name } = data;
     const userUpdates = {
       family_name,
       given_name,
@@ -72,12 +70,19 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
       </P>
       <H3>Basic information</H3>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* register your input into the hook by invoking the "register" function */}
-        <Label>Full name</Label>
+        <Label>First name</Label>
         <Input
-          name="full_name"
-          defaultValue={`${user.given_name} ${user.family_name}`}
-          placeholder="Jonathan Appleseed"
+          name="given_name"
+          defaultValue={`${user.given_name}`}
+          placeholder="Jonathan"
+          ref={register({ required: true })}
+        />
+
+        <Label>Last name</Label>
+        <Input
+          name="family_name"
+          defaultValue={`${user.family_name}`}
+          placeholder="Appleseed"
           ref={register({ required: true })}
         />
 

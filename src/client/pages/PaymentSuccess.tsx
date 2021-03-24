@@ -92,8 +92,8 @@ export const PaymentSuccess: React.FC<PaymentSuccessProps> = ({
         <span>${total}</span>
       </StyledCard>
       <Instructions>
-        Nice work! {appointment.client_profile?.full_name.split(' ')[0]} has
-        been emailed a receipt
+        Nice work! {appointment.client_profile?.given_name} has been emailed a
+        receipt
         {payment_method === 'credit_card' && ' and their card has been charged'}
         .
       </Instructions>
