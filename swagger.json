@@ -714,6 +714,8 @@
         "created_at": { "type": "integer" },
         "created_by_user_id": { "type": "string" },
         "email": { "type": "string" },
+        "given_name": { "type": "string" },
+        "family_name": { "type": "string" },
         "full_name": { "type": "string" },
         "phone": { "type": "string" },
         "address_street": { "type": "string" },
@@ -1018,7 +1020,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-23 11:22:40"
+          "example": "2021-03-24 17:05:29"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1052,7 +1054,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-23 11:22:40"
+          "example": "2021-03-24 17:05:29"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1163,6 +1165,16 @@
     },
     "ClientProfilePostBody": {
       "type": "object",
+      "required": [
+        "email",
+        "phone",
+        "given_name",
+        "family_name",
+        "address_street",
+        "address_city",
+        "address_state",
+        "address_postal_code"
+      ],
       "properties": {
         "email": {
           "type": "string",
@@ -1172,9 +1184,13 @@
           "type": "string",
           "description": "the contact phone number"
         },
-        "full_name": {
+        "given_name": {
           "type": "string",
-          "description": "the client's full name"
+          "description": "the client's first name"
+        },
+        "family_name": {
+          "type": "string",
+          "description": "the client's last name"
         },
         "address_street": {
           "type": "string",
