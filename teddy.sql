@@ -131,7 +131,6 @@ create table `client_profile` (
   user_id VARCHAR(255) NULL,
   created_by_user_id VARCHAR(255) NOT NULL,
   email VARCHAR(255) NULL,
-  full_name VARCHAR(255) NULL,
   given_name VARCHAR(255) NULL,
   family_name VARCHAR(255) NULL,
   phone VARCHAR(255) NULL,
