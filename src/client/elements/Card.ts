@@ -9,3 +9,12 @@ export const Card = styled.div`
   cursor: pointer;
   padding: 20px;
 `;
+
+export const FlashCard = styled.div`
+  align-items: center;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 5px 0 ${theme.boxShadowColor};
+  cursor: pointer;
+  padding: 20px;
+`;

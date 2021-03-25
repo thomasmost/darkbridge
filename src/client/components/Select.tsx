@@ -9,14 +9,13 @@ export interface IGenericOption<T = string> {
   value: T;
 }
 
-const defaultStyles: Styles<IGenericOption, false> = {
-  indicatorSeparator: (provided) => ({
-    ...provided,
-    display: 'none',
-  }),
-};
-
-export function Select(props: SelectProps<IGenericOption>) {
+export function Select<T>(props: SelectProps<T>) {
+  const defaultStyles: Styles<T, false> = {
+    indicatorSeparator: (provided) => ({
+      ...provided,
+      display: 'none',
+    }),
+  };
   const styles = {
     ...defaultStyles,
     ...props.styles,

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Styles } from 'react-select';
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import { theme } from '../theme';
@@ -8,6 +8,7 @@ import { Label } from '../elements/Label';
 import { H3, Instruction, OnboardingNav } from '../elements/OnboardingElements';
 import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
+import { IsoState, isoStates } from '../../data/iso_states';
 
 const workOptions = [
   { value: 'carpentry', label: 'Carpentry' },
@@ -16,7 +17,7 @@ const workOptions = [
   { value: 'plumbing', label: 'Plumbing' },
 ];
 
-const selectStyles: Styles<IGenericOption, false> = {
+const selectStyles: Styles<IGenericOption | IsoState, false> = {
   container: (provided) => ({
     ...provided,
     cursor: 'pointer',
@@ -51,16 +52,21 @@ type WorkFormFields = {
 };
 
 export const OnboardingWork: React.FC<RouteComponentProps> = () => {
+  const states = useMemo(
+    () => isoStates().filter((state) => state.subdivision_category === 'state'),
+    [],
+  );
   const { user } = useAuth();
+  const { register, handleSubmit, setValue } = useForm<WorkFormFields>();
+  const navigate = useNavigate();
+  useEffect(() => {
+    register('licensing_state');
+    register('primary_work'); // custom register Antd input
+  }, [register]);
+  // Finally done with hooks
   if (!user) {
     return null;
   }
-  const { register, handleSubmit, setValue } = useForm<WorkFormFields>();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    register('primary_work'); // custom register Antd input
-  }, [register]);
 
   const onSubmit = async (data: WorkFormFields) => {
     console.log(data);
@@ -74,21 +80,17 @@ export const OnboardingWork: React.FC<RouteComponentProps> = () => {
     navigate('finances');
   };
 
-  const handleChange = (selection: IGenericOption | null) => {
-    setValue('primary_work', selection?.value);
-  };
-
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <H3>Work and experience</H3>
         <Label>What kind of work do you do?</Label>
-        <Select
-          onChange={handleChange}
+        <Select<IGenericOption>
+          onChange={(selection) => setValue('primary_work', selection?.value)}
           defaultValue={workOptions.find(
             (item) => item.value === user?.contractor_profile?.primary_work,
           )}
-          styles={selectStyles}
+          styles={selectStyles as Styles<IGenericOption, false>}
           options={workOptions}
         />
         <H3>Your license</H3>
@@ -100,14 +102,21 @@ export const OnboardingWork: React.FC<RouteComponentProps> = () => {
           defaultValue={user?.contractor_profile?.license_number}
           ref={register({ required: false })}
         />
-
-        <Label>State</Label>
-        <Input
-          name="licensing_state"
-          placeholder="Delaware"
-          defaultValue={user?.contractor_profile?.licensing_state}
-          ref={register({ required: false })}
-        />
+        <div style={{ marginBottom: '30px' }}>
+          <Label>State</Label>
+          <Select<IsoState>
+            defaultValue={states.find(
+              (item) => item.name === user?.contractor_profile?.licensing_state,
+            )}
+            getOptionLabel={(item) => item.name}
+            getOptionValue={(item) => item.name}
+            options={states}
+            styles={selectStyles as Styles<IsoState, false>}
+            onChange={(selection) =>
+              setValue('licensing_state', selection?.name)
+            }
+          />
+        </div>
         <OnboardingNav slideNumber={2} />
       </form>
     </div>

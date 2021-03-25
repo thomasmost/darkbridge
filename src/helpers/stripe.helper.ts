@@ -58,8 +58,8 @@ function generateAccountLink(accountID: string, origin: string) {
     .create({
       type: 'account_onboarding',
       account: accountID,
-      refresh_url: `${origin}/onboard-user/refresh`,
-      return_url: `${origin}/success.html`,
+      refresh_url: `${origin}/api/stripe/refresh`,
+      return_url: `${origin}/onboarding/complete`,
     })
     .then((link) => link.url);
 }

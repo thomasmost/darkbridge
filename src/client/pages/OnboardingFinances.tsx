@@ -18,11 +18,11 @@ type FinancesFormFields = {
 
 export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
   const { user } = useAuth();
+  const { register, handleSubmit } = useForm<FinancesFormFields>();
+  const navigate = useNavigate();
   if (!user) {
     return null;
   }
-  const { register, handleSubmit } = useForm<FinancesFormFields>();
-  const navigate = useNavigate();
 
   const onSubmit = async (data: FinancesFormFields) => {
     console.log(data);

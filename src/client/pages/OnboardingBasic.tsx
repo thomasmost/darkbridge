@@ -8,6 +8,7 @@ import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
 import { apiRequest } from '../services/api.svc';
 import { Label } from '../elements/Label';
+import { FlexColumns } from '../elements/FlexColumns';
 
 const Logo = styled.img`
   display: block;
@@ -25,11 +26,11 @@ type BasicFormFields = {
 
 export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
   const { user, updateUser } = useAuth();
+  const { register, handleSubmit } = useForm<BasicFormFields>();
+  const navigate = useNavigate();
   if (!user) {
     return null;
   }
-  const { register, handleSubmit } = useForm<BasicFormFields>();
-  const navigate = useNavigate();
 
   const onSubmit = async (data: BasicFormFields) => {
     const { given_name, family_name, phone, company_name } = data;
@@ -70,23 +71,26 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
       </P>
       <H3>Basic information</H3>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Label>First name</Label>
-        <Input
-          name="given_name"
-          defaultValue={`${user.given_name}`}
-          placeholder="Jonathan"
-          ref={register({ required: true })}
-        />
-
-        <Label>Last name</Label>
-        <Input
-          name="family_name"
-          defaultValue={`${user.family_name}`}
-          placeholder="Appleseed"
-          ref={register({ required: true })}
-        />
-
-        {/* include validation with required or other standard HTML validation rules */}
+        <FlexColumns>
+          <div className="expand">
+            <Label>First name</Label>
+            <Input
+              name="given_name"
+              defaultValue={user.given_name}
+              placeholder="Jonathan"
+              ref={register({ required: true })}
+            />
+          </div>
+          <div className="expand">
+            <Label>Last name</Label>
+            <Input
+              name="family_name"
+              defaultValue={user.family_name}
+              placeholder="Appleseed"
+              ref={register({ required: true })}
+            />
+          </div>
+        </FlexColumns>
         <Label>Phone number</Label>
         <Input
           name="phone"

@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import { Link } from '@reach/router';
 import React from 'react';
-import { useAuth } from '../AuthProvider';
+import { FlashCard } from '../elements/Card';
 import { Icon } from '../elements/Icon';
-import { theme } from '../theme';
 import { Popdown } from './Popdown';
+import { theme } from '../theme';
+import { useAuth } from '../AuthProvider';
 
 const Logo = styled.img`
   display: inline-block;
@@ -119,10 +120,12 @@ export const Header: React.FC = () => {
               </LoggedInHeader>
             }
           >
-            <DropdownLink to="/profile">
-              Logged in as {user?.given_name}
-            </DropdownLink>
-            <StyledAnchor onClick={() => handleLogout()}>Logout</StyledAnchor>
+            <FlashCard>
+              <DropdownLink to="/profile">
+                Logged in as {user?.given_name}
+              </DropdownLink>
+              <StyledAnchor onClick={() => handleLogout()}>Logout</StyledAnchor>
+            </FlashCard>
           </Popdown>
         </Right>
       </HeaderContents>

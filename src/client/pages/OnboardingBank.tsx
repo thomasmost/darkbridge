@@ -79,15 +79,26 @@ export const OnboardingBank: React.FC<RouteComponentProps> = () => {
             </a>
             <P>
               By connecting you agree to the Stripe{' '}
-              <a href="https://stripe.com/connect-account/legal">
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href="https://stripe.com/connect-account/legal"
+              >
                 Terms of Service
               </a>{' '}
               and end user{' '}
-              <a href="https://stripe.com/privacy">Privacy Policy</a>.
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href="https://stripe.com/privacy"
+              >
+                Privacy Policy
+              </a>
+              .
             </P>
             <Label>
               You can also skip this step and come back to it later, but we
-              won&amp;t be able to pay you till you complete it!
+              won&apos;t be able to pay you till you complete it!
             </Label>
             <Link to="/onboarding/complete">Skip and come back</Link>
           </div>
