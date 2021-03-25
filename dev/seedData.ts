@@ -6,6 +6,8 @@ import faker from 'faker';
 dotenv.config();
 import { User } from '../src/models/user.model';
 import { ClientProfile } from '../src/models/client_profile.model';
+import { Invoice } from '../src/models/invoice.model';
+import { InvoiceItem } from '../src/models/invoice_item.model';
 import { timezones_by_utc_string } from '../src/data/timezones';
 import { DateTimeHelper } from '../src/helpers/datetime.helper';
 import { createAppointmentForClient } from '../src/helpers/appointment.helper';
@@ -188,6 +190,8 @@ async function truncate() {
   await User.destroy({ truncate: true });
   await ClientProfile.destroy({ truncate: true });
   await Appointment.destroy({ truncate: true });
+  await Invoice.destroy({ truncate: true });
+  await InvoiceItem.destroy({ truncate: true });
 }
 
 async function main() {
