@@ -32,18 +32,18 @@
         },
         {
           "name": "HOST_DOMAIN",
-          "value": "http://staging.callteddy.com"
+          "value": "https://staging.callteddy.com"
         },
         {
           "name": "NODE_ENV",
           "value": "staging"
+        },
+        {
+          "name": "MAILGUN_DOMAIN",
+          "value": "staging.callteddy.com"
         }
       ],
       "secrets": [
-        {
-          "name": "EXAMPLE_SECRET_VARIABLE",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:EXAMPLE_SECRET_VARIABLE-j7woBv"
-        },
         {
           "name": "MYSQL_HOST",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MYSQL_HOST-v01lbv"
@@ -59,6 +59,14 @@
         {
           "name": "GOOGLE_CLOUD_API_KEY",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_GOOGLE_CLOUD_API_KEY-eU5VSu"
+        },
+        {
+          "name": "STRIPE_SECRET_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_STRIPE_SECRET_KEY-zlqsGF"
+        },
+        {
+          "name": "MAILGUN_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MAILGUN_API_KEY-rSPzOG"
         }
       ]
     }
