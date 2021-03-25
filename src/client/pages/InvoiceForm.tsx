@@ -128,6 +128,7 @@ const costBreakdownInMinorUnits = (
   minutes_billed: number,
   state_tax_rate: number,
   local_tax_rate: number,
+  exclude_processing_fee = false,
 ) => {
   const hourlyTotal = Math.ceil((hourly_rate * minutes_billed) / 60);
   const preTaxTotal = hourlyTotal;
@@ -135,7 +136,9 @@ const costBreakdownInMinorUnits = (
   const localTaxTotal = Math.ceil((preTaxTotal * local_tax_rate) / 100);
   const taxTotal = stateTaxTotal + localTaxTotal;
   const postTaxTotal = preTaxTotal + taxTotal;
-  const processing_fee = Math.ceil(postTaxTotal * 0.04);
+  const processing_fee = exclude_processing_fee
+    ? 0
+    : Math.ceil(postTaxTotal * 0.04);
   return {
     hourlyTotal,
     preTaxTotal,
@@ -146,6 +149,25 @@ const costBreakdownInMinorUnits = (
     processing_fee,
   };
 };
+
+const createTaxItem = (
+  description: string,
+  suggested_rate: number | null,
+  entered_rate: number,
+  amount_in_minor_units: number,
+  state: string | null,
+) => ({
+  type: InvoiceItemType.tax,
+  amount_in_minor_units,
+  description,
+  quantity: 1,
+  currency_code: 'USD',
+  metadata: {
+    suggested_tax_rate: suggested_rate,
+    entered_tax_rate: entered_rate,
+    state_of_suggested_tax_rate: state,
+  },
+});
 
 const submitHandler = (
   values: FormValues,
@@ -164,37 +186,31 @@ const submitHandler = (
     values.minutes_billed,
     state_tax_rate,
     local_tax_rate,
+    values.payment_method === 'cash',
   );
+  const state = stateTaxInfo ? stateTaxInfo.state : null;
   const invoice_items: InvoiceItemPostBody[] = [];
   if (state_tax_rate) {
-    invoice_items.push({
-      type: InvoiceItemType.tax,
-      amount_in_minor_units: stateTaxTotal,
-      description: 'State Sales Tax',
-      quantity: 1,
-      currency_code: 'USD',
-      metadata: {
-        suggested_tax_rate: stateTaxInfo ? stateTaxInfo.state_sales_tax : null,
-        entered_tax_rate: state_tax_rate,
-        state_of_suggested_tax_rate: stateTaxInfo ? stateTaxInfo.state : null,
-      },
-    });
+    invoice_items.push(
+      createTaxItem(
+        'State Sales Tax',
+        stateTaxInfo ? stateTaxInfo.state_sales_tax : null,
+        state_tax_rate,
+        stateTaxTotal,
+        state,
+      ),
+    );
   }
   if (local_tax_rate) {
-    invoice_items.push({
-      type: InvoiceItemType.tax,
-      amount_in_minor_units: localTaxTotal,
-      description: 'Local Sales Tax',
-      quantity: 1,
-      currency_code: 'USD',
-      metadata: {
-        suggested_tax_rate: stateTaxInfo
-          ? stateTaxInfo.avg_local_sales_tax
-          : null,
-        entered_tax_rate: local_tax_rate,
-        state_of_suggested_tax_rate: stateTaxInfo ? stateTaxInfo.state : null,
-      },
-    });
+    invoice_items.push(
+      createTaxItem(
+        'Local Sales Tax',
+        stateTaxInfo ? stateTaxInfo.avg_local_sales_tax : null,
+        local_tax_rate,
+        localTaxTotal,
+        state,
+      ),
+    );
   }
   const currency_code = 'USD';
   const hourly_rate = values.hourly_rate_in_major_units * 100;
