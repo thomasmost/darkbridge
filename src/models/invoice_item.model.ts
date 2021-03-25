@@ -3,12 +3,8 @@ import { v4 } from 'uuid';
 import { toServiceProvider } from '../helpers/permissioners';
 
 import { sequelize } from '../sequelize';
+import { InvoiceItemType } from '../shared/enums';
 import { PermissionedModel } from './_prototypes';
-
-enum InvoiceItemType {
-  materials = 'materials',
-  tax = 'tax',
-}
 
 /**
   invoice_id VARCHAR(255) NOT NULL,
@@ -20,9 +16,9 @@ enum InvoiceItemType {
   quantity INT NOT NULL DEFAULT 1, */
 
 type TaxMetadata = {
-  suggested_tax_rate: number;
+  suggested_tax_rate: number | null;
   entered_tax_rate: number;
-  state_of_suggested_tax_rate: string;
+  state_of_suggested_tax_rate: string | null;
 };
 
 type MaterialMetadata = {
@@ -48,6 +44,16 @@ export interface InvoiceItemAttributes {
 type InvoiceItemCreationAttributes = Optional<
   InvoiceItemAttributes,
   'id' | 'created_at' | 'metadata_json'
+>;
+
+export type InvoiceItemPostBody = Omit<
+  InvoiceItemAttributes,
+  | 'id'
+  | 'created_at'
+  | 'metadata_json'
+  | 'invoice_id'
+  | 'service_provider_user_id'
+  | 'client_profile_id'
 >;
 
 export class InvoiceItem

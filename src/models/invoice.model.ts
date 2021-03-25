@@ -13,7 +13,7 @@ export enum InvoiceStatus {
   paid = 'paid',
 }
 
-interface InvoiceAttributes {
+export interface InvoiceAttributes {
   id: string;
   created_at: number;
   service_provider_user_id: string;
@@ -43,7 +43,6 @@ export class Invoice
   public id!: string;
   public service_provider_user_id!: string;
   public client_profile_id!: string;
-  public appointment_id!: string;
   public status!: InvoiceStatus;
   public payment_method!: InvoicePaymentMethod;
   public flat_rate!: number;

@@ -8,18 +8,20 @@ import {
   responses,
   operation,
   path,
+  middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext, TeddyRequestContext } from './types';
 import { baseCodes, swaggerRefFromModel } from '../helpers/swagger.helper';
 import { Invoice, InvoiceModel, InvoiceStatus } from '../models/invoice.model';
-import { ValidationError } from '../helpers/error.helper';
+import { AuthenticationError, ValidationError } from '../helpers/error.helper';
 import { loadAndAuthorizeAppointment } from '../helpers/appointment.helper';
 import {
   InvoiceItem,
   InvoiceItemAttributes,
   InvoiceItemModel,
 } from '../models/invoice_item.model';
+import { totalToBePaidOut } from '../helpers/invoice.helper';
 
 const postParams = {
   appointment_id: {
@@ -64,6 +66,15 @@ const postParams = {
 
 @prefix('/invoice')
 @securityAll([{ token: [] }])
+@middlewaresAll([
+  (ctx: TeddyRequestContext) => {
+    if (!ctx.user) {
+      throw new AuthenticationError(
+        'Only logged in users may access the invoice api',
+      );
+    }
+  },
+])
 @tagsAll(['invoice'])
 export class InvoiceAPI {
   @request('post', '')
@@ -79,11 +90,7 @@ export class InvoiceAPI {
       description: 'Unauthorized',
     },
   })
-  public static async createInvoice(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async createInvoice(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
     const service_provider_user_id = user.id;
     const {
@@ -106,12 +113,11 @@ export class InvoiceAPI {
 
     // For now users can only invoice their own appointments
     const appointment = await loadAndAuthorizeAppointment(appointment_id, user);
-
     const client_profile_id = appointment.client_profile_id;
     const status = InvoiceStatus.pending;
 
-    // This is obviously a placeholder
-    const processing_fee = 100;
+    // These will be filled in later
+    const processing_fee = 0;
     let total_from_line_items = 0;
 
     const unsaved_invoice = await Invoice.build({
@@ -159,6 +165,9 @@ export class InvoiceAPI {
       item_promises.push(item_promise);
     }
     unsaved_invoice.total_from_line_items = total_from_line_items;
+    unsaved_invoice.processing_fee = Math.ceil(
+      totalToBePaidOut(unsaved_invoice) * 0.04,
+    );
     const invoice = await unsaved_invoice.save();
     const items = await Promise.all(item_promises);
     await appointment.update({ invoice_id: invoice.id });
@@ -180,11 +189,7 @@ export class InvoiceAPI {
     },
     ...baseCodes([401, 404]),
   })
-  public static async getInvoiceById(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async getInvoiceById(ctx: AuthenticatedRequestContext) {
     const { id } = ctx.validatedParams;
     const invoicePromise = Invoice.findByPk(id);
     const itemPromise = InvoiceItem.findAll({

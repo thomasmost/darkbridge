@@ -39,6 +39,14 @@ const immerReducer = (draft: IStateContainer, action: Action): void => {
       }
     }
   }
+  if (action.type === 'COMPLETE_APPOINTMENT') {
+    const { appointment_id } = action.data;
+    for (const appointment of draft.appointments) {
+      if (appointment.id === appointment_id) {
+        appointment.status = AppointmentStatus.completed;
+      }
+    }
+  }
   if (action.type === 'RESCHEDULE_APPOINTMENT_SUCCESS') {
     const newAppointment = action.data;
     for (let i = 0; i < draft.appointments.length; i++) {

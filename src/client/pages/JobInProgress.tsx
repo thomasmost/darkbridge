@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
 import { RouteComponentProps, useNavigate } from '@reach/router';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { DateTimeHelper } from '../../helpers/datetime.helper';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { TimeCard } from '../components/TimeCard';
 import { Button } from '../elements/Button';
 import { Label } from '../elements/Label';
+import { DispatchContext } from '../reducers';
 import { apiRequest } from '../services/api.svc';
 import { theme } from '../theme';
 import { useInterval } from '../useInterval';
@@ -34,9 +35,10 @@ type FormValues = {
 export const JobInProgress: React.FC<JobInProgressProps> = ({
   appointment,
 }) => {
-  // todo(hacky)
+  const dispatch = useContext(DispatchContext);
   const { register, handleSubmit } = useForm<FormValues>();
   const navigate = useNavigate();
+  // todo(hacky)
   const start = new Date(appointment.started_at || Date.now());
   const now = new Date();
   const [secondsLogged, setSecondsLogged] = useState<number>(
@@ -48,8 +50,15 @@ export const JobInProgress: React.FC<JobInProgressProps> = ({
   }, 1000);
 
   const onSubmit = async (values: FormValues) => {
+    const appointment_id = appointment.id;
+    dispatch({
+      type: 'COMPLETE_APPOINTMENT',
+      data: {
+        appointment_id,
+      },
+    });
     const { error } = await apiRequest(
-      `appointment/${appointment.id}/complete`,
+      `appointment/${appointment_id}/complete`,
       'text',
       {
         headers: {
@@ -60,7 +69,7 @@ export const JobInProgress: React.FC<JobInProgressProps> = ({
       },
     );
     if (!error) {
-      navigate(`/payment/${appointment.id}/invoice`);
+      navigate(`/payment/${appointment_id}/invoice`);
     }
   };
 

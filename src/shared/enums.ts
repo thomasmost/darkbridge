@@ -19,3 +19,8 @@ export enum InvoicePaymentMethod {
   cash = 'cash',
   credit_card = 'credit_card',
 }
+
+export enum InvoiceItemType {
+  materials = 'materials',
+  tax = 'tax',
+}
