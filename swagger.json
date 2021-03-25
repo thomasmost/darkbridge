@@ -921,6 +921,11 @@
           "type": "number",
           "example": "4.9",
           "description": "the user-agreed-upon tax rate as represented by this line item"
+        },
+        "state_of_suggested_tax_rate": {
+          "type": "string",
+          "example": "Alabama",
+          "description": "the state of the suggested tax rate, usually the customer's state of address"
         }
       }
     },
@@ -1020,7 +1025,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-24 17:05:29"
+          "example": "2021-03-25 10:49:56"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1054,7 +1059,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-24 17:05:29"
+          "example": "2021-03-25 10:49:56"
         },
         "duration_minutes": {
           "type": "integer",
