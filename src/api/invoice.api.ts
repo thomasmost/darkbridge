@@ -8,13 +8,17 @@ import {
   responses,
   operation,
   path,
-  middlewaresAll,
+  // middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 
 import { AuthenticatedRequestContext, TeddyRequestContext } from './types';
 import { baseCodes, swaggerRefFromModel } from '../helpers/swagger.helper';
 import { Invoice, InvoiceModel, InvoiceStatus } from '../models/invoice.model';
-import { AuthenticationError, ValidationError } from '../helpers/error.helper';
+import {
+  AuthenticationError,
+  LogicalError,
+  ValidationError,
+} from '../helpers/error.helper';
 import { loadAndAuthorizeAppointment } from '../helpers/appointment.helper';
 import {
   InvoiceItem,
@@ -22,6 +26,7 @@ import {
   InvoiceItemModel,
 } from '../models/invoice_item.model';
 import { totalToBePaidOut } from '../helpers/invoice.helper';
+import { authUser } from './middlewares';
 
 const postParams = {
   appointment_id: {
@@ -66,17 +71,10 @@ const postParams = {
 
 @prefix('/invoice')
 @securityAll([{ token: [] }])
-@middlewaresAll([
-  (ctx: TeddyRequestContext) => {
-    if (!ctx.user) {
-      throw new AuthenticationError(
-        'Only logged in users may access the invoice api',
-      );
-    }
-  },
-])
+// @middlewaresAll(authUser)
 @tagsAll(['invoice'])
 export class InvoiceAPI {
+  // eslint-disable-next-line max-lines-per-function
   @request('post', '')
   @operation('apiInvoice_create')
   @summary('create a new invoice')
@@ -86,12 +84,15 @@ export class InvoiceAPI {
       description: 'Success',
       schema: swaggerRefFromModel(InvoiceModel),
     },
-    401: {
-      description: 'Unauthorized',
-    },
+    ...baseCodes([401, 405]),
   })
   public static async createInvoice(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
+    if (!ctx.user) {
+      throw new AuthenticationError(
+        'Only logged in users may access the invoice api',
+      );
+    }
     const service_provider_user_id = user.id;
     const {
       appointment_id,
@@ -113,6 +114,9 @@ export class InvoiceAPI {
 
     // For now users can only invoice their own appointments
     const appointment = await loadAndAuthorizeAppointment(appointment_id, user);
+    if (appointment.invoice_id) {
+      throw new LogicalError('This appointment has already been invoiced');
+    }
     const client_profile_id = appointment.client_profile_id;
     const status = InvoiceStatus.pending;
 
@@ -190,6 +194,11 @@ export class InvoiceAPI {
     ...baseCodes([401, 404]),
   })
   public static async getInvoiceById(ctx: AuthenticatedRequestContext) {
+    if (!ctx.user) {
+      throw new AuthenticationError(
+        'Only logged in users may access the invoice api',
+      );
+    }
     const { id } = ctx.validatedParams;
     const invoicePromise = Invoice.findByPk(id);
     const itemPromise = InvoiceItem.findAll({

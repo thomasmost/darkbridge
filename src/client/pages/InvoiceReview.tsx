@@ -64,7 +64,6 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
   ).toFixed(2);
 
   const onSubmit = async () => {
-    alert(JSON.stringify(invoice));
     invoice.invoice_items = invoice.invoice_items || [];
     const { error } = await apiRequest('invoice', 'json', {
       headers: {
