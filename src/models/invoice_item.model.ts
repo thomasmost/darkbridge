@@ -22,6 +22,7 @@ enum InvoiceItemType {
 type TaxMetadata = {
   suggested_tax_rate: number;
   entered_tax_rate: number;
+  state_of_suggested_tax_rate: string;
 };
 
 type MaterialMetadata = {

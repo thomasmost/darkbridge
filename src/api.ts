@@ -197,6 +197,12 @@ api.swagger({
             description:
               'the user-agreed-upon tax rate as represented by this line item',
           },
+          state_of_suggested_tax_rate: {
+            type: 'string',
+            example: 'Alabama',
+            description:
+              "the state of the suggested tax rate, usually the customer's state of address",
+          },
         },
       },
       StripeAccountResponse: {
