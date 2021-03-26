@@ -9,9 +9,10 @@ import {
   tagsAll,
   responses,
   operation,
+  middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 import {
   ClientProfile,
   ClientProfileAttributes,
@@ -20,6 +21,7 @@ import {
 } from '../models/client_profile.model';
 import { createClientProfileForServiceProvider } from '../helpers/client_profile.helper';
 import { arrayOf, swaggerRefFromModel } from '../helpers/swagger.helper';
+import { authUser } from './middlewares';
 
 type BodyParameter = {
   type: 'string' | 'integer';
@@ -83,6 +85,7 @@ const postParams: Record<
 
 @prefix('/client_profile')
 @securityAll([{ token: [] }])
+@middlewaresAll(authUser)
 @tagsAll(['clientProfile'])
 export class ClientProfileAPI {
   @request('post', '')
@@ -98,11 +101,7 @@ export class ClientProfileAPI {
       description: 'Unauthorized',
     },
   })
-  public static async addClientProfile(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async addClientProfile(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
 
     const {
@@ -153,11 +152,7 @@ export class ClientProfileAPI {
       description: 'Unauthorized',
     },
   })
-  public static async queryClientProfiles(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async queryClientProfiles(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
 
     const { name } = ctx.request.query;

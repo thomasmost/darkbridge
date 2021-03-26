@@ -1,24 +1,27 @@
 import { endOfDay, format, startOfDay } from 'date-fns';
 import { Appointment } from '../models/appointment.model';
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 import {
   ClientProfile,
   ClientProfileAttributes,
 } from '../models/client_profile.model';
 import { Op } from 'sequelize';
 import {
-  request,
-  summary,
+  middlewaresAll,
+  operation,
   prefix,
-  tagsAll,
+  request,
   responses,
   securityAll,
-  operation,
+  summary,
+  tagsAll,
 } from '@callteddy/koa-swagger-decorator';
 import { swaggerRefFromDefinitionName } from '../helpers/swagger.helper';
+import { authUser } from './middlewares';
 
 @prefix('/calendar')
 @securityAll([{ token: [] }])
+@middlewaresAll(authUser)
 @tagsAll(['calendar'])
 export class CalendarAPI {
   @request('get', '/daily')
@@ -35,11 +38,7 @@ export class CalendarAPI {
       description: 'Unauthorized',
     },
   })
-  public static async getDailyInfo(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async getDailyInfo(ctx: AuthenticatedRequestContext) {
     ctx.body = await assembleDailyInfo(ctx.user.id);
   }
 }

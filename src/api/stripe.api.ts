@@ -1,4 +1,4 @@
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 
 import {
   request,
@@ -8,15 +8,18 @@ import {
   responses,
   securityAll,
   operation,
+  middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 import {
   baseCodes,
   swaggerRefFromDefinitionName,
 } from '../helpers/swagger.helper';
 import { StripeHelper } from '../helpers/stripe.helper';
+import { authUser } from './middlewares';
 
 @prefix('/stripe')
 @securityAll([{ token: [] }])
+@middlewaresAll(authUser)
 @tagsAll(['stripe'])
 export class StripeAPI {
   @request('post', '/onboard')
@@ -29,7 +32,7 @@ export class StripeAPI {
     },
     ...baseCodes([401]),
   })
-  public static async onboardUser(ctx: TeddyRequestContext) {
+  public static async onboardUser(ctx: AuthenticatedRequestContext) {
     return StripeHelper.onboardUser(ctx);
   }
 
@@ -39,7 +42,7 @@ export class StripeAPI {
   @responses({
     ...baseCodes([302, 401]),
   })
-  public static async refresh(ctx: TeddyRequestContext) {
+  public static async refresh(ctx: AuthenticatedRequestContext) {
     return StripeHelper.refreshUser(ctx);
   }
 }

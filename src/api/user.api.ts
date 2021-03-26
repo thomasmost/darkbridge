@@ -1,5 +1,5 @@
 import { UserAttributes } from '../models/user.model';
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 
 import {
   request,
@@ -10,10 +10,13 @@ import {
   responses,
   securityAll,
   operation,
+  middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
+import { authUser } from './middlewares';
 
 @prefix('/user')
 @securityAll([{ token: [] }])
+@middlewaresAll(authUser)
 @tagsAll(['users'])
 export class UserAPI {
   @request('put', '/self')
@@ -44,12 +47,7 @@ export class UserAPI {
       description: 'Unauthorized',
     },
   })
-  public static async updateSelf(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
-
+  public static async updateSelf(ctx: AuthenticatedRequestContext) {
     const { phone, given_name, family_name } = ctx.request
       .body as Partial<UserAttributes>;
     const user = ctx.user;

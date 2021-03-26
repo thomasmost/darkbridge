@@ -29,7 +29,7 @@ import App from './client/apps/App';
 import { tokenFromAuthorizationHeader, tokenFromCookies } from './api/auth.api';
 import { consumeToken } from './helpers/auth_token.helper';
 import UnauthorizedApp from './client/apps/UnauthorizedApp';
-import { TeddyRequestContext } from './api/types';
+import { SemiAuthenticatedRequestContext } from './api/types';
 import { AuthToken } from './models/auth_token.model';
 import { AuthenticationError, ValidationError } from './helpers/error.helper';
 import OnboardingApp from './client/apps/OnboardingApp';
@@ -92,7 +92,7 @@ app.use(async (ctx: Koa.ParameterizedContext & UserAgentContext, next) => {
   await next();
 });
 
-app.use(async (ctx: TeddyRequestContext, next) => {
+app.use(async (ctx: SemiAuthenticatedRequestContext, next) => {
   if (ctx.user && ctx.url === '/login') {
     ctx.redirect('/');
     return;
@@ -111,7 +111,7 @@ router.get('/healthz', async (ctx) => {
 router.use('/api', api.routes(), api.allowedMethods());
 
 async function ssr(
-  ctx: TeddyRequestContext,
+  ctx: SemiAuthenticatedRequestContext,
   ApplicationRoot: () => JSX.Element,
   bundleFilename: string,
 ) {
@@ -155,7 +155,7 @@ async function ssr(
   }
 }
 
-router.get(/\/onboarding/, async (ctx: TeddyRequestContext) => {
+router.get(/\/onboarding/, async (ctx: SemiAuthenticatedRequestContext) => {
   if (!ctx.user) {
     ctx.redirect('/login');
   }
@@ -163,7 +163,7 @@ router.get(/\/onboarding/, async (ctx: TeddyRequestContext) => {
 });
 
 // Wildcard Route
-router.get(/\//, async (ctx: TeddyRequestContext) => {
+router.get(/\//, async (ctx: SemiAuthenticatedRequestContext) => {
   if (ctx.req.url && ctx.req.url.split('.').length > 1) {
     // file request
     return;

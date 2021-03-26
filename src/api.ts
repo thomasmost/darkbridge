@@ -7,7 +7,7 @@ import { ClientProfileAPI } from './api/client_profile.api';
 import { getTimeZone } from './helpers/location.helper';
 import { SwaggerRouter } from '@callteddy/koa-swagger-decorator';
 import { CalendarAPI } from './api/calendar.api';
-import { TeddyRequestContext } from './api/types';
+import { SemiAuthenticatedRequestContext } from './api/types';
 import { OmniAPI } from './api/omni.api';
 import {
   arrayOf,
@@ -33,7 +33,7 @@ import { StripeAPI } from './api/stripe.api';
 export const api = new SwaggerRouter();
 
 const protectDeveloperDocs = async (
-  ctx: TeddyRequestContext,
+  ctx: SemiAuthenticatedRequestContext,
   next: Koa.Next,
 ) => {
   // const user = ctx.user;
@@ -56,7 +56,7 @@ api.use('/swagger-html', protectDeveloperDocs);
 api.use('/swagger-json', protectDeveloperDocs, postProcessJson);
 
 // Permissioner
-api.use(async (ctx: TeddyRequestContext, next) => {
+api.use(async (ctx: SemiAuthenticatedRequestContext, next) => {
   await next();
   if (ctx.body) {
     ctx.body = permissionData(ctx.body, ctx.user);

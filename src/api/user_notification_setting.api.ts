@@ -7,9 +7,10 @@ import {
   responses,
   operation,
   body,
+  middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 import { arrayOf } from '../helpers/swagger.helper';
 import { NotificationSettingsHelper } from '../helpers/user_settings.helper';
 import {
@@ -17,9 +18,11 @@ import {
   UserNotificationSetting,
   UserNotificationSettingModel,
 } from '../models/user_notification_setting.model';
+import { authUser } from './middlewares';
 
 @prefix('/user_notification_setting')
 @securityAll([{ token: [] }])
+@middlewaresAll(authUser)
 @tagsAll(['userNotificationSetting'])
 export class UserNotificationSettingAPI {
   @request('get', '')
@@ -34,11 +37,9 @@ export class UserNotificationSettingAPI {
       description: 'Unauthorized',
     },
   })
-  public static async queryUserNotificationSettings(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async queryUserNotificationSettings(
+    ctx: AuthenticatedRequestContext,
+  ) {
     const user = ctx.user;
     const settings = await NotificationSettingsHelper.getForUser(user.id);
     ctx.status = 200;
@@ -75,11 +76,9 @@ export class UserNotificationSettingAPI {
       description: 'Unauthorized',
     },
   })
-  public static async updateContractorProfile(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async updateContractorProfile(
+    ctx: AuthenticatedRequestContext,
+  ) {
     const user_id = ctx.user.id;
 
     const { notification_id, email, push, text } = ctx.request.body;

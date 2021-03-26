@@ -11,10 +11,11 @@ import { User, UserModel } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
 import { sendEmail } from '../helpers/email.helper';
 import { ResetPasswordRequest } from '../models/reset_password_request.model';
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 import { ContractorProfile } from '../models/contractor_profile.model';
 import {
   body,
+  middlewares,
   operation,
   prefix,
   query,
@@ -29,6 +30,7 @@ import {
   swaggerRefFromDefinitionName,
   swaggerRefFromModel,
 } from '../helpers/swagger.helper';
+import { authUser } from './middlewares';
 
 export const authAPI = new Router();
 
@@ -448,6 +450,7 @@ export class AuthAPI {
   @operation('apiAuth_getCurrentUser')
   @summary('Get the currently logged in user')
   @security([{ token: [] }])
+  @middlewares(authUser)
   @responses({
     200: {
       description: 'Success',
@@ -455,11 +458,8 @@ export class AuthAPI {
     },
     ...baseCodes([401]),
   })
-  public static async getCurrentUser(ctx: TeddyRequestContext) {
+  public static async getCurrentUser(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
-    if (!user) {
-      return (ctx.status = 401);
-    }
     const contractor_profile = await ContractorProfile.findOne({
       where: {
         user_id: user.id,

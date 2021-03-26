@@ -1,17 +1,13 @@
 // import Koa from 'koa';
 import Stripe from 'stripe';
-import { TeddyRequestContext } from '../api/types';
+import { AuthenticatedRequestContext } from '../api/types';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2020-08-27',
 });
 
 export abstract class StripeHelper {
-  public static async onboardUser(ctx: TeddyRequestContext) {
+  public static async onboardUser(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
-    if (!user) {
-      ctx.status = 401;
-      return;
-    }
     try {
       const account = await stripe.accounts.create({ type: 'express' });
       user.stripe_express_account_id = account.id;
@@ -27,7 +23,7 @@ export abstract class StripeHelper {
     }
   }
 
-  public static async refreshUser(ctx: TeddyRequestContext) {
+  public static async refreshUser(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
     if (!user) {
       ctx.status = 401;

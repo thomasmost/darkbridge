@@ -1,5 +1,5 @@
 import { addMonths, subMonths } from 'date-fns';
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 import { Op } from 'sequelize';
 import {
   request,
@@ -10,6 +10,7 @@ import {
   responses,
   securityAll,
   operation,
+  middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 
 import { assembleDailyInfo } from './calendar.api';
@@ -27,6 +28,7 @@ import { NotificationSettingsHelper } from '../helpers/user_settings.helper';
 import { AppointmentPriority } from '../shared/enums';
 import { stateTaxes } from '../data/taxes';
 import { isoStates } from '../data/iso_states';
+import { authUser } from './middlewares';
 
 const omniResponsesV0 = {
   200: {
@@ -37,6 +39,7 @@ const omniResponsesV0 = {
 };
 @prefix('/omni')
 @securityAll([{ token: [] }])
+@middlewaresAll(authUser)
 @tagsAll(['omni'])
 export class OmniAPI {
   @request('get', '/v0/service')
@@ -48,11 +51,7 @@ export class OmniAPI {
     'This endpoint will be used to immediately load all the data the app is likely to need for an average session. This includes the full current user with contractor profile, all appointments from one month in the past to one month in the future, the daily calendar data, and all client profiles created by the logged in user',
   )
   @responses(omniResponsesV0)
-  public static async getOmniDataV0(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async getOmniDataV0(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
     const user_id = user.id;
 

@@ -1,4 +1,4 @@
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 import {
   body,
   request,
@@ -8,11 +8,13 @@ import {
   tagsAll,
   responses,
   operation,
+  middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 import {
   ContractorProfile,
   ContractorProfileUpdateAttributes,
 } from '../models/contractor_profile.model';
+import { authUser } from './middlewares';
 
 type BodyParameter = {
   type: 'string' | 'integer' | 'boolean';
@@ -68,6 +70,7 @@ const updateAttributes: Record<
 
 @prefix('/contractor_profile')
 @securityAll([{ token: [] }])
+@middlewaresAll(authUser)
 @tagsAll(['contractorProfile'])
 export class ContractorProfileAPI {
   @request('put', '')
@@ -85,11 +88,9 @@ export class ContractorProfileAPI {
     },
   })
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  public static async updateContractorProfile(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async updateContractorProfile(
+    ctx: AuthenticatedRequestContext,
+  ) {
     const user_id = ctx.user.id;
 
     const {

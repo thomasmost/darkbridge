@@ -4,7 +4,7 @@ import {
   IAppointmentPostBody,
 } from '../models/appointment.model';
 import { getById } from './base.api';
-import { TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 import { ClientProfile } from '../models/client_profile.model';
 import { Op, WhereAttributeHash } from 'sequelize';
 import {
@@ -19,6 +19,7 @@ import {
   securityAll,
   tagsAll,
   query,
+  middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 
 import { DateTimeHelper } from '../helpers/datetime.helper';
@@ -36,6 +37,7 @@ import {
 import { ValidationError } from '../helpers/error.helper';
 import { AppointmentActivity } from '../models/appointment_activity.model';
 import { AppointmentStatus } from '../shared/enums';
+import { authUser } from './middlewares';
 
 const postBodyParams = {
   override_warnings: {
@@ -74,6 +76,7 @@ const postBodyParams = {
 };
 @prefix('/appointment')
 @securityAll([{ token: [] }])
+@middlewaresAll(authUser)
 @tagsAll(['appointments'])
 export class AppointmentAPI {
   @request('post', '')
@@ -87,12 +90,7 @@ export class AppointmentAPI {
     },
     ...baseCodes([401, 405, 409]),
   })
-  public static async createAppointment(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
-
+  public static async createAppointment(ctx: AuthenticatedRequestContext) {
     const {
       override_warnings,
       client_profile_id,
@@ -147,11 +145,7 @@ export class AppointmentAPI {
     },
     ...baseCodes([400, 401]),
   })
-  public static async getAppointments(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async getAppointments(ctx: AuthenticatedRequestContext) {
     const { before, after, beforeMs, afterMs } = ctx.query;
 
     if ((before && beforeMs) || (after && afterMs)) {
@@ -200,11 +194,7 @@ export class AppointmentAPI {
     },
     ...baseCodes([401, 404]),
   })
-  public static async getAppointmentById(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async getAppointmentById(ctx: AuthenticatedRequestContext) {
     await getById(Appointment)(ctx);
     if (ctx.body.service_provider_user_id !== ctx.user.id) {
       ctx.body = null;
@@ -229,11 +219,7 @@ export class AppointmentAPI {
   @summary('start an appointment')
   @description('For now, only service providers can start their appointments.')
   @responses(baseCodes([204, 401, 404, 405]))
-  public static async startAppointment(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async startAppointment(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
 
     const { id } = ctx.validatedParams;
@@ -286,12 +272,7 @@ export class AppointmentAPI {
     },
     ...baseCodes([401, 404, 405]),
   })
-  public static async rescheduleAppointment(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
-    console.log('here we are');
+  public static async rescheduleAppointment(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
 
     const { id } = ctx.validatedParams;
@@ -329,11 +310,7 @@ export class AppointmentAPI {
     "For now, only service providers can cancel their appointments. We'll need to support client cancellations soon enough",
   )
   @responses(baseCodes([204, 401, 404, 405]))
-  public static async cancelAppointment(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async cancelAppointment(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
 
     const { id } = ctx.validatedParams;
@@ -372,11 +349,7 @@ export class AppointmentAPI {
     'For now, only service providers can complete their appointments.',
   )
   @responses(baseCodes([204, 401, 404, 405]))
-  public static async completeAppointment(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async completeAppointment(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
 
     const { followup_needed, notes } = ctx.request.body;
@@ -420,7 +393,9 @@ export class AppointmentAPI {
     404: { description: 'Not Found' },
     405: { description: 'Already rated' },
   })
-  public static async rateServiceOnAppointment(ctx: TeddyRequestContext) {
+  public static async rateServiceOnAppointment(
+    ctx: AuthenticatedRequestContext,
+  ) {
     const { rating } = ctx.request.body as { rating: number };
 
     const { id } = ctx.validatedParams;
@@ -461,11 +436,9 @@ export class AppointmentAPI {
     404: { description: 'Not Found' },
     405: { description: 'Already rated' },
   })
-  public static async rateClientOnAppointment(ctx: TeddyRequestContext) {
-    if (!ctx.user) {
-      ctx.status = 401;
-      return;
-    }
+  public static async rateClientOnAppointment(
+    ctx: AuthenticatedRequestContext,
+  ) {
     const user = ctx.user;
     const { rating } = ctx.request.body as { rating: number };
 
