@@ -11,6 +11,7 @@ import { DateTimeHelper } from '../helpers/datetime.helper';
 import { PermissionedModel } from './_prototypes';
 import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
 import { toServiceProvider } from '../helpers/permissioners';
+import { InvoiceAttributes, InvoiceModel } from './invoice.model';
 
 // These are all the attributes in the Appointment model
 export interface AppointmentAttributes {
@@ -55,6 +56,7 @@ export interface AppointmentAttributes {
   rating_of_service: number;
   rating_of_client: number;
   client_profile?: Readonly<ClientProfileAttributes>;
+  invoice?: Readonly<InvoiceAttributes>;
 }
 
 export interface IAppointmentPostBody {
@@ -122,6 +124,7 @@ export class Appointment
   public rating_of_service: number;
   public rating_of_client: number;
   public client_profile: ClientProfileAttributes;
+  public invoice: InvoiceAttributes;
 
   // timestamps!
   public readonly created_at!: number;
@@ -318,6 +321,11 @@ export const AppointmentModel = Appointment.initWithPermissions(
     client_profile: {
       type: DataTypes.VIRTUAL,
       model: ClientProfileModel,
+      visible: toServiceProvider,
+    },
+    invoice: {
+      type: DataTypes.VIRTUAL,
+      model: InvoiceModel,
       visible: toServiceProvider,
     },
   },

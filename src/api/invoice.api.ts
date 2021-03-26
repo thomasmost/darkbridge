@@ -26,7 +26,7 @@ import {
   InvoiceItemModel,
 } from '../models/invoice_item.model';
 import { totalToBePaidOut } from '../helpers/invoice.helper';
-import { authUser } from './middlewares';
+// import { authUser } from './middlewares';
 import { InvoicePaymentMethod } from '../shared/enums';
 
 const postParams = {
@@ -63,6 +63,7 @@ const postParams = {
     type: 'string',
     enum: Object.values(InvoicePaymentMethod),
     description: 'method of payment',
+    required: true,
   },
   currency_code: {
     type: 'string',

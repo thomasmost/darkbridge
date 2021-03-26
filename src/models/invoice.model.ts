@@ -28,7 +28,7 @@ export interface InvoiceAttributes {
   days_billed: number;
   total_from_line_items: number;
   currency_code: string;
-  invoice_items: InvoiceItemAttributes[];
+  invoice_items: Readonly<InvoiceItemAttributes[]>;
 }
 
 // Some attributes are optional in `Invoice.build` and `Invoice.create` calls
