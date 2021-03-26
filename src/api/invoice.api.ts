@@ -130,7 +130,7 @@ export class InvoiceAPI {
 
     // These will be filled in later
     const processing_fee = 0;
-    let total_from_line_items = 0;
+    const total_from_line_items = 0;
 
     const unsaved_invoice = await Invoice.build({
       service_provider_user_id,
@@ -147,44 +147,19 @@ export class InvoiceAPI {
       total_from_line_items,
     });
 
-    const item_promises = [];
-    for (const item of invoice_items as InvoiceItemAttributes[]) {
-      const {
-        amount_in_minor_units,
-        currency_code,
-        description,
-        quantity,
-        type,
-        metadata,
-      } = item;
+    const { sumTotalFromLineItems, itemPromises } = processLineItems(
+      unsaved_invoice,
+      invoice_items,
+    );
 
-      const invoice_id = unsaved_invoice.id;
-      if (currency_code !== 'USD') {
-        throw new ValidationError('Non-USD currencies not yet supported');
-      }
-
-      total_from_line_items += amount_in_minor_units * quantity;
-      const item_promise = InvoiceItem.create({
-        invoice_id,
-        service_provider_user_id,
-        client_profile_id,
-        amount_in_minor_units,
-        currency_code,
-        description,
-        quantity,
-        type,
-        metadata,
-      });
-      item_promises.push(item_promise);
-    }
-    unsaved_invoice.total_from_line_items = total_from_line_items;
+    unsaved_invoice.total_from_line_items = sumTotalFromLineItems;
     if (payment_method !== 'cash') {
       unsaved_invoice.processing_fee = Math.ceil(
         totalToBePaidOut(unsaved_invoice) * 0.04,
       );
     }
     const invoice = await unsaved_invoice.save();
-    const items = await Promise.all(item_promises);
+    const items = await Promise.all(itemPromises);
     await appointment.update({ invoice_id: invoice.id });
     invoice.invoice_items = items;
     ctx.status = 200;
@@ -227,4 +202,44 @@ export class InvoiceAPI {
     invoice.invoice_items = items;
     ctx.body = invoice;
   }
+}
+
+function processLineItems(
+  unsaved_invoice: Invoice,
+  invoice_items: InvoiceItemAttributes[],
+) {
+  const itemPromises = [];
+  let sumTotalFromLineItems = 0;
+  for (const item of invoice_items) {
+    const {
+      amount_in_minor_units,
+      currency_code,
+      description,
+      quantity,
+      type,
+      metadata,
+    } = item;
+
+    const invoice_id = unsaved_invoice.id;
+    if (currency_code !== 'USD') {
+      throw new ValidationError('Non-USD currencies not yet supported');
+    }
+
+    const { client_profile_id, service_provider_user_id } = unsaved_invoice;
+
+    sumTotalFromLineItems += amount_in_minor_units * quantity;
+    const item_promise = InvoiceItem.create({
+      invoice_id,
+      service_provider_user_id,
+      client_profile_id,
+      amount_in_minor_units,
+      currency_code,
+      description,
+      quantity,
+      type,
+      metadata,
+    });
+    itemPromises.push(item_promise);
+  }
+  return { itemPromises, sumTotalFromLineItems };
 }
