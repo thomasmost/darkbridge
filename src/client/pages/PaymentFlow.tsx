@@ -1,5 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { RouteComponentProps, Router, useNavigate } from '@reach/router';
+import {
+  NavigateFn,
+  RouteComponentProps,
+  Router,
+  useNavigate,
+} from '@reach/router';
 import { queryAppointments } from '../services/appointment.svc';
 import { DispatchContext, StateContext } from '../reducers';
 import styled from '@emotion/styled';
@@ -8,6 +13,8 @@ import { InvoiceForm } from './InvoiceForm';
 import { InvoiceReview } from './InvoiceReview';
 import { IInvoicePostBody } from '../../shared/invoice.dto';
 import { PaymentSuccess } from './PaymentSuccess';
+import { InvoiceView } from './InvoiceView';
+import { AppointmentAttributes } from '../../models/appointment.model';
 
 const HeadingText = styled.h2`
   margin-bottom: 20px;
@@ -32,6 +39,21 @@ const useFormState = () => {
     setIncludeTaxes,
   };
 };
+
+function handleRedirectAndAbortRender(
+  currentAppointment: AppointmentAttributes,
+  navigate: NavigateFn,
+) {
+  if (currentAppointment.status !== 'completed') {
+    navigate(`/appointment/${currentAppointment.id}`);
+    // abort render
+    return true;
+  }
+  if (currentAppointment.invoice_id && !location.pathname.includes('/view')) {
+    navigate(`view`);
+  }
+  return false;
+}
 
 export const PaymentFlow: React.FC<
   RouteComponentProps<{ appointment_id: string }>
@@ -74,10 +96,10 @@ export const PaymentFlow: React.FC<
   if (!currentAppointment) {
     return null;
   }
-  if (currentAppointment.status !== 'completed') {
-    navigate(`/appointment/${currentAppointment.id}`);
+  if (handleRedirectAndAbortRender(currentAppointment, navigate)) {
     return null;
   }
+
   return (
     <div>
       <HeadingText>{currentAppointment.summary}</HeadingText>
@@ -100,6 +122,7 @@ export const PaymentFlow: React.FC<
           includeTaxes={includeTaxes}
           path="review"
         />
+        <InvoiceView appointment={currentAppointment} path="view" />
         <PaymentSuccess
           appointment={currentAppointment}
           invoice={invoice}

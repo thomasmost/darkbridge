@@ -105,10 +105,13 @@ export const renderStartCard = (
   </Link>
 );
 
-export const renderInvoiceCard = (appointment_id: string) => (
-  <Link to={`/payment/${appointment_id}/invoice`}>
+export const renderInvoiceCard = (
+  appointment_id: string,
+  invoice_id: string,
+) => (
+  <Link to={`/payment/${appointment_id}/${invoice_id ? 'view' : 'invoice'}`}>
     <StartCard>
-      <div>Complete Invoice</div>
+      <div>{invoice_id ? 'View Invoice' : 'Complete Invoice'}</div>
       <CardArrow>
         <Icon name="Arrow-Right-2" />
       </CardArrow>
@@ -142,17 +145,13 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
   header,
 }) => {
   const dispatch = useContext(DispatchContext);
-  const isCanceled = appointment.status === 'canceled';
-  const canBeRescheduled =
-    appointment.status !== 'in_progress' && appointment.status !== 'completed';
+  const { status, invoice_id } = appointment;
+  const isCanceled = status === 'canceled';
+  const canBeRescheduled = status !== 'in_progress' && status !== 'completed';
   const canBeCanceled =
-    appointment.status !== 'in_progress' &&
-    appointment.status !== 'completed' &&
-    appointment.status !== 'canceled';
-  const isStartable =
-    appointment.status !== 'in_progress' && appointment.status !== 'completed';
-  const needsInvoice =
-    appointment.status === 'completed' && !appointment.invoice_id;
+    status !== 'in_progress' && status !== 'completed' && status !== 'canceled';
+  const isStartable = status !== 'in_progress' && status !== 'completed';
+  const showInvoiceCard = status === 'completed';
   // appointment.status === 'scheduled' &&
   // Math.abs(DateTimeHelper.differenceInMinutes(startDate, now)) < 12000;
   return (
@@ -160,7 +159,7 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
       <HeadingText>{header}</HeadingText>
       {renderAppointmentInfo(appointment)}
       {isStartable && renderStartCard(appointment.id, dispatch)}
-      {needsInvoice && renderInvoiceCard(appointment.id)}
+      {showInvoiceCard && renderInvoiceCard(appointment.id, invoice_id)}
       {renderCustomerInfo(appointment)}{' '}
       {canBeRescheduled && renderRescheduleCard(appointment.id)}
       {canBeCanceled && renderCancelCard(appointment.id)}

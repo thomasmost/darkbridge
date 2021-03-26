@@ -11,7 +11,7 @@ import {
   // middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 
-import { AuthenticatedRequestContext, TeddyRequestContext } from './types';
+import { AuthenticatedRequestContext } from './types';
 import { baseCodes, swaggerRefFromModel } from '../helpers/swagger.helper';
 import { Invoice, InvoiceModel, InvoiceStatus } from '../models/invoice.model';
 import {
