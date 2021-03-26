@@ -34,7 +34,7 @@ export interface InvoiceAttributes {
 // Some attributes are optional in `Invoice.build` and `Invoice.create` calls
 export type InvoiceCreationAttributes = Optional<
   InvoiceAttributes,
-  'id' | 'created_at' | 'payment_method' | 'invoice_items'
+  'id' | 'created_at' | 'invoice_items'
 >;
 
 export class Invoice

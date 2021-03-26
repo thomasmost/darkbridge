@@ -27,6 +27,7 @@ import {
 } from '../models/invoice_item.model';
 import { totalToBePaidOut } from '../helpers/invoice.helper';
 import { authUser } from './middlewares';
+import { InvoicePaymentMethod } from '../shared/enums';
 
 const postParams = {
   appointment_id: {
@@ -57,6 +58,11 @@ const postParams = {
     type: 'integer',
     description:
       'the number of days to bill at the daily rate (otherwise leave as 0)',
+  },
+  payment_method: {
+    type: 'string',
+    enum: Object.values(InvoicePaymentMethod),
+    description: 'method of payment',
   },
   currency_code: {
     type: 'string',
@@ -103,6 +109,7 @@ export class InvoiceAPI {
       days_billed,
       invoice_items,
       currency_code,
+      payment_method,
     } = ctx.request.body;
 
     if (currency_code !== 'USD') {
@@ -118,7 +125,8 @@ export class InvoiceAPI {
       throw new LogicalError('This appointment has already been invoiced');
     }
     const client_profile_id = appointment.client_profile_id;
-    const status = InvoiceStatus.pending;
+    const status =
+      payment_method === 'cash' ? InvoiceStatus.paid : InvoiceStatus.pending;
 
     // These will be filled in later
     const processing_fee = 0;
@@ -134,6 +142,7 @@ export class InvoiceAPI {
       minutes_billed,
       days_billed,
       currency_code,
+      payment_method,
       processing_fee,
       total_from_line_items,
     });
@@ -169,9 +178,11 @@ export class InvoiceAPI {
       item_promises.push(item_promise);
     }
     unsaved_invoice.total_from_line_items = total_from_line_items;
-    unsaved_invoice.processing_fee = Math.ceil(
-      totalToBePaidOut(unsaved_invoice) * 0.04,
-    );
+    if (payment_method !== 'cash') {
+      unsaved_invoice.processing_fee = Math.ceil(
+        totalToBePaidOut(unsaved_invoice) * 0.04,
+      );
+    }
     const invoice = await unsaved_invoice.save();
     const items = await Promise.all(item_promises);
     await appointment.update({ invoice_id: invoice.id });
