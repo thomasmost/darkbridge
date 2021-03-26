@@ -1,11 +1,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import { ParameterizedContext } from 'koa';
 import { createClientProfileForServiceProvider } from '../helpers/client_profile.helper';
 import { Appointment } from '../models/appointment.model';
 import { ClientProfile } from '../models/client_profile.model';
 import { sequelize } from '../sequelize';
 import { AppointmentAPI } from './appointment.api';
+import { AuthenticatedRequestContext } from './types';
 
 jest.mock('../helpers/location.helper', () => ({
   getTimeZone: () =>
@@ -80,7 +80,7 @@ describe('Appointment Api', () => {
         set: () => null,
       },
       ip: 'TEST::1',
-    } as unknown) as ParameterizedContext;
+    } as unknown) as AuthenticatedRequestContext;
 
     await expect(AppointmentAPI.createAppointment(ctx)).rejects.toThrow(
       'Expected a local datetime exactly 19 characters long',
@@ -111,7 +111,7 @@ describe('Appointment Api', () => {
         set: () => null,
       },
       ip: 'TEST::1',
-    } as unknown) as ParameterizedContext;
+    } as unknown) as AuthenticatedRequestContext;
 
     await expect(AppointmentAPI.createAppointment(ctx)).rejects.toThrow(
       "Expected a local datetime to exactly match the following format: 'YYYY-MM-DD HH:MM:SS'",
@@ -141,7 +141,7 @@ describe('Appointment Api', () => {
         set: () => null,
       },
       ip: 'TEST::1',
-    } as unknown) as ParameterizedContext;
+    } as unknown) as AuthenticatedRequestContext;
 
     await AppointmentAPI.createAppointment(ctx);
 
@@ -180,7 +180,7 @@ describe('Appointment Api', () => {
         set: () => null,
       },
       ip: 'TEST::1',
-    } as unknown) as ParameterizedContext;
+    } as unknown) as AuthenticatedRequestContext;
 
     await AppointmentAPI.createAppointment(ctx);
 
@@ -201,7 +201,7 @@ describe('Appointment Api', () => {
         set: () => null,
       },
       ip: 'TEST::1',
-    } as unknown) as ParameterizedContext;
+    } as unknown) as AuthenticatedRequestContext;
 
     await expect(AppointmentAPI.createAppointment(ctx2)).rejects.toThrow(
       '1 existing appointment overlaps with this one',
