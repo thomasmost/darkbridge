@@ -24,12 +24,14 @@ type InvoiceSectionProps = {
   total: string;
   disabled?: boolean;
   readonly?: boolean;
+  zeroed?: boolean;
 };
 
 const ExpandedContentsContainer = styled.div`
   align-items: center;
   display: flex;
   padding: 10px 20px 10px;
+  flex-wrap: wrap;
 `;
 
 export const InvoiceSection: React.FC<InvoiceSectionProps> = ({
@@ -37,11 +39,14 @@ export const InvoiceSection: React.FC<InvoiceSectionProps> = ({
   total,
   disabled,
   readonly,
+  zeroed,
   children,
 }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const Amount = styled.label`
-    color: ${disabled ? theme.subheaderTextColor : theme.passiveLinkColor};
+    color: ${disabled || zeroed
+      ? theme.subheaderTextColor
+      : theme.passiveLinkColor};
     margin-right: 10px;
   `;
   return (

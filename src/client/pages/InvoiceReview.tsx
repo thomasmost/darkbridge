@@ -28,10 +28,7 @@ type InvoiceReviewProps = RouteComponentProps & {
   invoice: IInvoicePostBody | null;
 };
 
-export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
-  appointment,
-  invoice,
-}) => {
+export const InvoiceReview: React.FC<InvoiceReviewProps> = ({ invoice }) => {
   const navigate = useNavigate();
   if (!invoice) {
     navigate('invoice');
@@ -39,12 +36,18 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
   }
   const {
     payment_method,
+    flat_rate,
     minutes_billed,
     hourly_rate,
+    daily_rate,
+    days_billed,
     processing_fee,
     invoice_items,
   } = invoice;
   const hourlyTotalInMinorUnits = (hourly_rate * minutes_billed) / 60;
+  const dailyTotalInMinorUnits = daily_rate * days_billed;
+  const timeTotal =
+    hourlyTotalInMinorUnits + dailyTotalInMinorUnits + flat_rate;
   const total_from_items = (invoice_items || []).reduce<number>(
     (item_total, item) =>
       item_total + item.amount_in_minor_units * item.quantity,
@@ -58,10 +61,9 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
     return prev;
   }, 0);
 
-  const total = (
-    (hourlyTotalInMinorUnits + processing_fee + total_from_items) /
-    100
-  ).toFixed(2);
+  const total = ((timeTotal + processing_fee + total_from_items) / 100).toFixed(
+    2,
+  );
 
   const onSubmit = async () => {
     invoice.invoice_items = invoice.invoice_items || [];
@@ -82,8 +84,8 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
       <Label>Breakdown</Label>
       <InvoiceSection
         readonly
-        label="Standard hourly"
-        total={toMajorUnits(hourlyTotalInMinorUnits)}
+        label="Time"
+        total={toMajorUnits(timeTotal)}
       ></InvoiceSection>
       <InvoiceSection readonly label="Parts" total={'0.00'} />
       <InvoiceSection readonly label="Taxes" total={toMajorUnits(tax_total)} />
