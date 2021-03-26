@@ -78,7 +78,7 @@ export const JobInProgress: React.FC<JobInProgressProps> = ({
       <TimeCard secondsLogged={secondsLogged} />
       <Label>Notes</Label>
       {/* <form onSubmit={handleSubmit(onSubmit)}> */}
-      <Textarea ref={register} />
+      <Textarea name="notes" ref={register} />
       <Button onClick={handleSubmit(onSubmit)}>Conclude Appointment</Button>
       {/* </form> */}
     </div>
