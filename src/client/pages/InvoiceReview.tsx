@@ -26,9 +26,13 @@ const InfoContainer = styled.div`
 type InvoiceReviewProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
   invoice: IInvoicePostBody | null;
+  includeTaxes: boolean;
 };
 
-export const InvoiceReview: React.FC<InvoiceReviewProps> = ({ invoice }) => {
+export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
+  invoice,
+  includeTaxes,
+}) => {
   const navigate = useNavigate();
   if (!invoice) {
     navigate('invoice');
@@ -87,8 +91,13 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({ invoice }) => {
         label="Time"
         total={toMajorUnits(timeTotal)}
       ></InvoiceSection>
-      <InvoiceSection readonly label="Parts" total={'0.00'} />
-      <InvoiceSection readonly label="Taxes" total={toMajorUnits(tax_total)} />
+      <InvoiceSection readonly label="Materials" total={'0.00'} />
+      <InvoiceSection
+        zeroed={!includeTaxes}
+        readonly
+        label="Taxes"
+        total={toMajorUnits(tax_total)}
+      />
       <InvoiceSection
         readonly
         label="Processing Fee"

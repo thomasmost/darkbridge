@@ -2,46 +2,40 @@ import styled from '@emotion/styled';
 import Switch from '@material-ui/core/Switch';
 
 import { RouteComponentProps, useNavigate } from '@reach/router';
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
 import { useForm, UseFormMethods } from 'react-hook-form';
 import { stateTaxes, StateTaxInfo } from '../../data/taxes';
 import {
   coalesceToMinorUnits,
   toMajorUnits,
 } from '../../helpers/currency.helper';
-import { DateTimeHelper } from '../../helpers/datetime.helper';
 import { AppointmentAttributes } from '../../models/appointment.model';
+
+import { Button } from '../elements/Button';
+import { DateTimeHelper } from '../../helpers/datetime.helper';
+import { IInvoiceFormValues, IInvoicePostBody } from '../../shared/invoice.dto';
+import { Input } from '../elements/Input';
+import { InvoiceDailyFormSection } from '../components/InvoiceDailyFormSection';
+import { InvoiceHourlyFormSection } from '../components/InvoiceHourlyFormSection';
 import { InvoiceItemPostBody } from '../../models/invoice_item.model';
 import { InvoiceItemType, InvoicePaymentMethod } from '../../shared/enums';
-import { IInvoicePostBody } from '../../shared/invoice.dto';
 import { InvoiceSection } from '../components/InvoiceSection';
-import { TimeCard } from '../components/TimeCard';
-import { Button } from '../elements/Button';
-import { Input } from '../elements/Input';
+import { InvoiceTaxesFormSection } from '../components/InvoiceTaxesFormSection';
 import { Label } from '../elements/Label';
+import { PrefixedInputContainer } from '../elements/PrefixedInputContainer';
 import { theme } from '../theme';
+import { TimeCard } from '../components/TimeCard';
 
 type InvoiceFormProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
+  invoice: IInvoicePostBody | null;
   setInvoice: Dispatch<SetStateAction<IInvoicePostBody | null>>;
-};
-
-type FormValues = {
-  flat_rate_in_major_units: number;
-  processing_fee: number;
-  hourly_rate_in_major_units: number;
-  daily_rate_in_major_units: number;
-  minutes_billed: number;
-  days_billed: number;
-  payment_method: InvoicePaymentMethod;
-  state_tax_rate: number;
-  local_tax_rate: number;
+  billingMethod: 'hourly' | 'daily';
+  setBillingMethod: (method: 'hourly' | 'daily') => void;
+  includeAppointmentFee: boolean;
+  setIncludeAppointmentFee: (bool: boolean) => void;
+  includeTaxes: boolean;
+  setIncludeTaxes: (bool: boolean) => void;
 };
 
 const AppointmentFeeContainer = styled.div`
@@ -49,15 +43,6 @@ const AppointmentFeeContainer = styled.div`
   display: flex;
   margin-bottom: 20px;
   width: 100%;
-`;
-
-const DollarInputContainer = styled.div`
-  align-items: center;
-  display: flex;
-  width: 25%;
-  input {
-    margin-left: 10px;
-  }
 `;
 const ToggleContainer = styled.div`
   align-items: center;
@@ -82,109 +67,6 @@ const SectionControls = styled.div`
     color: ${theme.passiveLinkColor};
   }
 `;
-
-type Register = UseFormMethods['register'];
-type FormSectionProps = {
-  register: Register;
-  error_message?: string;
-};
-
-const InvoiceHourlyFormSection: React.FC<FormSectionProps> = ({ register }) => {
-  return (
-    <>
-      <Label style={{ margin: '0', width: '15%' }}>Hourly Rate</Label>
-      <DollarInputContainer>
-        $
-        <Input
-          style={{ margin: '0' }}
-          name="hourly_rate_in_major_units"
-          ref={register}
-          min="0"
-          type="number"
-        />
-      </DollarInputContainer>
-      <Label style={{ margin: '0', paddingLeft: '20px', width: '15%' }}>
-        Minutes Billed
-      </Label>
-      <Input
-        style={{ margin: '0', width: '25%' }}
-        name="minutes_billed"
-        ref={register}
-        min="0"
-        type="number"
-      />
-    </>
-  );
-};
-
-const InvoiceDailyFormSection: React.FC<FormSectionProps> = ({ register }) => {
-  return (
-    <>
-      <Label style={{ margin: '0', width: '15%' }}>Daily Rate</Label>
-      <DollarInputContainer>
-        $
-        <Input
-          style={{ margin: '0' }}
-          name="daily_rate_in_major_units"
-          ref={register}
-          min="0"
-          type="number"
-        />
-      </DollarInputContainer>
-      <Label style={{ margin: '0', paddingLeft: '20px', width: '15%' }}>
-        Days Billed
-      </Label>
-      <Input
-        style={{ margin: '0', width: '25%' }}
-        name="days_billed"
-        ref={register}
-        min="0"
-        type="number"
-      />
-    </>
-  );
-};
-
-const InvoiceTaxesFormSection: React.FC<FormSectionProps> = ({
-  register,
-  error_message,
-}) => {
-  return (
-    <>
-      {Boolean(error_message) && (
-        <div style={{ color: theme.warningColor, width: '100%' }}>
-          Failed to load suggested tax rates for this appointment
-        </div>
-      )}
-      <Label style={{ margin: '0', width: '15%' }}>State Tax</Label>
-      <DollarInputContainer>
-        %
-        <Input
-          style={{ margin: '0' }}
-          step="0.1"
-          name="state_tax_rate"
-          ref={register}
-          min="0"
-          type="number"
-        />
-      </DollarInputContainer>
-      <Label style={{ margin: '0', marginLeft: '20px', width: '15%' }}>
-        Local Tax
-      </Label>
-      <DollarInputContainer>
-        %
-        <Input
-          style={{ margin: '0' }}
-          step="0.1"
-          name="local_tax_rate"
-          ref={register}
-          min="0"
-          type="number"
-        />
-      </DollarInputContainer>
-    </>
-  );
-};
 
 const costBreakdownInMinorUnits = (
   flat_rate = 0,
@@ -243,7 +125,7 @@ const createTaxItem = (
 });
 
 const submitHandler = (
-  values: FormValues,
+  values: IInvoiceFormValues,
   appointment_id: string,
   stateTaxInfo: StateTaxInfo | undefined,
   includeTaxes: boolean,
@@ -310,36 +192,95 @@ const submitHandler = (
   navigate('review');
 };
 
-// eslint-disable-next-line max-lines-per-function
-export const InvoiceForm: React.FC<InvoiceFormProps> = ({
-  appointment,
-  setInvoice,
-  //eslint-disable-next-line sonarjs/cognitive-complexity
-}) => {
-  const navigate = useNavigate();
-  const taxes = useMemo(() => stateTaxes(), []);
-  const [billingMethod, setBillingMethod] = useState<string>('hourly');
-  const [includeAppointmentFee, setIncludeAppointmentFee] = useState<boolean>(
-    false,
-  );
-  const [includeTaxes, setIncludeTaxes] = useState<boolean>(true);
-  const taxInfoForState = taxes.find(
-    (taxDef) => taxDef.state === appointment.client_profile?.address_state,
-  );
-  let taxErrorMessage;
-  if (!taxInfoForState) {
-    taxErrorMessage = 'Failed to load suggested tax rates for this location';
-  }
+type Register = UseFormMethods['register'];
+
+const renderAppointmentFeeControls = (register: Register) => (
+  <AppointmentFeeContainer>
+    <Label style={{ margin: '0', width: '15%' }}>Appointment Fee</Label>
+    <PrefixedInputContainer>
+      $
+      <Input
+        style={{ margin: '0' }}
+        name="flat_rate_in_major_units"
+        ref={register}
+        min="0"
+        type="number"
+      />
+    </PrefixedInputContainer>
+  </AppointmentFeeContainer>
+);
+
+const renderAppointmentFeeToggle = (
+  includeAppointmentFee: boolean,
+  setIncludeAppointmentFee: (bool: boolean) => void,
+) => (
+  <a href="#" onClick={() => setIncludeAppointmentFee(!includeAppointmentFee)}>
+    {includeAppointmentFee ? '- Appointment Fee' : '+ Appointment Fee'}
+  </a>
+);
+
+const renderHourlyControls = (
+  register: Register,
+  includeAppointmentFee: boolean,
+  setIncludeAppointmentFee: (bool: boolean) => void,
+  setBillingMethod: (method: 'hourly' | 'daily') => void,
+) => (
+  <>
+    <InvoiceHourlyFormSection register={register} />
+    <SectionControls>
+      {renderAppointmentFeeToggle(
+        includeAppointmentFee,
+        setIncludeAppointmentFee,
+      )}
+      <a href="#" onClick={() => setBillingMethod('daily')}>
+        Bill Daily
+      </a>
+    </SectionControls>
+  </>
+);
+
+const renderDailyControls = (
+  register: Register,
+  includeAppointmentFee: boolean,
+  setIncludeAppointmentFee: (bool: boolean) => void,
+  setBillingMethod: (method: 'hourly' | 'daily') => void,
+) => (
+  <>
+    <InvoiceDailyFormSection register={register} />
+    <SectionControls>
+      {renderAppointmentFeeToggle(
+        includeAppointmentFee,
+        setIncludeAppointmentFee,
+      )}
+      <a href="#" onClick={() => setBillingMethod('hourly')}>
+        Bill Hourly
+      </a>
+    </SectionControls>
+  </>
+);
+
+const useInvoiceForm = (
+  appointment: AppointmentAttributes,
+  draftInvoice: IInvoicePostBody | null,
+  taxInfoForState: StateTaxInfo | undefined,
+  billingMethod: 'daily' | 'hourly',
+) => {
   const suggested_state_tax_rate = taxInfoForState?.state_sales_tax;
   const suggested_local_tax_rate = taxInfoForState?.avg_local_sales_tax;
-  // bit hacky
-  const start = new Date(appointment.started_at || Date.now());
-  const completed = new Date(appointment.completed_at || Date.now());
+  const start = new Date(appointment.started_at);
+  const completed = new Date(appointment.completed_at);
   const secondsLogged = Math.abs(
     DateTimeHelper.differenceInSeconds(start, completed),
   );
   const minutesLogged = Math.ceil(secondsLogged / 60);
-  const { register, handleSubmit, setValue, watch } = useForm<FormValues>({
+  if (draftInvoice) {
+    return useForm<IInvoiceFormValues>({
+      defaultValues: {
+        ...draftInvoice,
+      },
+    });
+  }
+  return useForm<IInvoiceFormValues>({
     defaultValues: {
       hourly_rate_in_major_units: 50,
       minutes_billed: billingMethod === 'hourly' ? minutesLogged : 0,
@@ -350,6 +291,40 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
       local_tax_rate: suggested_local_tax_rate,
     },
   });
+};
+
+// eslint-disable-next-line max-lines-per-function
+export const InvoiceForm: React.FC<InvoiceFormProps> = ({
+  appointment,
+  setInvoice,
+  invoice,
+  billingMethod,
+  setBillingMethod,
+  includeAppointmentFee,
+  setIncludeAppointmentFee,
+  includeTaxes,
+  setIncludeTaxes,
+}) => {
+  const navigate = useNavigate();
+  const taxes = useMemo(() => stateTaxes(), []);
+  const taxInfoForState = taxes.find(
+    (taxDef) => taxDef.state === appointment.client_profile?.address_state,
+  );
+  let taxErrorMessage;
+  if (!taxInfoForState) {
+    taxErrorMessage = 'Failed to load suggested tax rates for this location';
+  }
+  const start = new Date(appointment.started_at);
+  const completed = new Date(appointment.completed_at);
+  const secondsLogged = Math.abs(
+    DateTimeHelper.differenceInSeconds(start, completed),
+  );
+  const { register, handleSubmit, setValue, watch } = useInvoiceForm(
+    appointment,
+    invoice,
+    taxInfoForState,
+    billingMethod,
+  );
   useEffect(() => {
     register('payment_method');
   }, []);
@@ -382,7 +357,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
   const timeTotal =
     (billingMethod === 'hourly' ? hourlyTotal : dailyTotal) +
     coalesceToMinorUnits(flat_rate_in_major_units);
-  const onSubmit = async (values: FormValues) =>
+  const onSubmit = async (values: IInvoiceFormValues) =>
     submitHandler(
       values,
       appointment.id,
@@ -394,72 +369,28 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue('payment_method', event.target.checked ? 'cash' : 'credit_card');
   };
-  const changeBillingMethod = (method: string) => {
-    if (method === 'daily') {
-      setBillingMethod('daily');
-    }
-    if (method === 'hourly') {
-      setBillingMethod('hourly');
-    }
-  };
   return (
     <div>
       <TimeCard secondsLogged={secondsLogged} />
       <Label>Breakdown</Label>
       <InvoiceSection label="Time" total={toMajorUnits(timeTotal)}>
-        {includeAppointmentFee && (
-          <AppointmentFeeContainer>
-            <Label style={{ margin: '0', width: '15%' }}>Appointment Fee</Label>
-            <DollarInputContainer>
-              $
-              <Input
-                style={{ margin: '0' }}
-                name="flat_rate_in_major_units"
-                ref={register}
-                min="0"
-                type="number"
-              />
-            </DollarInputContainer>
-          </AppointmentFeeContainer>
-        )}
-        {billingMethod === 'hourly' && (
-          <>
-            <InvoiceHourlyFormSection register={register} />
-            <SectionControls>
-              <a
-                href="#"
-                onClick={() => setIncludeAppointmentFee(!includeAppointmentFee)}
-              >
-                {includeAppointmentFee
-                  ? '- Appointment Fee'
-                  : '+ Appointment Fee'}
-              </a>
-              <a href="#" onClick={() => changeBillingMethod('daily')}>
-                Bill Daily
-              </a>
-            </SectionControls>
-          </>
-        )}
-        {billingMethod === 'daily' && (
-          <>
-            <InvoiceDailyFormSection register={register} />
-            <SectionControls>
-              <a
-                href="#"
-                onClick={() => setIncludeAppointmentFee(!includeAppointmentFee)}
-              >
-                {includeAppointmentFee
-                  ? '- Appointment Fee'
-                  : '+ Appointment Fee'}
-              </a>
-              <a href="#" onClick={() => changeBillingMethod('hourly')}>
-                Bill Hourly
-              </a>
-            </SectionControls>
-          </>
-        )}
+        {includeAppointmentFee && renderAppointmentFeeControls(register)}
+        {billingMethod === 'hourly' &&
+          renderHourlyControls(
+            register,
+            includeAppointmentFee,
+            setIncludeAppointmentFee,
+            setBillingMethod,
+          )}
+        {billingMethod === 'daily' &&
+          renderDailyControls(
+            register,
+            includeAppointmentFee,
+            setIncludeAppointmentFee,
+            setBillingMethod,
+          )}
       </InvoiceSection>
-      <InvoiceSection label="Parts" total={'0.00'} />
+      <InvoiceSection label="Materials" total={'0.00'} />
       <InvoiceSection
         label="Taxes"
         zeroed={!includeTaxes}
@@ -493,11 +424,14 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
       <ToggleContainer>
         <div>
           Paid in cash
-          <Switch color="primary" onChange={handleChange} />
+          <Switch
+            color="primary"
+            checked={payment_method === 'cash'}
+            onChange={handleChange}
+          />
         </div>
       </ToggleContainer>
       <Button onClick={handleSubmit(onSubmit)}>Proceed to Payment</Button>
-      {/* </form> */}
     </div>
   );
 };

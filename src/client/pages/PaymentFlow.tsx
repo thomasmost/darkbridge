@@ -15,6 +15,24 @@ const HeadingText = styled.h2`
   color: ${theme.pageHeaderColor};
 `;
 
+const useFormState = () => {
+  const [billingMethod, setBillingMethod] = useState<'hourly' | 'daily'>(
+    'hourly',
+  );
+  const [includeAppointmentFee, setIncludeAppointmentFee] = useState<boolean>(
+    false,
+  );
+  const [includeTaxes, setIncludeTaxes] = useState<boolean>(true);
+  return {
+    billingMethod,
+    setBillingMethod,
+    includeAppointmentFee,
+    setIncludeAppointmentFee,
+    includeTaxes,
+    setIncludeTaxes,
+  };
+};
+
 export const PaymentFlow: React.FC<
   RouteComponentProps<{ appointment_id: string }>
 > = (props) => {
@@ -22,6 +40,14 @@ export const PaymentFlow: React.FC<
   const dispatch = useContext(DispatchContext);
   const navigate = useNavigate();
   const [invoice, setInvoice] = useState<IInvoicePostBody | null>(null);
+  const {
+    billingMethod,
+    setBillingMethod,
+    includeAppointmentFee,
+    setIncludeAppointmentFee,
+    includeTaxes,
+    setIncludeTaxes,
+  } = useFormState();
 
   const { appointment_id } = props;
 
@@ -58,12 +84,20 @@ export const PaymentFlow: React.FC<
       <Router>
         <InvoiceForm
           appointment={currentAppointment}
+          invoice={invoice}
           setInvoice={setInvoice}
+          billingMethod={billingMethod}
+          setBillingMethod={setBillingMethod}
+          includeAppointmentFee={includeAppointmentFee}
+          setIncludeAppointmentFee={setIncludeAppointmentFee}
+          includeTaxes={includeTaxes}
+          setIncludeTaxes={setIncludeTaxes}
           path="invoice"
         />
         <InvoiceReview
           appointment={currentAppointment}
           invoice={invoice}
+          includeTaxes={includeTaxes}
           path="review"
         />
         <PaymentSuccess

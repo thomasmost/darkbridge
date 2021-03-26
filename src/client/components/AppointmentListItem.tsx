@@ -69,7 +69,11 @@ export const AppointmentListItem: React.FC<AppointmentCardProps> = ({
     case AppointmentStatus.completed: {
       blockColor = theme.blockColorInactive;
       textColor = theme.subheaderTextColor;
-      statusBadge = <Badge>Completed</Badge>;
+      if (appointment.invoice_id) {
+        statusBadge = <Badge>Completed / Invoiced</Badge>;
+      } else {
+        statusBadge = <Badge>Completed / Unpaid</Badge>;
+      }
       break;
     }
     case AppointmentStatus.in_progress: {

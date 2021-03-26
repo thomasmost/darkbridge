@@ -105,6 +105,17 @@ export const renderStartCard = (
   </Link>
 );
 
+export const renderInvoiceCard = (appointment_id: string) => (
+  <Link to={`/payment/${appointment_id}/invoice`}>
+    <StartCard>
+      <div>Complete Invoice</div>
+      <CardArrow>
+        <Icon name="Arrow-Right-2" />
+      </CardArrow>
+    </StartCard>
+  </Link>
+);
+
 export const renderCanceledCard = () => (
   <Card>This appointment has been canceled.</Card>
 );
@@ -140,6 +151,8 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
     appointment.status !== 'canceled';
   const isStartable =
     appointment.status !== 'in_progress' && appointment.status !== 'completed';
+  const needsInvoice =
+    appointment.status === 'completed' && !appointment.invoice_id;
   // appointment.status === 'scheduled' &&
   // Math.abs(DateTimeHelper.differenceInMinutes(startDate, now)) < 12000;
   return (
@@ -147,6 +160,7 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
       <HeadingText>{header}</HeadingText>
       {renderAppointmentInfo(appointment)}
       {isStartable && renderStartCard(appointment.id, dispatch)}
+      {needsInvoice && renderInvoiceCard(appointment.id)}
       {renderCustomerInfo(appointment)}{' '}
       {canBeRescheduled && renderRescheduleCard(appointment.id)}
       {canBeCanceled && renderCancelCard(appointment.id)}
