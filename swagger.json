@@ -594,7 +594,8 @@
             "description": "Success",
             "schema": { "$ref": "#/definitions/Invoice" }
           },
-          "401": { "description": "Unauthorized" }
+          "401": { "description": "Unauthorized" },
+          "405": { "description": "Method Not Allowed" }
         },
         "tags": ["invoice"],
         "operationId": "apiInvoice_create",
@@ -1025,7 +1026,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-25 10:49:56"
+          "example": "2021-03-25 21:03:25"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1059,7 +1060,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-25 10:49:56"
+          "example": "2021-03-25 21:03:25"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1258,6 +1259,11 @@
         "days_billed": {
           "type": "integer",
           "description": "the number of days to bill at the daily rate (otherwise leave as 0)"
+        },
+        "payment_method": {
+          "type": "string",
+          "enum": ["cash", "credit_card"],
+          "description": "method of payment"
         },
         "currency_code": {
           "type": "string",
