@@ -32,6 +32,7 @@ import { InvoicePaymentMethod } from '../shared/enums';
 const postParams = {
   appointment_id: {
     type: 'string',
+    required: true,
     description: 'the id of the billed appointment',
   },
   flat_rate: {
@@ -61,12 +62,13 @@ const postParams = {
   },
   payment_method: {
     type: 'string',
+    required: true,
     enum: Object.values(InvoicePaymentMethod),
     description: 'method of payment',
-    required: true,
   },
   currency_code: {
     type: 'string',
+    required: true,
     enum: ['USD'],
     description: 'Should always be USD to start',
   },
@@ -211,7 +213,7 @@ function processLineItems(
 ) {
   const itemPromises = [];
   let sumTotalFromLineItems = 0;
-  for (const item of invoice_items) {
+  for (const item of invoice_items || []) {
     const {
       amount_in_minor_units,
       currency_code,
