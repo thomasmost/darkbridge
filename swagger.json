@@ -705,7 +705,8 @@
         "invoice_id": { "type": "string" },
         "rating_of_client": { "type": "integer" },
         "rating_of_service": { "type": "integer" },
-        "client_profile": { "$ref": "#/definitions/ClientProfile" }
+        "client_profile": { "$ref": "#/definitions/ClientProfile" },
+        "invoice": { "$ref": "#/definitions/Invoice" }
       }
     },
     "ClientProfile": {
@@ -1026,7 +1027,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-25 21:03:25"
+          "example": "2021-03-26 14:13:39"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1060,7 +1061,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-25 21:03:25"
+          "example": "2021-03-26 14:13:39"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1235,6 +1236,7 @@
     },
     "InvoicePostBody": {
       "type": "object",
+      "required": ["appointment_id", "payment_method", "currency_code"],
       "properties": {
         "appointment_id": {
           "type": "string",
