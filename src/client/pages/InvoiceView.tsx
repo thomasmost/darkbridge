@@ -27,6 +27,23 @@ type InvoiceViewProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
 };
 
+const loadInvoice = async (
+  appointment: AppointmentAttributes,
+  setInvoice: (invoice: InvoiceAttributes) => void,
+) => {
+  if (!appointment.invoice_id) {
+    return;
+  }
+  const { error, data } = await apiRequest(
+    `invoice/${appointment.invoice_id}`,
+    'json',
+  );
+  if (error) {
+    toast.error(error);
+  }
+  setInvoice(data);
+};
+
 export const InvoiceView: React.FC<InvoiceViewProps> = ({ appointment }) => {
   const navigate = useNavigate();
   const [invoice, setInvoice] = useState<InvoiceAttributes | null>(null);
@@ -36,15 +53,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({ appointment }) => {
   }
 
   useEffect(() => {
-    if (!appointment.invoice_id) {
-      return;
-    }
-    apiRequest(`invoice/${appointment.invoice_id}`, 'json').then((result) => {
-      if (result.error) {
-        toast.error(result.error);
-      }
-      setInvoice(result.data);
-    });
+    loadInvoice(appointment, setInvoice);
   }, []);
 
   if (!invoice) {
