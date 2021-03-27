@@ -22,6 +22,10 @@ import { Select } from '../components/Select';
 import { Button } from '../elements/Button';
 import { DateTimeHelper } from '../../helpers/datetime.helper';
 
+interface IFormValues extends Omit<IAppointmentPostBody, 'duration_minutes'> {
+  duration_hours: number;
+}
+
 const Label = styled.label`
   color: ${theme.subheaderTextColor};
   display: block;
@@ -135,7 +139,11 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
     setSelectedClient,
   ] = useState<ClientProfileAttributes | null>(null);
   const navigate = useNavigate();
-  const { register, handleSubmit, setValue } = useForm<IAppointmentPostBody>();
+  const { register, handleSubmit, setValue } = useForm<IFormValues>({
+    defaultValues: {
+      duration_hours: 1,
+    },
+  });
   useEffect(() => {
     register('client_profile_id');
     register('datetime_local');
@@ -149,8 +157,11 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
     setValue('datetime_local', DateTimeHelper.formatToPureDateTime(date));
     setDate(date);
   };
-  const onSubmit = async (data: IAppointmentPostBody) => {
-    console.log(data);
+  const onSubmit = async (values: IFormValues) => {
+    const data = {
+      ...values,
+      duration_minutes: Math.ceil(values.duration_hours * 60),
+    };
     const result = await apiRequest<AppointmentAttributes>(
       'appointment',
       'json',
@@ -224,13 +235,13 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
             />
           </div>
           <div>
-            <Label>Duration</Label>
+            <Label>Duration (hours)</Label>
             <Input
-              name="duration_minutes"
+              name="duration_hours"
               ref={register}
               type="number"
-              step="30"
-              max="600"
+              step=".5"
+              max="12"
               min="0"
             />
           </div>
