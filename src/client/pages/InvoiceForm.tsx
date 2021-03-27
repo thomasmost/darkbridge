@@ -2,7 +2,13 @@ import styled from '@emotion/styled';
 import Switch from '@material-ui/core/Switch';
 
 import { RouteComponentProps, useNavigate } from '@reach/router';
-import React, { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useForm, UseFormMethods } from 'react-hook-form';
 import { stateTaxes, StateTaxInfo } from '../../data/taxes';
 import {
@@ -25,6 +31,7 @@ import { Label } from '../elements/Label';
 import { PrefixedInputContainer } from '../elements/PrefixedInputContainer';
 import { theme } from '../theme';
 import { TimeCard } from '../components/TimeCard';
+import { InvoiceMaterialsFormSection } from '../components/InvoiceMaterialsFormSection';
 
 type InvoiceFormProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
@@ -307,6 +314,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
 }) => {
   const navigate = useNavigate();
   const taxes = useMemo(() => stateTaxes(), []);
+  const [totalFromMaterials, setTotalFromMaterials] = useState(0);
   const taxInfoForState = taxes.find(
     (taxDef) => taxDef.state === appointment.client_profile?.address_state,
   );
@@ -390,7 +398,14 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
             setBillingMethod,
           )}
       </InvoiceSection>
-      <InvoiceSection label="Materials" total={'0.00'} />
+      <InvoiceSection
+        label="Materials"
+        total={toMajorUnits(totalFromMaterials)}
+      >
+        <InvoiceMaterialsFormSection
+          setTotalFromMaterials={setTotalFromMaterials}
+        />
+      </InvoiceSection>
       <InvoiceSection
         label="Taxes"
         zeroed={!includeTaxes}
