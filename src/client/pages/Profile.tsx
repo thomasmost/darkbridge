@@ -3,6 +3,8 @@ import { RouteComponentProps } from '@reach/router';
 import React from 'react';
 import { ContractorProfileAttributes } from '../../models/contractor_profile.model';
 import { useAuth } from '../AuthProvider';
+import { Card } from '../elements/Card';
+import { Label } from '../elements/Label';
 import { theme } from '../theme';
 
 const HeadingText = styled.h1`
@@ -11,21 +13,14 @@ const HeadingText = styled.h1`
   color: ${theme.pageHeaderColor};
 `;
 
-const Label = styled.label`
-  display: block;
-  font-size: 1.2em;
-  font-weight: 400;
-  margin-bottom: 20px;
-`;
-
 const Item = styled.div`
   font-weight: 600;
   display: inline-block;
   margin-bottom: 40px;
 `;
-const Additional = styled(Item)`
-  font-style: italic;
-  margin-left: 20px;
+
+const ProfileColumn = styled.div`
+  min-width: 100px;
 `;
 
 const renderContractorProfile = (
@@ -36,16 +31,26 @@ const renderContractorProfile = (
   }
   return (
     <>
-      <div>
-        <Label>Company</Label>
-        <Item>{contractorProfile.company_name}</Item>
-        <Additional>{contractorProfile.primary_work}</Additional>
-      </div>
-      <div>
-        <Label>License</Label>
-        <Item>{contractorProfile.license_number}</Item>
-        <Additional>{contractorProfile.licensing_state}</Additional>
-      </div>
+      <Label>Your business</Label>
+      <Card>
+        <div>
+          <Item>{contractorProfile.company_name}</Item>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <ProfileColumn>
+            <Label>Your business</Label>
+            <Item>{contractorProfile.primary_work}</Item>
+          </ProfileColumn>
+          <ProfileColumn>
+            <Label>License No.</Label>
+            <Item>{contractorProfile.license_number}</Item>
+          </ProfileColumn>
+          <ProfileColumn>
+            <Label>State of Licensing</Label>
+            <Item>{contractorProfile.licensing_state}</Item>
+          </ProfileColumn>
+        </div>
+      </Card>
     </>
   );
 };
@@ -59,20 +64,25 @@ export const Profile: React.FC<RouteComponentProps> = () => {
   return (
     <div>
       <HeadingText>Hi {given_name}!</HeadingText>
-      <div>
-        <Label>Full name</Label>
-        <Item>
-          {given_name} {family_name}
-        </Item>
-      </div>
-      <div>
-        <Label>Primary Email</Label>
-        <Item>{email}</Item>
-      </div>
-      <div>
-        <Label>Phone</Label>
-        <Item>{phone}</Item>
-      </div>
+      <Label>Your contact information</Label>
+      <Card style={{ marginBottom: '50px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <ProfileColumn>
+            <Label>Full name</Label>
+            <Item>
+              {given_name} {family_name}
+            </Item>
+          </ProfileColumn>
+          <ProfileColumn>
+            <Label>Primary Email</Label>
+            <Item>{email}</Item>
+          </ProfileColumn>
+          <ProfileColumn>
+            <Label>Phone</Label>
+            <Item>{phone}</Item>
+          </ProfileColumn>
+        </div>
+      </Card>
       {renderContractorProfile(contractor_profile)}
     </div>
   );
