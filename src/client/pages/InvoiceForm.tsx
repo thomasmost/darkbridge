@@ -31,7 +31,10 @@ import { Label } from '../elements/Label';
 import { PrefixedInputContainer } from '../elements/PrefixedInputContainer';
 import { theme } from '../theme';
 import { TimeCard } from '../components/TimeCard';
-import { InvoiceMaterialsFormSection } from '../components/InvoiceMaterialsFormSection';
+import {
+  ILineItem,
+  InvoiceMaterialsFormSection,
+} from '../components/InvoiceMaterialsFormSection';
 
 type InvoiceFormProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
@@ -81,6 +84,7 @@ const costBreakdownInMinorUnits = (
   minutes_billed = 0,
   daily_rate = 0,
   days_billed = 0,
+  materials_total = 0,
   state_tax_rate: number,
   local_tax_rate: number,
   includeTaxes = true,
@@ -88,7 +92,7 @@ const costBreakdownInMinorUnits = (
 ) => {
   const hourlyTotal = Math.ceil((hourly_rate * minutes_billed) / 60);
   const dailyTotal = Math.ceil(daily_rate * days_billed);
-  const preTaxTotal = hourlyTotal + dailyTotal + flat_rate;
+  const preTaxTotal = hourlyTotal + dailyTotal + flat_rate + materials_total;
   const stateTaxTotal = includeTaxes
     ? Math.ceil((preTaxTotal * state_tax_rate) / 100)
     : 0;
@@ -131,14 +135,32 @@ const createTaxItem = (
   },
 });
 
+const createMaterialsItem = (
+  amount_in_minor_units: number,
+  description: string,
+  quantity: number,
+) => ({
+  type: InvoiceItemType.materials,
+  amount_in_minor_units,
+  description,
+  quantity,
+  currency_code: 'USD',
+  metadata: {},
+});
+
 const submitHandler = (
   values: IInvoiceFormValues,
   appointment_id: string,
+  materials: InvoiceItemPostBody[],
   stateTaxInfo: StateTaxInfo | undefined,
   includeTaxes: boolean,
   setInvoice: (invoice_draft: IInvoicePostBody) => void,
   navigate: (location: string) => void,
 ) => {
+  const materials_total = materials.reduce<number>((subtotal, item) => {
+    subtotal += item.amount_in_minor_units * item.quantity;
+    return subtotal;
+  }, 0);
   const { state_tax_rate, local_tax_rate } = values;
   const {
     stateTaxTotal,
@@ -150,6 +172,7 @@ const submitHandler = (
     values.minutes_billed,
     coalesceToMinorUnits(values.daily_rate_in_major_units),
     values.days_billed,
+    materials_total,
     state_tax_rate,
     local_tax_rate,
     includeTaxes,
@@ -311,10 +334,14 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
   setIncludeAppointmentFee,
   includeTaxes,
   setIncludeTaxes,
+  // eslint-disable-next-line sonarjs/cognitive-complexity
 }) => {
   const navigate = useNavigate();
   const taxes = useMemo(() => stateTaxes(), []);
-  const [totalFromMaterials, setTotalFromMaterials] = useState(0);
+  const [materialsTotal, setMaterialsTotal] = useState(0);
+  const [materialsItems, setMaterialsItems] = useState<InvoiceItemPostBody[]>(
+    [],
+  );
   const taxInfoForState = taxes.find(
     (taxDef) => taxDef.state === appointment.client_profile?.address_state,
   );
@@ -358,6 +385,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
     minutes_billed,
     coalesceToMinorUnits(daily_rate_in_major_units),
     days_billed,
+    materialsTotal,
     state_tax_rate,
     local_tax_rate,
     includeTaxes,
@@ -369,6 +397,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
     submitHandler(
       values,
       appointment.id,
+      materialsItems,
       taxInfoForState,
       includeTaxes,
       setInvoice,
@@ -376,6 +405,19 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
     );
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue('payment_method', event.target.checked ? 'cash' : 'credit_card');
+  };
+  const setMaterials = (materials: ILineItem[]) => {
+    let total = 0;
+    const materialItems = [];
+    for (const material of materials) {
+      total += material.amount_in_minor_units * material.quantity;
+      const { amount_in_minor_units, description, quantity } = material;
+      materialItems.push(
+        createMaterialsItem(amount_in_minor_units, description, quantity),
+      );
+    }
+    setMaterialsTotal(total);
+    setMaterialsItems(materialItems);
   };
   return (
     <div>
@@ -398,13 +440,8 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
             setBillingMethod,
           )}
       </InvoiceSection>
-      <InvoiceSection
-        label="Materials"
-        total={toMajorUnits(totalFromMaterials)}
-      >
-        <InvoiceMaterialsFormSection
-          setTotalFromMaterials={setTotalFromMaterials}
-        />
+      <InvoiceSection label="Materials" total={toMajorUnits(materialsTotal)}>
+        <InvoiceMaterialsFormSection setMaterials={setMaterials} />
       </InvoiceSection>
       <InvoiceSection
         label="Taxes"

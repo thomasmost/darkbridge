@@ -13,7 +13,7 @@ interface IFormValues {
   amount_in_major_units: number;
 }
 
-interface ILineItem extends IFormValues {
+export interface ILineItem extends IFormValues {
   amount_in_minor_units: number;
 }
 
@@ -116,15 +116,15 @@ const renderLineItems = (
   ));
 
 interface IInvoiceMaterialsFormSectionProps {
-  setTotalFromMaterials: React.Dispatch<React.SetStateAction<number>>;
+  setMaterials: (items: ILineItem[]) => void;
 }
 
 const changeHandler = (
   index: number,
   lineItemValues: IFormValues,
   lineItems: ILineItem[],
-  setLineItems: (lineItems: ILineItem[]) => void,
-  setTotalFromMaterials: (total: number) => void,
+  setLocalLineItems: (lineItems: ILineItem[]) => void,
+  setMaterials: (lineItems: ILineItem[]) => void,
 ) => {
   const amount_in_minor_units = coalesceToMinorUnits(
     lineItemValues.amount_in_major_units,
@@ -132,15 +132,15 @@ const changeHandler = (
   lineItems[index] = { ...lineItemValues, amount_in_minor_units };
   let anyIncomplete = false;
   let shouldPopLast = false;
-  let total = 0;
+  const completeLineItems: ILineItem[] = [];
   for (let i = 0; i < lineItems.length; i++) {
     const lineItem = lineItems[i];
-    const { complete, empty, subtotal } = evaluateLineItem(lineItem);
+    const { complete, empty } = evaluateLineItem(lineItem);
     if (i === lineItems.length - 1 && empty && anyIncomplete) {
       shouldPopLast = true;
     }
     if (complete) {
-      total += subtotal;
+      completeLineItems.push(lineItem);
     } else {
       anyIncomplete = true;
     }
@@ -156,14 +156,14 @@ const changeHandler = (
   if (shouldPopLast) {
     lineItems.pop();
   }
-  setTotalFromMaterials(total * 100);
-  setLineItems([...lineItems]);
+  setLocalLineItems([...lineItems]);
+  setMaterials(completeLineItems);
 };
 
 export const InvoiceMaterialsFormSection: React.FC<IInvoiceMaterialsFormSectionProps> = ({
-  setTotalFromMaterials,
+  setMaterials,
 }) => {
-  const [lineItems, setLineItems] = useState<ILineItem[]>([
+  const [lineItems, setLocalLineItems] = useState<ILineItem[]>([
     {
       description: '',
       quantity: 0,
@@ -177,8 +177,8 @@ export const InvoiceMaterialsFormSection: React.FC<IInvoiceMaterialsFormSectionP
       index,
       lineItemValues,
       lineItems,
-      setLineItems,
-      setTotalFromMaterials,
+      setLocalLineItems,
+      setMaterials,
     );
   return <div>{renderLineItems(lineItems, onChange)}</div>;
 };
