@@ -50,7 +50,6 @@ const App = () => {
   const { width } = useWindowDimensions();
   const shouldRenderPWA = width < 600;
 
-  console.log('re-rendering full app');
   const Main = styled.main`
     background-color: ${theme.applicationBackgroundColor};
     box-sizing: border-box;
@@ -58,7 +57,7 @@ const App = () => {
     display: block;
     margin: auto;
     max-width: 1000px;
-    padding: 25px 25px 50px;
+    padding: ${theme.pad(5)} ${theme.pad(5)} ${theme.pad(10)};
     width: 100%;
   `;
   const ScrollWrapper = styled.div`

@@ -18,38 +18,43 @@ const mediumGray = '#bbb';
 const eggshellGray = '#717198';
 const darkGray = '#343434';
 
-export const theme = {
-  activeLinkColor: green,
-  activePageColor: teddyBlueLight,
-  applicationBackgroundColor: white,
-  applicationTextColor: darkGray,
-  blockColorActive: greenPastel,
-  blockColorDefault: bluePastel,
-  blockColorInactive: lightGray,
-  blockColorWarning: redPastel,
-  boxShadowColor: lightGray,
-  buttonColorActive: teddyBlueLight,
-  buttonColorActiveSecondary: mediumGray,
-  buttonColorDisabled: lightGray,
-  buttonColorPassive: teddyBlueLight,
-  buttonTextColor: white,
-  cardHeaderColor: teddyBlueLight,
-  darkModeTextColor: paperWhite,
-  dotColorActive: teddyBlueLight,
-  dotColorPassive: eggshellGray,
-  dropdownContainerColor: eggshellGray,
-  headerBackgroundColor: white,
-  headerBorderColor: teddyBlueDark,
-  headerTextColor: teddyBlueDark,
-  inputBackgroundColor: lightGray,
-  onboardingBackgroundColor: teddyBlueDark,
-  pageHeaderColor: darkGray,
-  passiveLinkColor: teddyBlueLight,
-  subheaderTextColor: eggshellGray,
-  lightIconColor: mediumGray,
-  textColor: charcoal,
-  upvoteColor: green,
-  warningColor: red,
-  // Other variables
-  pwa_footer_height: 80,
-};
+class TeddyWebTheme {
+  public activeLinkColor = green;
+  public activePageColor = teddyBlueLight;
+  public applicationBackgroundColor = white;
+  public applicationTextColor = darkGray;
+  public blockColorActive = greenPastel;
+  public blockColorDefault = bluePastel;
+  public blockColorInactive = lightGray;
+  public blockColorWarning = redPastel;
+  public boxShadowColor = lightGray;
+  public buttonColorActive = teddyBlueLight;
+  public buttonColorActiveSecondary = mediumGray;
+  public buttonColorDisabled = lightGray;
+  public buttonColorPassive = teddyBlueLight;
+  public buttonTextColor = white;
+  public cardHeaderColor = teddyBlueLight;
+  public darkModeTextColor = paperWhite;
+  public dotColorActive = teddyBlueLight;
+  public dotColorPassive = eggshellGray;
+  public dropdownContainerColor = eggshellGray;
+  public headerBackgroundColor = white;
+  public headerBorderColor = teddyBlueDark;
+  public headerTextColor = teddyBlueDark;
+  public inputBackgroundColor = lightGray;
+  public onboardingBackgroundColor = teddyBlueDark;
+  public pageHeaderColor = darkGray;
+  public passiveLinkColor = teddyBlueLight;
+  public subheaderTextColor = eggshellGray;
+  public lightIconColor = mediumGray;
+  public textColor = charcoal;
+  public upvoteColor = green;
+  public warningColor = red;
+  private padding_increment = 5;
+  public pad(x: number) {
+    return `${x * this.padding_increment}px`;
+  }
+  public pwa_footer_height = this.pad(16);
+}
+
+export const theme = new TeddyWebTheme();

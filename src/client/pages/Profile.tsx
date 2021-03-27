@@ -8,7 +8,7 @@ import { Label } from '../elements/Label';
 import { theme } from '../theme';
 
 const HeadingText = styled.h1`
-  padding-bottom: 50px;
+  padding-bottom: ${theme.pad(10)};
   font-size: 1.6em;
   color: ${theme.pageHeaderColor};
 `;
@@ -16,7 +16,7 @@ const HeadingText = styled.h1`
 const Item = styled.div`
   font-weight: 600;
   display: inline-block;
-  margin-bottom: 40px;
+  margin-bottom: ${theme.pad(8)};
 `;
 
 const ProfileColumn = styled.div`

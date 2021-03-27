@@ -9,7 +9,7 @@ const PWAFooter = styled.footer`
   background-color: ${theme.applicationBackgroundColor};
   box-shadow: 0 0 20px 20px ${theme.boxShadowColor};
   display: flex;
-  height: ${theme.pwa_footer_height}px;
+  height: ${theme.pwa_footer_height};
   justify-content: space-between;
   line-height: 50px;
   width: 100%;
