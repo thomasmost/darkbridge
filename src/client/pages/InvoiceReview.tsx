@@ -50,25 +50,24 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
   } = invoice;
   const hourlyTotalInMinorUnits = (hourly_rate * minutes_billed) / 60;
   const dailyTotalInMinorUnits = daily_rate * days_billed;
-  const timeTotal =
+  const time_total =
     hourlyTotalInMinorUnits + dailyTotalInMinorUnits + flat_rate;
-  const total_from_items = (invoice_items || []).reduce<number>(
-    (item_total, item) =>
-      item_total + item.amount_in_minor_units * item.quantity,
-    0,
-  );
-
   const tax_total = invoice.invoice_items.reduce<number>((prev, item) => {
     if (item.type === InvoiceItemType.tax) {
       return prev + item.amount_in_minor_units;
     }
     return prev;
   }, 0);
-
-  const total = ((timeTotal + processing_fee + total_from_items) / 100).toFixed(
-    2,
-  );
-
+  const materials_total = invoice.invoice_items.reduce<number>((prev, item) => {
+    if (item.type === InvoiceItemType.materials) {
+      return prev + item.amount_in_minor_units * item.quantity;
+    }
+    return prev;
+  }, 0);
+  const total = (
+    (time_total + materials_total + processing_fee + tax_total) /
+    100
+  ).toFixed(2);
   const onSubmit = async () => {
     invoice.invoice_items = invoice.invoice_items || [];
     const { error } = await apiRequest('invoice', 'json', {
@@ -82,16 +81,19 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
       navigate('success');
     }
   };
-
   return (
     <div>
       <Label>Breakdown</Label>
       <InvoiceSection
         readonly
         label="Time"
-        total={toMajorUnits(timeTotal)}
+        total={toMajorUnits(time_total)}
       ></InvoiceSection>
-      <InvoiceSection readonly label="Materials" total={'0.00'} />
+      <InvoiceSection
+        readonly
+        label="Materials"
+        total={toMajorUnits(materials_total)}
+      />
       <InvoiceSection
         zeroed={!includeTaxes}
         readonly
@@ -111,16 +113,13 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
           information, see our Terms of Service.
         </Label>
       </InvoiceSection>
-
       <InfoContainer>
         <label>
           Total: <span>${total}</span>
         </label>
         <div>Paid by {payment_method === 'cash' ? 'cash' : 'card'}</div>
       </InfoContainer>
-
       <Button onClick={onSubmit}>Confirm Payment</Button>
-      {/* </form> */}
     </div>
   );
 };

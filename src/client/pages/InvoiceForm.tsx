@@ -202,6 +202,9 @@ const submitHandler = (
       ),
     );
   }
+  if (materials && Array.isArray(materials)) {
+    invoice_items.push(...materials);
+  }
   const currency_code = 'USD';
   const hourly_rate = coalesceToMinorUnits(values.hourly_rate_in_major_units);
   const daily_rate = coalesceToMinorUnits(values.daily_rate_in_major_units);
