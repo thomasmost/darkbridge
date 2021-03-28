@@ -127,6 +127,25 @@ export const Register: React.FC<RouteComponentProps> = () => {
         />
       </FormFieldPair>
       <Input type="submit" value="Register" />
+      <Instruction>
+        By registering, you agree to our{' '}
+        <a
+          href="https://www.callteddy.com/terms-of-service"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Terms of Service
+        </a>{' '}
+        and confirm that you&apos;ve read our{' '}
+        <a
+          href="https://www.callteddy.com/privacy-policy"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Privacy Policy
+        </a>
+        .
+      </Instruction>{' '}
     </AccountForm>
   );
 };
