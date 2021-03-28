@@ -15,7 +15,7 @@ import { queryAppointments } from '../services/appointment.svc';
 import { Button } from '../elements/Button';
 import { Input } from '../elements/Input';
 
-import { apiRequest } from '../services/api.svc';
+import { putRequest } from '../services/api.svc';
 import { FlexColumns } from '../elements/FlexColumns';
 import { DateTimeHelper } from '../../helpers/datetime.helper';
 
@@ -48,7 +48,7 @@ export const renderCustomerInfo = (
 
 type FormValues = {
   datetime_local: string;
-  duration_minutes: number;
+  duration_hours: number;
   reason_for_reschedule: string;
 };
 
@@ -71,16 +71,20 @@ export const RescheduleAppointment: React.FC<
   const dispatch = useContext(DispatchContext);
   const [selectedDate, setDate] = useState(new Date());
   const navigate = useNavigate();
-  const { register, handleSubmit, setValue } = useForm<FormValues>();
-  useEffect(() => {
-    register('datetime_local');
-  }, [register]);
-
   const { appointment_id } = props;
   const currentAppointment = appointments?.find(
     (appointment) => appointment.id === appointment_id,
   );
-
+  const { register, handleSubmit, setValue } = useForm<FormValues>({
+    defaultValues: {
+      duration_hours: currentAppointment
+        ? currentAppointment.duration_minutes / 60
+        : 1,
+    },
+  });
+  useEffect(() => {
+    register('datetime_local');
+  }, [register]);
   useEffect(() => {
     if (!appointment_id) {
       return;
@@ -99,27 +103,22 @@ export const RescheduleAppointment: React.FC<
       });
     });
   }, []);
-
   const handleDateChange = (date: Date) => {
     setValue('datetime_local', DateTimeHelper.formatToPureDateTime(date));
     setDate(date);
   };
-
-  const onSubmit = async (data: FormValues) => {
-    console.log(data);
+  const onSubmit = async (values: FormValues) => {
+    const data = {
+      ...values,
+      duration_minutes: Math.ceil(values.duration_hours * 60),
+    };
     if (!currentAppointment) {
       return;
     }
-    const result = await apiRequest<AppointmentAttributes>(
+    const result = await putRequest<typeof data, AppointmentAttributes>(
       `appointment/${currentAppointment.id}/reschedule`,
       'json',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'PUT',
-        body: JSON.stringify(data),
-      },
+      data,
     );
     if (!result.error) {
       toast.success('Appointment Rescheduled');
@@ -127,7 +126,6 @@ export const RescheduleAppointment: React.FC<
       navigate(`/appointment/${currentAppointment.id}`);
     }
   };
-
   if (!currentAppointment) {
     return null;
   }
@@ -148,13 +146,13 @@ export const RescheduleAppointment: React.FC<
           />
         </div>
         <div>
-          <Label>Duration</Label>
+          <Label>Duration (hours)</Label>
           <Input
-            name="duration_minutes"
+            name="duration_hours"
             ref={register}
             type="number"
-            step="30"
-            max="600"
+            step=".5"
+            max="12"
             min="0"
           />
         </div>

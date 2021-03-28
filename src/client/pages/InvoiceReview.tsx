@@ -52,13 +52,13 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
   const dailyTotalInMinorUnits = daily_rate * days_billed;
   const time_total =
     hourlyTotalInMinorUnits + dailyTotalInMinorUnits + flat_rate;
-  const tax_total = invoice.invoice_items.reduce<number>((prev, item) => {
+  const tax_total = invoice_items.reduce<number>((prev, item) => {
     if (item.type === InvoiceItemType.tax) {
       return prev + item.amount_in_minor_units;
     }
     return prev;
   }, 0);
-  const materials_total = invoice.invoice_items.reduce<number>((prev, item) => {
+  const materials_total = invoice_items.reduce<number>((prev, item) => {
     if (item.type === InvoiceItemType.materials) {
       return prev + item.amount_in_minor_units * item.quantity;
     }

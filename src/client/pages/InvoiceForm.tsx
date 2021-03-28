@@ -156,6 +156,7 @@ const submitHandler = (
   includeTaxes: boolean,
   setInvoice: (invoice_draft: IInvoicePostBody) => void,
   navigate: (location: string) => void,
+  // eslint-disable-next-line sonarjs/cognitive-complexity
 ) => {
   const materials_total = materials.reduce<number>((subtotal, item) => {
     subtotal += item.amount_in_minor_units * item.quantity;

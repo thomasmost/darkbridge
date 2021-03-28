@@ -51,3 +51,29 @@ export async function apiRequest<TData = any>(
     };
   }
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function putRequest<TBody = any, TData = any>(
+  path: string,
+  accept: 'text' | 'json',
+  body: TBody,
+): Promise<ApiResultSuccess<TData> | ApiResultFailure> {
+  // if (request?.method && request?.method !== 'PUT') {
+  //   throw Error(`Don't call this method with a conflicting http method`);
+  // }
+  // if (request?.body) {
+  //   throw Error(`Don't pass the body in the request if using this helper`);
+  // }
+  if (typeof body === 'string') {
+    throw Error('A PUT request body should be an object');
+  }
+  // let additonalParams = request || {};
+  const putRequest = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'PUT',
+    body: JSON.stringify(body),
+  };
+  return apiRequest<TData>(path, accept, putRequest);
+}
