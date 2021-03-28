@@ -17,7 +17,7 @@ import AsyncSelect from 'react-select/async';
 import { DateTimePicker } from '@material-ui/pickers';
 import { Styles } from 'react-select';
 import { ClientProfileAttributes } from '../../models/client_profile.model';
-import { apiRequest } from '../services/api.svc';
+import { getRequest, postRequest } from '../services/api.svc';
 import { Select } from '../components/Select';
 import { Button } from '../elements/Button';
 import { DateTimeHelper } from '../../helpers/datetime.helper';
@@ -111,14 +111,8 @@ const selectStyles: Styles<any, false> = {
 };
 
 const loadOptions = async (name: string) => {
-  const response = await apiRequest<ClientProfileAttributes[]>(
+  const response = await getRequest<ClientProfileAttributes[]>(
     `client_profile?name=${name}`,
-    'json',
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
   );
   if (response.error) {
     return [];
@@ -162,16 +156,10 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
       ...values,
       duration_minutes: Math.ceil(values.duration_hours * 60),
     };
-    const result = await apiRequest<AppointmentAttributes>(
+    const result = await postRequest<typeof data, AppointmentAttributes>(
       'appointment',
       'json',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify(data),
-      },
+      data,
     );
     if (!result.error) {
       toast.success('Appointment Created');

@@ -14,6 +14,18 @@ export interface IInvoiceFormValues {
   local_tax_rate: number;
 }
 
+export interface IInvoiceCore
+  extends Omit<
+    InvoiceCreationAttributes,
+    | 'invoice_items'
+    | 'client_profile_id'
+    | 'service_provider_user_id'
+    | 'status'
+    | 'total_from_line_items'
+  > {
+  invoice_items: InvoiceItemPostBody[];
+}
+
 export interface IInvoicePostBody
   extends IInvoiceFormValues,
     Omit<

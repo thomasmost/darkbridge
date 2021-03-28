@@ -36,6 +36,7 @@ const immerReducer = (draft: IStateContainer, action: Action): void => {
     for (const appointment of draft.appointments) {
       if (appointment.id === appointment_id) {
         appointment.status = AppointmentStatus.in_progress;
+        appointment.started_at = Date.now();
       }
     }
   }
@@ -44,6 +45,7 @@ const immerReducer = (draft: IStateContainer, action: Action): void => {
     for (const appointment of draft.appointments) {
       if (appointment.id === appointment_id) {
         appointment.status = AppointmentStatus.completed;
+        appointment.completed_at = Date.now();
       }
     }
   }

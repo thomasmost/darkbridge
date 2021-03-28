@@ -8,9 +8,8 @@ import styled from '@emotion/styled';
 import { theme } from '../theme';
 import { InvoiceItemType } from '../../shared/enums';
 import { toMajorUnits } from '../../helpers/currency.helper';
-import { InvoiceAttributes } from '../../models/invoice.model';
-import { apiRequest } from '../services/api.svc';
-import { toast } from 'react-toastify';
+import { loadInvoice } from '../services/invoice.svc';
+import { IInvoiceCore } from '../../shared/invoice.dto';
 
 const InfoContainer = styled.div`
   margin: 20px;
@@ -27,26 +26,9 @@ type InvoiceViewProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
 };
 
-const loadInvoice = async (
-  appointment: AppointmentAttributes,
-  setInvoice: (invoice: InvoiceAttributes) => void,
-) => {
-  if (!appointment.invoice_id) {
-    return;
-  }
-  const { error, data } = await apiRequest(
-    `invoice/${appointment.invoice_id}`,
-    'json',
-  );
-  if (error) {
-    toast.error(error);
-  }
-  setInvoice(data);
-};
-
 export const InvoiceView: React.FC<InvoiceViewProps> = ({ appointment }) => {
   const navigate = useNavigate();
-  const [invoice, setInvoice] = useState<InvoiceAttributes | null>(null);
+  const [invoice, setInvoice] = useState<IInvoiceCore | null>(null);
   if (!appointment.invoice_id) {
     navigate('invoice');
     return null;
@@ -78,13 +60,13 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({ appointment }) => {
   const time_total =
     hourlyTotalInMinorUnits + dailyTotalInMinorUnits + flat_rate;
 
-  const tax_total = invoice.invoice_items.reduce<number>((prev, item) => {
+  const tax_total = invoice_items.reduce<number>((prev, item) => {
     if (item.type === InvoiceItemType.tax) {
       return prev + item.amount_in_minor_units;
     }
     return prev;
   }, 0);
-  const materials_total = invoice.invoice_items.reduce<number>((prev, item) => {
+  const materials_total = invoice_items.reduce<number>((prev, item) => {
     if (item.type === InvoiceItemType.materials) {
       return prev + item.amount_in_minor_units * item.quantity;
     }

@@ -89,15 +89,21 @@ const startAppointment = async (
 };
 
 export const renderStartCard = (
-  appointment_id: string,
+  appointment: AppointmentAttributes,
   dispatch: Dispatch<Action<{ appointment_id: string }>>,
 ) => (
   <Link
-    to={`/job/${appointment_id}/working`}
-    onClick={() => startAppointment(appointment_id, dispatch)}
+    to={`/job/${appointment.id}/working`}
+    onClick={() =>
+      appointment.status === 'in_progress'
+        ? null
+        : startAppointment(appointment.id, dispatch)
+    }
   >
     <StartCard>
-      <div>Start Work</div>
+      <div>
+        {appointment.status === 'in_progress' ? 'Continue Work' : 'Start Work'}
+      </div>
       <CardArrow>
         <Icon name="Arrow-Right-2" />
       </CardArrow>
@@ -150,7 +156,7 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
   const canBeRescheduled = status !== 'in_progress' && status !== 'completed';
   const canBeCanceled =
     status !== 'in_progress' && status !== 'completed' && status !== 'canceled';
-  const isStartable = status !== 'in_progress' && status !== 'completed';
+  const isStartable = status !== 'canceled' && status !== 'completed';
   const showInvoiceCard = status === 'completed';
   // appointment.status === 'scheduled' &&
   // Math.abs(DateTimeHelper.differenceInMinutes(startDate, now)) < 12000;
@@ -158,7 +164,7 @@ export const AppointmentView: React.FC<AppointmentViewProps> = ({
     <div>
       <HeadingText>{header}</HeadingText>
       {renderAppointmentInfo(appointment)}
-      {isStartable && renderStartCard(appointment.id, dispatch)}
+      {isStartable && renderStartCard(appointment, dispatch)}
       {showInvoiceCard && renderInvoiceCard(appointment.id, invoice_id)}
       {renderCustomerInfo(appointment)}{' '}
       {canBeRescheduled && renderRescheduleCard(appointment.id)}

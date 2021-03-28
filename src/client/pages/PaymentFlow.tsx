@@ -49,7 +49,11 @@ function handleRedirectAndAbortRender(
     // abort render
     return true;
   }
-  if (currentAppointment.invoice_id && !location.pathname.includes('/view')) {
+  if (
+    currentAppointment.invoice_id &&
+    !location.pathname.includes('/view') &&
+    !location.pathname.includes('/success')
+  ) {
     navigate(`view`);
   }
   return false;
