@@ -476,7 +476,10 @@ export class AuthAPI {
   @summary('Log out, voiding the current token and clearing the cookie')
   @responses(baseCodes([204, 400]))
   public static async logout(ctx: Koa.ParameterizedContext) {
-    const tokenId = ctx.cookies.get('teddy_web_token');
+    let tokenId = tokenFromAuthorizationHeader(ctx);
+    if (!tokenId) {
+      tokenId = tokenFromCookies(ctx);
+    }
     if (tokenId) {
       const token = await AuthToken.findOne({
         where: {
