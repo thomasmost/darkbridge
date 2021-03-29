@@ -27,6 +27,8 @@ import { CancelAppointment } from '../pages/CancelAppointment';
 import { JobFlow } from '../pages/JobFlow';
 import { RescheduleAppointment } from '../pages/RescheduleAppointment';
 import { PaymentFlow } from '../pages/PaymentFlow';
+import { ViewClients } from '../pages/ViewClients';
+import { EditClientProfile } from '../pages/EditClientProfile';
 
 const muiTheme = createMuiTheme({
   palette: {
@@ -94,18 +96,20 @@ const App = () => {
                 <Main>
                   <Router>
                     <Home path="/" />
-                    <AppointmentPage path="appointment/:appointment_id" />
-                    <CancelAppointment path="cancel-appointment/:appointment_id" />
-                    <RescheduleAppointment path="reschedule-appointment/:appointment_id" />
                     <AddAppointment path="calendar/add-appointment" />
-                    <JobFlow path="job/:appointment_id/*" />
-                    <PaymentFlow path="payment/:appointment_id/*" />
-                    <NextAppointment path="next-appointment" />
                     <AddClientProfile path="add-client" />
+                    <EditClientProfile path="edit-client/:client_profile_id" />
                     <ApiSandbox path="sandbox" />
+                    <AppointmentPage path="appointment/:appointment_id" />
                     <Calendar path="calendar" />
-                    <Profile path="profile" />
+                    <CancelAppointment path="cancel-appointment/:appointment_id" />
+                    <JobFlow path="job/:appointment_id/*" />
                     <Logout path="logout" />
+                    <NextAppointment path="next-appointment" />
+                    <PaymentFlow path="payment/:appointment_id/*" />
+                    <Profile path="profile" />
+                    <RescheduleAppointment path="reschedule-appointment/:appointment_id" />
+                    <ViewClients path="clients" />
                   </Router>
                 </Main>
               </ScrollWrapper>

@@ -10,6 +10,7 @@ import {
   responses,
   operation,
   middlewaresAll,
+  path,
 } from '@callteddy/koa-swagger-decorator';
 
 import { AuthenticatedRequestContext } from './types';
@@ -20,8 +21,13 @@ import {
   ClientProfileModel,
 } from '../models/client_profile.model';
 import { createClientProfileForServiceProvider } from '../helpers/client_profile.helper';
-import { arrayOf, swaggerRefFromModel } from '../helpers/swagger.helper';
+import {
+  arrayOf,
+  baseCodes,
+  swaggerRefFromModel,
+} from '../helpers/swagger.helper';
 import { authUser } from './middlewares';
+import { NotFoundError } from '../helpers/error.helper';
 
 type BodyParameter = {
   type: 'string' | 'integer';
@@ -184,5 +190,81 @@ export class ClientProfileAPI {
 
     ctx.status = 200;
     ctx.body = profiles;
+  }
+
+  @request('get', '/{id}')
+  @operation('apiClientProfile_getById')
+  @summary('get a single client profile by primary key')
+  @path({
+    id: { type: 'string', required: true, description: 'id' },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(ClientProfileModel),
+    },
+    ...baseCodes([401, 404]),
+  })
+  public static async getClientById(ctx: AuthenticatedRequestContext) {
+    const { id } = ctx.validatedParams;
+    const client = await ClientProfile.findByPk(id);
+    ctx.body = client;
+  }
+
+  @request('put', '/{id}')
+  @operation('apiClientProfile_update')
+  @summary('update a client profile')
+  @path({
+    id: {
+      type: 'string',
+      required: true,
+      description: 'id of the client profile',
+    },
+  })
+  @body(postParams)
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(ClientProfileModel),
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+  })
+  public static async updateClientProfile(ctx: AuthenticatedRequestContext) {
+    const user = ctx.user;
+
+    const {
+      email,
+      given_name,
+      family_name,
+      phone,
+      address_street,
+      address_city,
+      address_state,
+      address_postal_code,
+    } = ctx.request.body as ClientProfileCreationAttributes;
+
+    const { id } = ctx.validatedParams;
+    const clientProfile = await ClientProfile.findByPk(id);
+
+    if (!clientProfile || clientProfile.created_by_user_id !== user.id) {
+      throw new NotFoundError(
+        `Tried to update a client profile that doesn't exist`,
+      );
+    }
+
+    clientProfile.given_name = given_name;
+    clientProfile.family_name = family_name;
+    clientProfile.phone = phone;
+    clientProfile.email = email;
+    clientProfile.address_street = address_street;
+    clientProfile.address_city = address_city;
+    clientProfile.address_state = address_state;
+    clientProfile.address_postal_code = address_postal_code;
+
+    await clientProfile.save();
+    ctx.status = 200;
+    ctx.body = clientProfile;
   }
 }
