@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { RouteComponentProps } from '@reach/router';
+import { Link, RouteComponentProps } from '@reach/router';
 import React from 'react';
 import { ContractorProfileAttributes } from '../../models/contractor_profile.model';
 import { useAuth } from '../AuthProvider';
@@ -84,6 +84,7 @@ export const Profile: React.FC<RouteComponentProps> = () => {
         </div>
       </Card>
       {renderContractorProfile(contractor_profile)}
+      <Link to="/clients">View your clients</Link>
     </div>
   );
 };

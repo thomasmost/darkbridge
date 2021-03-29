@@ -16,7 +16,7 @@ const H2 = styled.h2`
 const renderClients = (clients: ClientProfileAttributes[]) => {
   const clientCards = [];
   for (const client of clients) {
-    clientCards.push(<ClientDetailsCard client={client} />);
+    clientCards.push(<ClientDetailsCard key={client.id} client={client} />);
   }
   return clientCards;
 };
