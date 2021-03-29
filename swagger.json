@@ -500,6 +500,61 @@
         "security": [{ "token": [] }]
       }
     },
+    "/api/client_profile/{id}": {
+      "get": {
+        "summary": "get a single client profile by primary key",
+        "description": "get a single client profile by primary key",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/ClientProfile" }
+          },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" }
+        },
+        "tags": ["clientProfile"],
+        "operationId": "apiClientProfile_getById",
+        "security": [{ "token": [] }]
+      },
+      "put": {
+        "summary": "update a client profile",
+        "description": "update a client profile",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id of the client profile",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/ClientProfilePutBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/ClientProfile" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["clientProfile"],
+        "operationId": "apiClientProfile_update",
+        "security": [{ "token": [] }]
+      }
+    },
     "/api/calendar/daily": {
       "get": {
         "summary": "get the day's appointments, the next appointment, and a summary of the user's day so far",
@@ -1027,7 +1082,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-26 14:13:39"
+          "example": "2021-03-29 00:24:06"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1061,7 +1116,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-26 14:13:39"
+          "example": "2021-03-29 00:24:06"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1182,6 +1237,43 @@
         "address_state",
         "address_postal_code"
       ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "the contact email address"
+        },
+        "phone": {
+          "type": "string",
+          "description": "the contact phone number"
+        },
+        "given_name": {
+          "type": "string",
+          "description": "the client's first name"
+        },
+        "family_name": {
+          "type": "string",
+          "description": "the client's last name"
+        },
+        "address_street": {
+          "type": "string",
+          "description": "the street address for the client"
+        },
+        "address_city": {
+          "type": "string",
+          "description": "the city of the client's primary address"
+        },
+        "address_state": {
+          "type": "string",
+          "description": "the state of client's primary address"
+        },
+        "address_postal_code": {
+          "type": "string",
+          "description": "the postal code for the client's primary address"
+        }
+      }
+    },
+    "ClientProfilePutBody": {
+      "type": "object",
       "properties": {
         "email": {
           "type": "string",
