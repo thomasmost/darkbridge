@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
