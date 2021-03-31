@@ -47,9 +47,9 @@ const AppContainer = styled.div`
   height: 100%;
 `;
 
-const App = () => {
+const App = ({ isMobile }: { isMobile?: boolean }) => {
   const { width } = useWindowDimensions();
-  const shouldRenderPWA = width < 600;
+  const shouldRenderPWA = width < 600 || isMobile;
 
   const Main = styled.main`
     background-color: ${theme.applicationBackgroundColor};

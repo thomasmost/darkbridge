@@ -7,9 +7,7 @@ export const userAuthenticated = async (
   next: Koa.Next,
 ) => {
   if (!ctx.user) {
-    throw new AuthenticationError(
-      'Only logged in users may access the invoice api',
-    );
+    throw new AuthenticationError('Only logged in users may access this api');
   }
   return next();
 };

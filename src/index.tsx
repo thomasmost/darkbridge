@@ -112,7 +112,7 @@ router.use('/api', api.routes(), api.allowedMethods());
 
 async function ssr(
   ctx: SemiAuthenticatedRequestContext,
-  ApplicationRoot: () => JSX.Element,
+  ApplicationRoot: (props: { isMobile: boolean }) => JSX.Element,
   bundleFilename: string,
 ) {
   if (!ctx.req.url) {
@@ -122,7 +122,7 @@ async function ssr(
   try {
     const app = ReactDOMServer.renderToString(
       <ServerLocation url={ctx.req.url}>
-        <ApplicationRoot />
+        <ApplicationRoot isMobile={true} />
       </ServerLocation>,
     );
     console.log(`Rendering to: ${path.resolve('./views/index.html')}`);
