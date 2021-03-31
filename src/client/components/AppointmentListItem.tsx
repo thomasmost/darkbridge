@@ -70,9 +70,9 @@ export const AppointmentListItem: React.FC<AppointmentCardProps> = ({
       blockColor = theme.blockColorInactive;
       textColor = theme.subheaderTextColor;
       if (appointment.invoice_id) {
-        statusBadge = <Badge>Completed / Invoiced</Badge>;
+        statusBadge = <Badge>Completed</Badge>;
       } else {
-        statusBadge = <Badge>Completed / Unpaid</Badge>;
+        statusBadge = <Badge>Unpaid</Badge>;
       }
       break;
     }

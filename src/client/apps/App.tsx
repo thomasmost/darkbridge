@@ -44,8 +44,7 @@ if (typeof window !== 'undefined') {
 
 const AppContainer = styled.div`
   font-family: 'Circular Std', Helvetica, sans-serif;
-  display: flex;
-  flex-wrap: wrap;
+  height: 100%;
 `;
 
 const App = () => {
@@ -63,8 +62,8 @@ const App = () => {
     width: 100%;
   `;
   const ScrollWrapper = styled.div`
-    height: calc(100vh - ${shouldRenderPWA ? `157px` : '52px'});
-    max-height: calc(100vh- ${shouldRenderPWA ? `157px` : '52px'});
+    height: calc(100% - ${shouldRenderPWA ? `157px` : '52px'});
+    max-height: calc(100% - ${shouldRenderPWA ? `157px` : '52px'});
     overflow: scroll;
     width: 100%;
   `;
