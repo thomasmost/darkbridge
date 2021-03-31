@@ -27,6 +27,7 @@ const StyledHeader = styled.header`
   display: flex;
   font-size: 1.2em;
   height: 50px;
+  max-height: 50px;
   justify-content: space-between;
   left: 0;
   line-height: 50px;

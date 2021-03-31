@@ -44,6 +44,8 @@ if (typeof window !== 'undefined') {
 
 const AppContainer = styled.div`
   font-family: 'Circular Std', Helvetica, sans-serif;
+  display: flex;
+  flex-wrap: wrap;
   height: 100%;
 `;
 
