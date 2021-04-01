@@ -47,6 +47,7 @@ const AppContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   height: 100%;
+  align-content: start;
 `;
 
 const App = ({ isMobile }: { isMobile?: boolean }) => {
