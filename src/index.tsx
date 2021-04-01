@@ -119,10 +119,11 @@ async function ssr(
     ctx.status = 400;
     return;
   }
+  const isMobile = ctx.userAgent.isMobile;
   try {
     const app = ReactDOMServer.renderToString(
       <ServerLocation url={ctx.req.url}>
-        <ApplicationRoot isMobile={true} />
+        <ApplicationRoot isMobile={isMobile} />
       </ServerLocation>,
     );
     console.log(`Rendering to: ${path.resolve('./views/index.html')}`);
