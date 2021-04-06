@@ -25,12 +25,13 @@ export interface ClientProfileAttributes {
     type: string;
     coordinates: Readonly<Readonly<number>[]>;
   }>;
+  stripe_customer_id: string;
 }
 
 // Some attributes are optional in `ClientProfile.build` and `ClientProfile.create` calls
 export type ClientProfileCreationAttributes = Omit<
   Optional<ClientProfileAttributes, 'id' | 'created_at' | 'coordinates'>,
-  'full_name'
+  'full_name' | 'stripe_customer_id'
 >;
 export class ClientProfile
   extends PermissionedModel<
@@ -52,6 +53,7 @@ export class ClientProfile
   public timezone!: string;
   public timezone_offset!: number;
   public coordinates!: { type: string; coordinates: number[] };
+  public stripe_customer_id!: string;
 
   // timestamps!
   public readonly created_at!: number;
@@ -148,6 +150,11 @@ export const ClientProfileModel = ClientProfile.initWithPermissions(
     // we have to set it separately with a Sequelize query literal.
     coordinates: {
       type: DataTypes.GEOGRAPHY('POINT', 4326),
+      allowNull: true,
+      visible: false,
+    },
+    stripe_customer_id: {
+      type: DataTypes.STRING,
       allowNull: true,
       visible: false,
     },

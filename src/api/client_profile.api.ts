@@ -133,6 +133,7 @@ export class ClientProfileAPI {
       address_city,
       address_state,
       address_postal_code,
+      true,
     );
 
     ctx.status = 200;

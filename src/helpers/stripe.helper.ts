@@ -5,6 +5,15 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2020-08-27',
 });
 
+export type StripeAddress = {
+  city: string;
+  state: string;
+  country: string;
+  line1: string;
+  line2?: string;
+  postal_code: string;
+};
+
 export abstract class StripeHelper {
   public static async onboardUser(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
@@ -46,6 +55,28 @@ export abstract class StripeHelper {
       ctx.status = 500;
       ctx.message = err.message;
     }
+  }
+
+  public static async createCustomer(
+    name: string,
+    email: string,
+    phone: string,
+    address: StripeAddress,
+    teddy_client_profile_id: string,
+    teddy_user_id: string | null,
+  ) {
+    const customer = await stripe.customers.create({
+      name,
+      email,
+      phone,
+      address,
+      metadata: {
+        teddy_client_profile_id,
+        teddy_user_id,
+      },
+    });
+    console.log('Customer successfully created with id: ', customer.id);
+    return customer;
   }
 }
 

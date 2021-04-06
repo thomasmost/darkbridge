@@ -47,6 +47,7 @@ describe('Appointment Api', () => {
       address_city,
       address_state,
       address_postal_code,
+      false,
     );
 
     await Appointment.destroy({

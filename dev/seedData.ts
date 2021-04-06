@@ -132,6 +132,7 @@ async function createClients(created_by_user_id: string) {
         address_city,
         address_state,
         address_postal_code,
+        false,
       ),
     );
   }
