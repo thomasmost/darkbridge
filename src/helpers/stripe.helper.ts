@@ -1,6 +1,8 @@
 // import Koa from 'koa';
 import Stripe from 'stripe';
 import { AuthenticatedRequestContext } from '../api/types';
+import { ClientProfile } from '../models/client_profile.model';
+import { NotFoundError } from './error.helper';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2020-08-27',
 });
@@ -77,6 +79,18 @@ export abstract class StripeHelper {
     });
     console.log('Customer successfully created with id: ', customer.id);
     return customer;
+  }
+
+  public static async getCustomerPaymentSetupIntent(client_profile_id: string) {
+    const client_profile = await ClientProfile.findByPk(client_profile_id);
+
+    if (!client_profile) {
+      throw new NotFoundError();
+    }
+
+    return stripe.setupIntents.create({
+      customer: client_profile.stripe_customer_id,
+    });
   }
 }
 

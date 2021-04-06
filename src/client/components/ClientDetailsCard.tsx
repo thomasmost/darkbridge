@@ -117,6 +117,20 @@ export const ClientDetailsCard: React.FC<ClientProfileCardProps> = ({
             </span>
           </IconTextPair>
         </ActionButton>
+        <ActionButton to={`/add-client-payment-method/${client.id}`}>
+          <IconTextPair>
+            <Icon name="Wallet" />
+            <span
+              style={{
+                display: 'block',
+                fontSize: '.6em',
+                marginLeft: theme.pad(2),
+              }}
+            >
+              Add Payment Method
+            </span>
+          </IconTextPair>
+        </ActionButton>
       </ActionRow>
     </Card>
   );

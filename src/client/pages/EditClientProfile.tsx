@@ -21,7 +21,6 @@ export const EditClientProfile: React.FC<
     if (!client_profile_id) {
       return;
     }
-    // the additional 'noop' id is a hack to satisfy the swagger validation
     getRequest(`client_profile/${client_profile_id}`).then((result) => {
       if (result.error) {
         return;

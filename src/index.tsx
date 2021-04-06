@@ -67,15 +67,7 @@ app.use(async (ctx, next) => {
   }
 });
 
-app.use(async (ctx: Koa.ParameterizedContext & UserAgentContext, next) => {
-  // const isBrowser =
-  //   ctx.userAgent.isChrome ||
-  //   ctx.userAgent.isEdge ||
-  //   ctx.userAgent.isFirefox ||
-  //   ctx.userAgent.isIE ||
-  //   ctx.userAgent.isSafari;
-  // const isMobile = ctx.userAgent.isMobile && !isBrowser;
-  // const tokenId = isMobile
+app.use(async (ctx: SemiAuthenticatedRequestContext, next) => {
   let tokenId = tokenFromAuthorizationHeader(ctx);
   if (!tokenId) {
     tokenId = tokenFromCookies(ctx);
@@ -209,8 +201,3 @@ process.on('SIGINT', async function () {
   console.log('Shutdown complete!');
   process.exit(0);
 });
-
-// console.log('terminating');
-
-// terminator.terminate();
-// console.log('terminated');
