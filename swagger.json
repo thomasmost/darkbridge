@@ -700,6 +700,53 @@
         "security": [{ "token": [] }]
       }
     },
+    "/api/stripe/setup_intent": {
+      "post": {
+        "summary": "creates a setup intent with stripe and returns a sensitive client_secret",
+        "description": "creates a setup intent with stripe and returns a sensitive client_secret",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/StripeSetupIntentPostBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/StripeClientSecretResponse" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["stripe"],
+        "operationId": "apiStripe_createSetupIntent",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/stripe/add_payment_method": {
+      "post": {
+        "summary": "add a payment method to a client",
+        "description": "add a payment method to a client",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/StripeAddPaymentMethodPostBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["stripe"],
+        "operationId": "apiStripe_addPaymentMethod",
+        "security": [{ "token": [] }]
+      }
+    },
     "/api/stripe/refresh": {
       "get": {
         "summary": "refreshes and redirects to the express account url",
@@ -780,7 +827,8 @@
         "address_state": { "type": "string" },
         "address_postal_code": { "type": "string" },
         "timezone": { "type": "string" },
-        "timezone_offset": { "type": "integer" }
+        "timezone_offset": { "type": "integer" },
+        "has_primary_payment_method": { "type": "boolean" }
       }
     },
     "ContractorProfile": {
@@ -986,9 +1034,27 @@
         }
       }
     },
+    "StripeClientSecretResponse": {
+      "type": "object",
+      "properties": { "client_secret": { "type": "string" } }
+    },
     "StripeAccountResponse": {
       "type": "object",
       "properties": { "url": { "type": "string" } }
+    },
+    "SuccessfulStripeSetupIntent": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "created_at": { "type": "integer" },
+        "payment_method": { "type": "string" },
+        "payment_method_types": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "status": { "type": "string" },
+        "usage": { "type": "string" }
+      }
     },
     "OmniResponseV0": {
       "type": "object",
@@ -1082,7 +1148,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-29 00:24:06"
+          "example": "2021-04-07 18:14:25"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1116,7 +1182,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-03-29 00:24:06"
+          "example": "2021-04-07 18:14:25"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1368,6 +1434,27 @@
           "type": "array",
           "items": { "$ref": "#/definitions/InvoiceItem" }
         }
+      }
+    },
+    "StripeSetupIntentPostBody": {
+      "type": "object",
+      "required": ["client_profile_id"],
+      "properties": {
+        "client_profile_id": {
+          "type": "string",
+          "description": "client profile id to set up"
+        }
+      }
+    },
+    "StripeAddPaymentMethodPostBody": {
+      "type": "object",
+      "required": ["client_profile_id"],
+      "properties": {
+        "client_profile_id": {
+          "type": "string",
+          "description": "client profile id to set up"
+        },
+        "setupIntent": { "$ref": "#/definitions/SuccessfulStripeSetupIntent" }
       }
     }
   },
