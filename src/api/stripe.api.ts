@@ -9,6 +9,7 @@ import {
   securityAll,
   operation,
   middlewaresAll,
+  body,
 } from '@callteddy/koa-swagger-decorator';
 import {
   baseCodes,
@@ -34,6 +35,36 @@ export class StripeAPI {
   })
   public static async onboardUser(ctx: AuthenticatedRequestContext) {
     return StripeHelper.onboardUser(ctx);
+  }
+
+  @request('post', '/setup_intent')
+  @operation('apiStripe_createSetupIntent')
+  @summary(
+    'creates a setup intent with stripe and returns a sensitive client_secret',
+  )
+  @body({
+    client_profile_id: {
+      type: 'string',
+      required: true,
+      description: 'client profile id to set up',
+    },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromDefinitionName('StripeAccountResponse'),
+    },
+    ...baseCodes([401]),
+  })
+  public static async createSetupIntent(ctx: AuthenticatedRequestContext) {
+    const { client_profile_id } = ctx.request.body;
+    const setupIntent = await StripeHelper.getCustomerPaymentSetupIntent(
+      client_profile_id,
+    );
+    const { client_secret } = setupIntent;
+    ctx.body = {
+      client_secret,
+    };
   }
 
   @request('get', '/refresh')

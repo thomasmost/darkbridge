@@ -6,6 +6,22 @@ import ReactDOMServer from 'react-dom/server';
 import { isRedirect, ServerLocation } from '@reach/router';
 import { SemiAuthenticatedRequestContext } from './api/types';
 
+function setPublicConfigInScript() {
+  // whitelisted env variables
+  const { NODE_ENV, STRIPE_PUBLIC_KEY } = process.env;
+  const publicConfig = {
+    env: {
+      NODE_ENV,
+      STRIPE_PUBLIC_KEY,
+    },
+  };
+  return `
+<script>
+  window.config = ${JSON.stringify(publicConfig)};
+</script>
+`;
+}
+
 export async function ssr(
   ctx: SemiAuthenticatedRequestContext,
   ApplicationRoot: (props: { isMobile: boolean }) => JSX.Element,
@@ -40,7 +56,8 @@ export async function ssr(
 
     return (ctx.body = indexHtml.replace(
       '<div id="root"></div>',
-      `<div id="root">${app}</div>
+      `${setPublicConfigInScript()}
+  <div id="root">${app}</div>
   <script src="/build/${bundleFilename}"></script>`,
     ));
   } catch (error) {

@@ -2,6 +2,17 @@ import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
 import dotenv from 'dotenv';
 dotenv.config();
+const { NODE_ENV, STRIPE_PUBLIC_KEY } = process.env;
+// todo(thomas) obnoxious typescript error during SSR
+// note that this is specifically a problem with ts-node;
+// all the more reason to stop using it
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(global as any).config = {
+  env: {
+    NODE_ENV,
+    STRIPE_PUBLIC_KEY,
+  },
+};
 import Koa from 'koa';
 import path from 'path';
 import Router from 'koa-router';
@@ -16,7 +27,6 @@ import { api } from './api';
 
 // Initialize constants
 const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
-const NODE_ENV = process.env.NODE_ENV;
 console.log(`NODE_ENV: ${NODE_ENV}`);
 
 import { AuthenticationError, ValidationError } from './helpers/error.helper';

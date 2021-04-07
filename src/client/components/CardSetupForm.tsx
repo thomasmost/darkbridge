@@ -39,14 +39,17 @@ const StyledCardForm = styled.form`
   button {
     margin-top: ${theme.pad(2)};
     padding: ${theme.pad(2)};
+    width: 100%;
+    border-radius: 4px;
   }
 `;
 
 export const CardSetupForm: React.FC<
   {
+    client_secret: string;
     client_profile: ClientProfileAttributes;
   } & CardEntryChangeEvent
-> = ({ client_profile, onChange }) => {
+> = ({ client_profile, client_secret, onChange }) => {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -72,7 +75,7 @@ export const CardSetupForm: React.FC<
       name: client_profile.full_name,
     };
 
-    const result = await stripe.confirmCardSetup('{{CLIENT_SECRET}}', {
+    const result = await stripe.confirmCardSetup(client_secret, {
       payment_method: {
         card,
         billing_details,

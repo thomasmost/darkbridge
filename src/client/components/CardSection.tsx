@@ -33,6 +33,8 @@ export type CardEntryChangeEvent = {
   onChange: (data: StripeCardChangeEvent) => void;
 };
 
+// Test the form with 4242 4242 4242 4242
+
 export const CardSection: React.FC<CardEntryChangeEvent> = ({ onChange }) => (
   <label>
     Card details

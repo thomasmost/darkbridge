@@ -57,6 +57,7 @@ export const ClientCard: React.FC<ClientProfileCardProps> = ({ client }) => {
         <Avatar />
         <ClientName>{client.full_name}</ClientName>
       </ClientTitleRow>
+
       <ContactRow>
         <ContactButton>
           <Icon name="Call" />
