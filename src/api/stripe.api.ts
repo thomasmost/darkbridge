@@ -17,6 +17,7 @@ import {
 } from '../helpers/swagger.helper';
 import { StripeHelper } from '../helpers/stripe.helper';
 import { authUser } from './middlewares';
+import { Stripe } from 'stripe';
 
 @prefix('/stripe')
 @securityAll([{ token: [] }])
@@ -52,7 +53,7 @@ export class StripeAPI {
   @responses({
     200: {
       description: 'Success',
-      schema: swaggerRefFromDefinitionName('StripeAccountResponse'),
+      schema: swaggerRefFromDefinitionName('StripeClientSecretResponse'),
     },
     ...baseCodes([401]),
   })
@@ -65,6 +66,29 @@ export class StripeAPI {
     ctx.body = {
       client_secret,
     };
+  }
+
+  @request('post', '/add_payment_method')
+  @operation('apiStripe_addPaymentMethod')
+  @summary('add a payment method to a client')
+  @body({
+    client_profile_id: {
+      type: 'string',
+      required: true,
+      description: 'client profile id to set up',
+    },
+    setupIntent: swaggerRefFromDefinitionName('SuccessfulStripeSetupIntent'),
+  })
+  @responses({
+    ...baseCodes([204, 401]),
+  })
+  public static async addPaymentMethod(ctx: AuthenticatedRequestContext) {
+    const { client_profile_id, setupIntent } = ctx.request.body as {
+      client_profile_id: string;
+      setupIntent: Stripe.SetupIntent;
+    };
+    await StripeHelper.addPrimaryPaymentMethod(client_profile_id, setupIntent);
+    ctx.status = 204;
   }
 
   @request('get', '/refresh')

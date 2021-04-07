@@ -205,10 +205,44 @@ api.swagger({
           },
         },
       },
+      StripeClientSecretResponse: {
+        type: 'object',
+        properties: {
+          client_secret: {
+            type: 'string',
+          },
+        },
+      },
       StripeAccountResponse: {
         type: 'object',
         properties: {
           url: {
+            type: 'string',
+          },
+        },
+      },
+      SuccessfulStripeSetupIntent: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+          },
+          created_at: {
+            type: 'integer',
+          },
+          payment_method: {
+            type: 'string',
+          },
+          payment_method_types: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+          status: {
+            type: 'string',
+          },
+          usage: {
             type: 'string',
           },
         },

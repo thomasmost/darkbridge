@@ -7,6 +7,7 @@ import { postRequest } from '../services/api.svc';
 import { ClientProfileAttributes } from '../../models/client_profile.model';
 import styled from '@emotion/styled';
 import { theme } from '../theme';
+import { useNavigate } from '@reach/router';
 
 const StyledCardForm = styled.form`
   box-sizing: border-box;
@@ -52,6 +53,7 @@ export const CardSetupForm: React.FC<
 > = ({ client_profile, client_secret, onChange }) => {
   const stripe = useStripe();
   const elements = useElements();
+  const navigate = useNavigate();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
     event,
@@ -87,9 +89,16 @@ export const CardSetupForm: React.FC<
     } else {
       toast.success('Card added!');
       const { setupIntent } = result;
-      postRequest('stripe/add_payment_method', 'json', {
+      const client_profile_id = client_profile.id;
+      const add_res = await postRequest('stripe/add_payment_method', 'text', {
+        client_profile_id,
         setupIntent,
       });
+      if (add_res.error) {
+        toast.error(add_res.error);
+        return;
+      }
+      navigate('/clients');
       // The setup has succeeded. Display a success message and send
       // result.setupIntent.payment_method to your server to save the
       // card to a Customer

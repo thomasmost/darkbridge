@@ -26,12 +26,17 @@ export interface ClientProfileAttributes {
     coordinates: Readonly<Readonly<number>[]>;
   }>;
   stripe_customer_id: string;
+  primary_payment_method_id: string;
+  has_primary_payment_method: boolean;
 }
 
 // Some attributes are optional in `ClientProfile.build` and `ClientProfile.create` calls
 export type ClientProfileCreationAttributes = Omit<
   Optional<ClientProfileAttributes, 'id' | 'created_at' | 'coordinates'>,
-  'full_name' | 'stripe_customer_id'
+  | 'full_name'
+  | 'stripe_customer_id'
+  | 'primary_payment_method_id'
+  | 'has_primary_payment_method'
 >;
 export class ClientProfile
   extends PermissionedModel<
@@ -54,6 +59,8 @@ export class ClientProfile
   public timezone_offset!: number;
   public coordinates!: { type: string; coordinates: number[] };
   public stripe_customer_id!: string;
+  public primary_payment_method_id!: string;
+  public has_primary_payment_method!: boolean;
 
   // timestamps!
   public readonly created_at!: number;
@@ -157,6 +164,22 @@ export const ClientProfileModel = ClientProfile.initWithPermissions(
       type: DataTypes.STRING,
       allowNull: true,
       visible: false,
+    },
+    primary_payment_method_id: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      visible: false,
+    },
+    has_primary_payment_method: {
+      type: DataTypes.VIRTUAL(DataTypes.BOOLEAN),
+      swagger_type: 'boolean',
+      get: function () {
+        const primary_payment_method_id = this.getDataValue(
+          'primary_payment_method_id',
+        );
+        return Boolean(primary_payment_method_id);
+      },
+      visible: toCreator,
     },
   },
   {

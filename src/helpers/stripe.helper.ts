@@ -92,6 +92,23 @@ export abstract class StripeHelper {
       customer: client_profile.stripe_customer_id,
     });
   }
+
+  public static async addPrimaryPaymentMethod(
+    client_profile_id: string,
+    setup_intent: Stripe.SetupIntent,
+  ) {
+    const client_profile = await ClientProfile.findByPk(client_profile_id);
+    if (!client_profile) {
+      throw new NotFoundError();
+    }
+    if (typeof setup_intent.payment_method !== 'string') {
+      throw Error(
+        `Received an unexpected payment method type: ${typeof setup_intent.payment_method}`,
+      );
+    }
+    client_profile.primary_payment_method_id = setup_intent.payment_method;
+    await client_profile.save();
+  }
 }
 
 function generateAccountLink(accountID: string, origin: string) {

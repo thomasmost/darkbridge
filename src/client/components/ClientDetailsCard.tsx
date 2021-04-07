@@ -45,7 +45,7 @@ const ActionButton = styled(Link)`
   align-items: center;
   display: flex;
   justify-content: space-around;
-  background-color: #daedfd;
+  background-color: ${theme.blockColorDefault};
   color: ${theme.buttonColorActive};
   border-radius: 40px;
   width: 100%;
@@ -60,6 +60,23 @@ const ActionButton = styled(Link)`
   &:focus {
     color: white;
   }
+`;
+const ActionBadge = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
+  background-color: ${theme.blockColorActive};
+  color: ${theme.activeLinkColor};
+  border-radius: 40px;
+  width: 100%;
+  line-height: 30px;
+  padding: 10px 0;
+  font-size: 2em;
+  margin-right: 10px;
+  &:last-child {
+    margin-right: 0;
+  }
+  cursor: default;
 `;
 
 const IconTextPair = styled.div`
@@ -117,20 +134,38 @@ export const ClientDetailsCard: React.FC<ClientProfileCardProps> = ({
             </span>
           </IconTextPair>
         </ActionButton>
-        <ActionButton to={`/add-client-payment-method/${client.id}`}>
-          <IconTextPair>
-            <Icon name="Wallet" />
-            <span
-              style={{
-                display: 'block',
-                fontSize: '.6em',
-                marginLeft: theme.pad(2),
-              }}
-            >
-              Add Payment Method
-            </span>
-          </IconTextPair>
-        </ActionButton>
+        {!client.has_primary_payment_method && (
+          <ActionButton to={`/add-client-payment-method/${client.id}`}>
+            <IconTextPair>
+              <Icon name="Wallet" />
+              <span
+                style={{
+                  display: 'block',
+                  fontSize: '.6em',
+                  marginLeft: theme.pad(2),
+                }}
+              >
+                Add Payment Method
+              </span>
+            </IconTextPair>
+          </ActionButton>
+        )}
+        {client.has_primary_payment_method && (
+          <ActionBadge>
+            <IconTextPair>
+              <Icon name="Wallet" />
+              <span
+                style={{
+                  display: 'block',
+                  fontSize: '.6em',
+                  marginLeft: theme.pad(2),
+                }}
+              >
+                Has Payment Method
+              </span>
+            </IconTextPair>
+          </ActionBadge>
+        )}
       </ActionRow>
     </Card>
   );
