@@ -12,7 +12,7 @@
       "type": "node",
       "request": "launch",
       "args": [
-        "./src/index.tsx"
+        "./src/index.ts"
       ],
       "runtimeArgs": [
         "--nolazy",

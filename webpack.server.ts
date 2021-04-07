@@ -15,7 +15,7 @@ const handler = (percentage: number, message: string) => {
 
 const config: webpack.Configuration = {
   entry: {
-    server: ['./src/index.tsx'],
+    server: ['./src/index.ts'],
   },
   // node: {
   //   fs: 'empty',
