@@ -142,6 +142,7 @@ create table `client_profile` (
   timezone_offset TINYINT NOT NULL,
   coordinates POINT NULL,
   stripe_customer_id VARCHAR(255) NULL,
+  primary_payment_method_id VARCHAR(255) NULL,
   -- SPATIAL INDEX `SPATIAL` (`coordinates`),
   UNIQUE KEY(user_id)
 );
