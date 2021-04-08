@@ -55,6 +55,7 @@
     "request": "^2.88.2",
     "sequelize": "^6.5.0",
     "stripe": "^8.139.0",
+    "use-debounce": "^6.0.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

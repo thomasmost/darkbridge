@@ -18,7 +18,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import { NextAppointment } from '../pages/NextAppointment';
-import { useWindowDimensions } from '../useWindowDimensions';
+import { usePWA } from '../usePWA';
 import { FooterPWA } from '../components/FooterPWA';
 import { HeaderPWA } from '../components/HeaderPWA';
 import { AppointmentPage } from '../pages/AppointmentPage';
@@ -52,8 +52,9 @@ const AppContainer = styled.div`
 `;
 
 const App = ({ isMobile }: { isMobile?: boolean }) => {
-  const { width } = useWindowDimensions();
-  const shouldRenderPWA = width < 600 || isMobile;
+  const { isPWAWidth } = usePWA();
+  const shouldRenderPWA = isPWAWidth || isMobile;
+  console.log('jesus were rerendering');
 
   const Main = styled.main`
     background-color: ${theme.applicationBackgroundColor};
