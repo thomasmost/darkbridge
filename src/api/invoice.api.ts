@@ -28,6 +28,8 @@ import {
 import { totalToBePaidOut } from '../helpers/invoice.helper';
 // import { authUser } from './middlewares';
 import { InvoicePaymentMethod } from '../shared/enums';
+import { StripeHelper } from '../helpers/stripe.helper';
+import { ClientProfile } from '../models/client_profile.model';
 
 const postParams = {
   appointment_id: {
@@ -164,6 +166,27 @@ export class InvoiceAPI {
     const invoice = await unsaved_invoice.save();
     const items = await Promise.all(itemPromises);
     await appointment.update({ invoice_id: invoice.id });
+    const client_profile = await ClientProfile.findByPk(client_profile_id);
+    if (!client_profile) {
+      throw Error('This should never happen');
+    }
+    const { stripe_customer_id, primary_payment_method_id } = client_profile;
+    if (stripe_customer_id && primary_payment_method_id) {
+      const res = await StripeHelper.createCharge(
+        stripe_customer_id,
+        primary_payment_method_id,
+        user.stripe_express_account_id,
+        invoice.total_to_be_charged,
+        invoice.processing_fee,
+        'usd',
+      );
+      if (res.error) {
+        console.log('Failed to create a charge');
+      } else {
+        console.log(res.paymentIntent);
+        await invoice.update({ status: 'paid' });
+      }
+    }
     invoice.invoice_items = items;
     ctx.status = 200;
     ctx.body = invoice;

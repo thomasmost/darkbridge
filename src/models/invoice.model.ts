@@ -29,12 +29,14 @@ export interface InvoiceAttributes {
   total_from_line_items: number;
   currency_code: string;
   invoice_items: Readonly<InvoiceItemAttributes[]>;
+  total_to_be_charged: number;
+  total_to_be_paid_out: number;
 }
 
 // Some attributes are optional in `Invoice.build` and `Invoice.create` calls
-export type InvoiceCreationAttributes = Optional<
-  InvoiceAttributes,
-  'id' | 'created_at' | 'invoice_items'
+export type InvoiceCreationAttributes = Omit<
+  Optional<InvoiceAttributes, 'id' | 'created_at'>,
+  'invoice_items' | 'total_to_be_charged' | 'total_to_be_paid_out'
 >;
 
 export class Invoice
@@ -55,6 +57,8 @@ export class Invoice
   public total_from_line_items!: number;
   public currency_code!: string;
   public invoice_items: InvoiceItemAttributes[];
+  public total_to_be_charged!: number;
+  public total_to_be_paid_out!: number;
 
   // timestamps!
   public readonly created_at!: number;
@@ -148,6 +152,49 @@ export const InvoiceModel = Invoice.initWithPermissions(
     },
     invoice_items: {
       type: DataTypes.VIRTUAL,
+      visible: toServiceProvider,
+    },
+    total_to_be_charged: {
+      type: DataTypes.VIRTUAL(DataTypes.NUMBER),
+      swagger_type: 'integer',
+      get: function () {
+        const flat_rate = this.getDataValue('flat_rate');
+        const daily_rate = this.getDataValue('daily_rate');
+        const hourly_rate = this.getDataValue('hourly_rate');
+        const days_billed = this.getDataValue('days_billed');
+        const minutes_billed = this.getDataValue('minutes_billed');
+        const processing_fee = this.getDataValue('processing_fee');
+        const total_from_line_items = this.getDataValue(
+          'total_from_line_items',
+        );
+        const hourly_total = Math.ceil((hourly_rate * minutes_billed) / 60);
+        const daily_total = Math.ceil(daily_rate * days_billed);
+        return (
+          flat_rate +
+          hourly_total +
+          daily_total +
+          processing_fee +
+          total_from_line_items
+        );
+      },
+      visible: toServiceProvider,
+    },
+    total_to_be_paid_out: {
+      type: DataTypes.VIRTUAL(DataTypes.NUMBER),
+      swagger_type: 'integer',
+      get: function () {
+        const flat_rate = this.getDataValue('flat_rate');
+        const daily_rate = this.getDataValue('daily_rate');
+        const hourly_rate = this.getDataValue('hourly_rate');
+        const days_billed = this.getDataValue('days_billed');
+        const minutes_billed = this.getDataValue('minutes_billed');
+        const total_from_line_items = this.getDataValue(
+          'total_from_line_items',
+        );
+        const hourly_total = Math.ceil((hourly_rate * minutes_billed) / 60);
+        const daily_total = Math.ceil(daily_rate * days_billed);
+        return flat_rate + hourly_total + daily_total + total_from_line_items;
+      },
       visible: toServiceProvider,
     },
   },

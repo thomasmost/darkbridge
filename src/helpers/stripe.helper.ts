@@ -17,6 +17,17 @@ export type StripeAddress = {
 };
 
 export abstract class StripeHelper {
+  private static async generateAccountLink(accountID: string, origin: string) {
+    return stripe.accountLinks
+      .create({
+        type: 'account_onboarding',
+        account: accountID,
+        refresh_url: `${origin}/api/stripe/refresh`,
+        return_url: `${origin}/onboarding/complete`,
+      })
+      .then((link) => link.url);
+  }
+
   public static async onboardUser(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
     try {
@@ -26,7 +37,10 @@ export abstract class StripeHelper {
       await user.save();
 
       const origin = `${ctx.headers.origin}`;
-      const accountLinkURL = await generateAccountLink(account.id, origin);
+      const accountLinkURL = await StripeHelper.generateAccountLink(
+        account.id,
+        origin,
+      );
       ctx.body = { url: accountLinkURL };
     } catch (err) {
       ctx.status = 500;
@@ -48,7 +62,7 @@ export abstract class StripeHelper {
       const { stripe_express_account_id } = user;
       const origin = `https://${ctx.headers.host}`;
 
-      const accountLinkURL = await generateAccountLink(
+      const accountLinkURL = await StripeHelper.generateAccountLink(
         stripe_express_account_id,
         origin,
       );
@@ -109,15 +123,40 @@ export abstract class StripeHelper {
     client_profile.primary_payment_method_id = setup_intent.payment_method;
     await client_profile.save();
   }
-}
 
-function generateAccountLink(accountID: string, origin: string) {
-  return stripe.accountLinks
-    .create({
-      type: 'account_onboarding',
-      account: accountID,
-      refresh_url: `${origin}/api/stripe/refresh`,
-      return_url: `${origin}/onboarding/complete`,
-    })
-    .then((link) => link.url);
+  public static async createCharge(
+    stripe_customer_id: string,
+    stripe_payment_method_id: string,
+    stripe_service_provider_account_id: string,
+    amount: number,
+    application_fee_amount: number,
+    currency: 'usd',
+  ) {
+    if (amount % 1 !== 0) {
+      throw Error('Expected an amount in minor units; received a decimal');
+    }
+    try {
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        application_fee_amount,
+        currency,
+        customer: stripe_customer_id,
+        payment_method: stripe_payment_method_id,
+        off_session: true,
+        confirm: true,
+        transfer_data: {
+          destination: stripe_service_provider_account_id,
+        },
+      });
+      return { paymentIntent };
+    } catch (error) {
+      // Error code will be authentication_required if authentication is needed
+      console.log('Error code is: ', error.code);
+      const paymentIntentRetrieved = await stripe.paymentIntents.retrieve(
+        error.raw.payment_intent.id,
+      );
+      console.log('PI retrieved: ', paymentIntentRetrieved.id);
+      return { error };
+    }
+  }
 }
