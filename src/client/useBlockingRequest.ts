@@ -18,7 +18,7 @@ export function useBlockingRequest() {
       setRequestPending(true);
       const promise = requestHandler(...args);
       promise.then((result) => {
-        // setRequestPending(false);
+        setRequestPending(false);
         if (result.error) {
           setError(result.error?.message);
         } else {
