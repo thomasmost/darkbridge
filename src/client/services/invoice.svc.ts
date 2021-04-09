@@ -10,9 +10,15 @@ export const loadInvoice = async (
   if (!appointment.invoice_id) {
     return;
   }
-  const { error, data } = await getRequest(`invoice/${appointment.invoice_id}`);
+  const { error, data } = await getRequest<IInvoiceCore>(
+    `invoice/${appointment.invoice_id}`,
+  );
   if (error) {
     toast.error(error);
+  }
+  if (!data) {
+    // This really shouldn't be necessary, I should look into why data is possibly undefined at this point
+    return;
   }
   setInvoice(data);
 };

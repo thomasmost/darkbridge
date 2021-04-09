@@ -156,7 +156,7 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
       ...values,
       duration_minutes: Math.ceil(values.duration_hours * 60),
     };
-    const result = await postRequest<typeof data, AppointmentAttributes>(
+    const result = await postRequest<AppointmentAttributes, typeof data>(
       'appointment',
       'json',
       data,

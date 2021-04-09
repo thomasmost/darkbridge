@@ -1,15 +1,14 @@
 import { RouteComponentProps } from '@reach/router';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import styled from '@emotion/styled';
 
 import React, { useEffect, useState } from 'react';
 import { ClientProfileAttributes } from '../../models/client_profile.model';
 import { getRequest, postRequest } from '../services/api.svc';
 
 import { CardSetupForm } from '../components/CardSetupForm';
-import styled from '@emotion/styled';
 import { theme } from '../theme';
-import { ClientCard } from '../components/ClientCard';
 import { StripeCardChangeEvent } from '../components/CardSection';
 import { Card } from '../elements/Card';
 
@@ -101,10 +100,16 @@ export const AddClientPaymentMethod: React.FC<
   ] = useState<ClientProfileAttributes | null>(null);
 
   const initialLoad = async () => {
-    const clientPromise = getRequest(`client_profile/${client_profile_id}`);
-    const secretPromise = postRequest(`stripe/setup_intent`, 'json', {
-      client_profile_id,
-    });
+    const clientPromise = getRequest<ClientProfileAttributes>(
+      `client_profile/${client_profile_id}`,
+    );
+    const secretPromise = postRequest<{ client_secret: string }>(
+      `stripe/setup_intent`,
+      'json',
+      {
+        client_profile_id,
+      },
+    );
     const [clientRes, secretRes] = await Promise.all([
       clientPromise,
       secretPromise,

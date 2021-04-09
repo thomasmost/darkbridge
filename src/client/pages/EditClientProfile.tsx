@@ -23,7 +23,9 @@ export const EditClientProfile: React.FC<
     if (!client_profile_id) {
       return;
     }
-    getRequest(`client_profile/${client_profile_id}`).then((result) => {
+    getRequest<ClientProfileAttributes>(
+      `client_profile/${client_profile_id}`,
+    ).then((result) => {
       if (result.error) {
         return;
       }

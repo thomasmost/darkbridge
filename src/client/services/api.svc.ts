@@ -10,8 +10,7 @@ export interface ApiResultFailure {
 
 const routineErrorCodes = [400, 405, 409];
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function apiRequest<TData = any>(
+async function apiRequest<TData = unknown>(
   path: string,
   accept: 'text' | 'json',
   request?: RequestInit,
@@ -52,8 +51,7 @@ export async function apiRequest<TData = any>(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function postRequest<TBody, TData = any>(
+export async function postRequest<TData = unknown, TBody = unknown>(
   path: string,
   accept: 'text' | 'json',
   body?: TBody,
@@ -71,8 +69,7 @@ export async function postRequest<TBody, TData = any>(
   return apiRequest<TData>(path, accept, putRequest);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function putRequest<TBody = any, TData = any>(
+export async function putRequest<TData = unknown, TBody = unknown>(
   path: string,
   accept: 'text' | 'json',
   body?: TBody,
@@ -90,8 +87,7 @@ export async function putRequest<TBody = any, TData = any>(
   return apiRequest<TData>(path, accept, putRequest);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getRequest<TData = any>(
+export async function getRequest<TData = unknown>(
   path: string,
 ): Promise<ApiResultSuccess<TData> | ApiResultFailure> {
   return apiRequest<TData>(path, 'json');

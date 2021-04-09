@@ -115,7 +115,7 @@ export const RescheduleAppointment: React.FC<
     if (!currentAppointment) {
       return;
     }
-    const result = await putRequest<typeof data, AppointmentAttributes>(
+    const result = await putRequest<AppointmentAttributes, typeof data>(
       `appointment/${currentAppointment.id}/reschedule`,
       'json',
       data,

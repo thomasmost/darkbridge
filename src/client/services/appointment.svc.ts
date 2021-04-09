@@ -1,18 +1,18 @@
 import { endOfWeek, startOfWeek } from 'date-fns';
 import { AppointmentAttributes } from '../../models/appointment.model';
-import { apiRequest } from './api.svc';
+import { getRequest } from './api.svc';
 
 export function getAppointments() {
-  return apiRequest('appointment', 'json');
+  return getRequest('appointment');
 }
 
 export function getDailyInfo() {
-  return apiRequest<{
+  return getRequest<{
     summary: string;
     appointments: AppointmentAttributes[];
     nextAppointment: AppointmentAttributes;
     currentAppointment: AppointmentAttributes;
-  }>('calendar/daily', 'json');
+  }>('calendar/daily');
 }
 
 type AppointmentQueryParams = {
@@ -47,7 +47,7 @@ export function queryAppointments(queryParams: AppointmentQueryParams) {
       queryUrl += `ids=${id}&`;
     }
   }
-  return apiRequest(queryUrl, 'json');
+  return getRequest(queryUrl);
 }
 
 export function getCalendar() {
