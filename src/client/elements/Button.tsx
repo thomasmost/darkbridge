@@ -34,6 +34,7 @@ export const Button: React.FC<IButtonProps> = ({
   variant,
   onClick,
   onSubmit,
+  ...args
 }) => {
   if (!variant) {
     variant = 'primary';
@@ -47,7 +48,7 @@ export const Button: React.FC<IButtonProps> = ({
   `;
 
   return (
-    <StyledButton onClick={onClick} onSubmit={onSubmit}>
+    <StyledButton onClick={onClick} onSubmit={onSubmit} {...args}>
       {children}
     </StyledButton>
   );
