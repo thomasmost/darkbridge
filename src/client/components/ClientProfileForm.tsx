@@ -52,12 +52,14 @@ const selectStyles: Styles<any, false> = {
 type ClientProfileFormProps = {
   onSubmit: (values: ClientProfileFormValues) => void;
   client_profile?: ClientProfileAttributes;
+  isRequestPending: boolean;
   submitText: string;
 };
 
 export const ClientProfileForm: React.FC<ClientProfileFormProps> = ({
   onSubmit,
   client_profile,
+  isRequestPending,
   submitText,
 }) => {
   const states = useMemo(
@@ -130,8 +132,14 @@ export const ClientProfileForm: React.FC<ClientProfileFormProps> = ({
             <Input name="phone" ref={register()} />
           </div>
         </FlexColumns>
-        <Button onClick={handleSubmit(onSubmit)}>{submitText}</Button>
-        <Button variant="secondary" onClick={() => navigate(-1)}>
+        <Button disabled={isRequestPending} onClick={handleSubmit(onSubmit)}>
+          {submitText}
+        </Button>
+        <Button
+          disabled={isRequestPending}
+          variant="secondary"
+          onClick={() => navigate(-1)}
+        >
           Cancel
         </Button>
       </form>

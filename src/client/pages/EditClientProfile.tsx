@@ -7,11 +7,13 @@ import {
   ClientProfileForm,
   ClientProfileFormValues,
 } from '../components/ClientProfileForm';
+import { useBlockingRequest } from '../useBlockingRequest';
 
 export const EditClientProfile: React.FC<
   RouteComponentProps<{ client_profile_id: string }>
 > = ({ client_profile_id }) => {
   const navigate = useNavigate();
+  const { blockFor, isRequestPending } = useBlockingRequest();
   const [
     clientProfile,
     setClientProfile,
@@ -33,7 +35,7 @@ export const EditClientProfile: React.FC<
     return null;
   }
 
-  const onSubmit = async (data: ClientProfileFormValues) => {
+  const onSubmit = blockFor(async (data: ClientProfileFormValues) => {
     const result = await putRequest<ClientProfileFormValues>(
       `client_profile/${client_profile_id}`,
       'json',
@@ -43,11 +45,13 @@ export const EditClientProfile: React.FC<
       toast.success('Client Updated');
       navigate('/clients');
     }
-  };
+    return result;
+  });
   return (
     <ClientProfileForm
       client_profile={clientProfile}
       onSubmit={onSubmit}
+      isRequestPending={isRequestPending}
       submitText="Update Client"
     />
   );
