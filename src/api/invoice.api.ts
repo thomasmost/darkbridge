@@ -30,6 +30,7 @@ import { totalToBePaidOut } from '../helpers/invoice.helper';
 import { InvoicePaymentMethod } from '../shared/enums';
 import { StripeHelper } from '../helpers/stripe.helper';
 import { ClientProfile } from '../models/client_profile.model';
+import { User } from '../models/user.model';
 
 const postParams = {
   appointment_id: {
@@ -170,23 +171,7 @@ export class InvoiceAPI {
     if (!client_profile) {
       throw Error('This should never happen');
     }
-    const { stripe_customer_id, primary_payment_method_id } = client_profile;
-    if (stripe_customer_id && primary_payment_method_id) {
-      const res = await StripeHelper.createCharge(
-        stripe_customer_id,
-        primary_payment_method_id,
-        user.stripe_express_account_id,
-        invoice.total_to_be_charged,
-        invoice.processing_fee,
-        'usd',
-      );
-      if (res.error) {
-        console.log('Failed to create a charge');
-      } else {
-        console.log(res.paymentIntent);
-        await invoice.update({ status: 'paid' });
-      }
-    }
+    handleAutomaticPayment(invoice, user, client_profile);
     invoice.invoice_items = items;
     ctx.status = 200;
     ctx.body = invoice;
@@ -268,4 +253,28 @@ function processLineItems(
     itemPromises.push(item_promise);
   }
   return { itemPromises, sumTotalFromLineItems };
+}
+
+async function handleAutomaticPayment(
+  invoice: Invoice,
+  user: User,
+  client_profile: ClientProfile,
+) {
+  const { stripe_customer_id, primary_payment_method_id } = client_profile;
+  if (stripe_customer_id && primary_payment_method_id) {
+    const res = await StripeHelper.createCharge(
+      stripe_customer_id,
+      primary_payment_method_id,
+      user.stripe_express_account_id,
+      invoice.total_to_be_charged,
+      invoice.processing_fee,
+      'usd',
+    );
+    if (res.error) {
+      console.log('Failed to create a charge');
+    } else {
+      console.log(res.paymentIntent);
+      await invoice.update({ status: 'paid' });
+    }
+  }
 }
