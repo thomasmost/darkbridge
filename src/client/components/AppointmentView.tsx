@@ -8,7 +8,7 @@ import { ClientCard } from './ClientCard';
 import { Icon } from '../elements/Icon';
 import { Link } from '@reach/router';
 import { Card } from '../elements/Card';
-import { apiRequest } from '../services/api.svc';
+import { putRequest } from '../services/api.svc';
 import { Action, DispatchContext } from '../reducers';
 
 const HeadingText = styled.h2`
@@ -80,12 +80,7 @@ const startAppointment = async (
       appointment_id,
     },
   });
-  await apiRequest(`appointment/${appointment_id}/start`, 'text', {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    method: 'PUT',
-  });
+  await putRequest(`appointment/${appointment_id}/start`, 'text', {});
 };
 
 export const renderStartCard = (

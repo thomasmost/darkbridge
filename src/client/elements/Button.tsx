@@ -17,15 +17,15 @@ type ButtonTheme = {
 const buttonTheme: Record<ButtonType, ButtonTheme> = {
   primary: {
     activeColor: theme.buttonColorActive,
-    disabledColor: theme.buttonColorDisabled,
+    disabledColor: theme.buttonColorDisabledPrimary,
   },
   warning: {
     activeColor: theme.warningColor,
-    disabledColor: theme.buttonColorDisabled,
+    disabledColor: theme.buttonColorDisabledWarning,
   },
   secondary: {
     activeColor: theme.buttonColorActiveSecondary,
-    disabledColor: theme.buttonColorDisabled,
+    disabledColor: theme.buttonColorDisabledDefault,
   },
 };
 
@@ -45,6 +45,9 @@ export const Button: React.FC<IButtonProps> = ({
     padding: 10px;
     margin-top: 10px;
     background-color: ${buttonTheme[variant].activeColor};
+    &:disabled {
+      background-color: ${buttonTheme[variant].disabledColor};
+    }
   `;
 
   return (

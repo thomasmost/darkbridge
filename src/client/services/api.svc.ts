@@ -56,7 +56,7 @@ export async function apiRequest<TData = any>(
 export async function postRequest<TBody, TData = any>(
   path: string,
   accept: 'text' | 'json',
-  body: TBody,
+  body?: TBody,
 ): Promise<ApiResultSuccess<TData> | ApiResultFailure> {
   if (typeof body === 'string') {
     throw Error('A POST request body should be an object');
@@ -66,7 +66,7 @@ export async function postRequest<TBody, TData = any>(
       'Content-Type': 'application/json',
     },
     method: 'POST',
-    body: JSON.stringify(body),
+    body: body && JSON.stringify(body),
   };
   return apiRequest<TData>(path, accept, putRequest);
 }
@@ -75,7 +75,7 @@ export async function postRequest<TBody, TData = any>(
 export async function putRequest<TBody = any, TData = any>(
   path: string,
   accept: 'text' | 'json',
-  body: TBody,
+  body?: TBody,
 ): Promise<ApiResultSuccess<TData> | ApiResultFailure> {
   if (typeof body === 'string') {
     throw Error('A PUT request body should be an object');
@@ -85,7 +85,7 @@ export async function putRequest<TBody = any, TData = any>(
       'Content-Type': 'application/json',
     },
     method: 'PUT',
-    body: JSON.stringify(body),
+    body: body && JSON.stringify(body),
   };
   return apiRequest<TData>(path, accept, putRequest);
 }

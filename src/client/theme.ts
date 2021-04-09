@@ -30,7 +30,10 @@ class TeddyWebTheme {
   public boxShadowColor = lightGray;
   public buttonColorActive = teddyBlueLight;
   public buttonColorActiveSecondary = mediumGray;
-  public buttonColorDisabled = lightGray;
+  public buttonColorDisabledDefault = lightGray;
+  public buttonColorDisabledPrimary = bluePastel;
+  public buttonColorDisabledWarning = redPastel;
+  public buttonColorDisabledAccent = greenPastel;
   public buttonColorPassive = teddyBlueLight;
   public buttonTextColor = white;
   public cardHeaderColor = teddyBlueLight;

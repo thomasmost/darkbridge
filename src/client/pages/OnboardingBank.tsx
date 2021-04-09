@@ -3,7 +3,7 @@ import { Link, RouteComponentProps, useNavigate } from '@reach/router';
 import styled from '@emotion/styled';
 import { theme } from '../theme';
 import { OnboardingNav, P } from '../elements/OnboardingElements';
-import { apiRequest } from '../services/api.svc';
+import { postRequest } from '../services/api.svc';
 import { toast } from 'react-toastify';
 import { Label } from '../elements/Label';
 
@@ -46,15 +46,9 @@ export const OnboardingBank: React.FC<RouteComponentProps> = () => {
   };
 
   const createExpressAccount = async () => {
-    const { data, error } = await apiRequest<{ url: string }>(
+    const { data, error } = await postRequest<{ url: string }>(
       'stripe/onboard',
       'json',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      },
     );
     if (error || !data) {
       toast.error(error);

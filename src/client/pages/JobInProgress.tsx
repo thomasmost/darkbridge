@@ -8,7 +8,7 @@ import { TimeCard } from '../components/TimeCard';
 import { Button } from '../elements/Button';
 import { Label } from '../elements/Label';
 import { DispatchContext } from '../reducers';
-import { apiRequest } from '../services/api.svc';
+import { putRequest } from '../services/api.svc';
 import { theme } from '../theme';
 import { useInterval } from '../useInterval';
 
@@ -57,16 +57,10 @@ export const JobInProgress: React.FC<JobInProgressProps> = ({
         appointment_id,
       },
     });
-    const { error } = await apiRequest(
+    const { error } = await putRequest(
       `appointment/${appointment_id}/complete`,
       'text',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'PUT',
-        body: JSON.stringify(values),
-      },
+      values,
     );
     if (!error) {
       navigate(`/payment/${appointment_id}/invoice`);

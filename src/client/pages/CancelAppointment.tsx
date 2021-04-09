@@ -16,7 +16,7 @@ import { Button } from '../elements/Button';
 import { Input } from '../elements/Input';
 
 import { withStyles } from '@material-ui/core/styles';
-import { apiRequest } from '../services/api.svc';
+import { putRequest } from '../services/api.svc';
 
 const StyledRadio = withStyles({
   root: {
@@ -91,16 +91,10 @@ const CancelationReasonForm: React.FC<{ appointment_id: string }> = ({
       ...values,
       appointment_id,
     };
-    const { error } = await apiRequest(
+    const { error } = await putRequest(
       `appointment/${appointment_id}/cancel`,
       'text',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'PUT',
-        body: JSON.stringify(body),
-      },
+      body,
     );
     if (!error) {
       navigate(-1);

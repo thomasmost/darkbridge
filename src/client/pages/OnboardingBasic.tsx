@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { H3, OnboardingNav, P } from '../elements/OnboardingElements';
 import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
-import { apiRequest } from '../services/api.svc';
+import { putRequest } from '../services/api.svc';
 import { Label } from '../elements/Label';
 import { FlexColumns } from '../elements/FlexColumns';
 
@@ -39,23 +39,11 @@ export const OnboardingBasic: React.FC<RouteComponentProps> = () => {
       given_name,
       phone,
     };
-    await apiRequest('user/self', 'text', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'PUT',
-      body: JSON.stringify(userUpdates),
-    });
+    await putRequest('user/self', 'text', userUpdates);
     updateUser(userUpdates);
     if (company_name) {
-      await apiRequest('contractor_profile', 'text', {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'PUT',
-        body: JSON.stringify({
-          company_name,
-        }),
+      await putRequest('contractor_profile', 'text', {
+        company_name,
       });
     }
     navigate('work');

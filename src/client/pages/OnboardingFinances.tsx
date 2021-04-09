@@ -6,7 +6,7 @@ import { Label } from '../elements/Label';
 import { H3, Instruction, OnboardingNav } from '../elements/OnboardingElements';
 import { Input } from '../elements/Input';
 import { useAuth } from '../AuthProvider';
-import { apiRequest } from '../services/api.svc';
+import { putRequest } from '../services/api.svc';
 
 type FinancesFormFields = {
   appointment_fee: number;
@@ -26,13 +26,7 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
 
   const onSubmit = async (data: FinancesFormFields) => {
     console.log(data);
-    await apiRequest('contractor_profile', 'text', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+    await putRequest('contractor_profile', 'text', data);
     navigate('bank');
   };
   return (
