@@ -8,7 +8,7 @@ import { InvoiceSection } from '../components/InvoiceSection';
 import styled from '@emotion/styled';
 import { IInvoicePostBody } from '../../shared/invoice.dto';
 import { theme } from '../theme';
-import { putRequest } from '../services/api.svc';
+import { postRequest } from '../services/api.svc';
 import { InvoiceItemType } from '../../shared/enums';
 import { toMajorUnits } from '../../helpers/currency.helper';
 
@@ -70,7 +70,7 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
   ).toFixed(2);
   const onSubmit = async () => {
     invoice.invoice_items = invoice.invoice_items || [];
-    const { error } = await putRequest('invoice', 'json', invoice);
+    const { error } = await postRequest('invoice', 'json', invoice);
     if (!error) {
       navigate('success');
     }

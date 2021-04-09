@@ -21,6 +21,7 @@ import { getRequest, postRequest } from '../services/api.svc';
 import { Select } from '../components/Select';
 import { Button } from '../elements/Button';
 import { DateTimeHelper } from '../../helpers/datetime.helper';
+import { useBlockingRequest } from '../useBlockingRequest';
 
 interface IFormValues extends Omit<IAppointmentPostBody, 'duration_minutes'> {
   duration_hours: number;
@@ -138,6 +139,7 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
       duration_hours: 1,
     },
   });
+  const { blockFor, isRequestPending } = useBlockingRequest();
   useEffect(() => {
     register('client_profile_id');
     register('datetime_local');
@@ -151,7 +153,7 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
     setValue('datetime_local', DateTimeHelper.formatToPureDateTime(date));
     setDate(date);
   };
-  const onSubmit = async (values: IFormValues) => {
+  const onSubmit = blockFor(async (values: IFormValues) => {
     const data = {
       ...values,
       duration_minutes: Math.ceil(values.duration_hours * 60),
@@ -165,7 +167,8 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
       toast.success('Appointment Created');
       navigate('/');
     }
-  };
+    return result;
+  });
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -240,7 +243,9 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
           styles={selectStyles}
           onChange={(selection) => setValue('priority', selection?.value)}
         />
-        <Button onClick={handleSubmit(onSubmit)}>Add Appointment</Button>
+        <Button disabled={isRequestPending} onClick={handleSubmit(onSubmit)}>
+          Add Appointment
+        </Button>
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Cancel
         </Button>

@@ -77,6 +77,7 @@ const renderStars = (rating = 0, setRating: (index: number) => void) => {
   for (let i = 0; i < countStars; i++) {
     stars.push(
       <svg
+        key={i}
         width="30"
         height="28"
         viewBox="0 0 24 22"
