@@ -14,6 +14,7 @@ import { DispatchContext, StateContext } from '../reducers';
 import { queryAppointments } from '../services/appointment.svc';
 import { Button } from '../elements/Button';
 import { Input } from '../elements/Input';
+import { Spacer } from '../elements/Spacer';
 
 import { putRequest } from '../services/api.svc';
 import { FlexColumns } from '../elements/FlexColumns';
@@ -56,11 +57,6 @@ const Label = styled.label`
   color: ${theme.subheaderTextColor};
   display: block;
   margin-bottom: 10px;
-`;
-
-const Spacer = styled.div`
-  width: 100%;
-  height: 20px;
 `;
 
 export const RescheduleAppointment: React.FC<
@@ -132,7 +128,7 @@ export const RescheduleAppointment: React.FC<
   return (
     <div>
       <AppointmentCard appointment={currentAppointment} warning />
-      <Spacer />
+      <Spacer y={4} />
       <FlexColumns>
         <div>
           <Label>Time</Label>

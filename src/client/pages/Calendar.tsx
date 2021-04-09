@@ -11,15 +11,11 @@ import { FlexColumns } from '../elements/FlexColumns';
 import { getCalendar } from '../services/appointment.svc';
 import { Icon } from '../elements/Icon';
 import { theme } from '../theme';
+import { Spacer } from '../elements/Spacer';
 
 const StyledLink = styled(Link)`
   color: ${theme.buttonColorActive};
   font-size: 2em;
-`;
-
-const Spacer = styled.div`
-  height: 20px;
-  width: 100%;
 `;
 
 const CalendarHeader = styled.div`
@@ -111,11 +107,11 @@ export const Calendar: React.FC<RouteComponentProps> = () => {
           <Icon name="Plus" />
         </StyledLink>
       </FlexColumns>
-      <Spacer />
+      <Spacer y={4} />
       {days?.map((day) => (
         <CalendarDay key={day} headerUnixStr={day} appointments={byDay[day]} />
       ))}
-      <Spacer />
+      <Spacer y={4} />
     </div>
   );
 };

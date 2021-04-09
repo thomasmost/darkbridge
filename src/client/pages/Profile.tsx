@@ -5,6 +5,7 @@ import { ContractorProfileAttributes } from '../../models/contractor_profile.mod
 import { useAuth } from '../AuthProvider';
 import { Card } from '../elements/Card';
 import { Label } from '../elements/Label';
+import { Spacer } from '../elements/Spacer';
 import { theme } from '../theme';
 
 const HeadingText = styled.h1`
@@ -84,6 +85,7 @@ export const Profile: React.FC<RouteComponentProps> = () => {
         </div>
       </Card>
       {renderContractorProfile(contractor_profile)}
+      <Spacer y={4} />
       <Link to="/clients">View your clients</Link>
     </div>
   );
