@@ -104,6 +104,7 @@ create table `invoice` (
   days_billed INT NULL,
   total_from_line_items INT NOT NULL DEFAULT 0,
   currency_code VARCHAR(255) NOT NULL,
+  stripe_payment_intent_id VARCHAR(255) NULL,
   INDEX(service_provider_user_id),
   INDEX(client_profile_id)
 );
