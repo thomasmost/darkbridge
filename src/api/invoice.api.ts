@@ -13,7 +13,7 @@ import {
 
 import { AuthenticatedRequestContext } from './types';
 import { baseCodes, swaggerRefFromModel } from '../helpers/swagger.helper';
-import { Invoice, InvoiceModel, InvoiceStatus } from '../models/invoice.model';
+import { Invoice, InvoiceModel } from '../models/invoice.model';
 import {
   AuthenticationError,
   LogicalError,
@@ -27,7 +27,7 @@ import {
 } from '../models/invoice_item.model';
 import { totalToBePaidOut } from '../helpers/invoice.helper';
 // import { authUser } from './middlewares';
-import { InvoicePaymentMethod } from '../shared/enums';
+import { InvoicePaymentMethod, InvoiceStatus } from '../shared/enums';
 import { StripeHelper } from '../helpers/stripe.helper';
 import { ClientProfile } from '../models/client_profile.model';
 import { User } from '../models/user.model';
@@ -275,7 +275,7 @@ async function handleAutomaticPayment(
       invoice.processing_fee,
       'usd',
     );
-    return handlePaymentIntentPromise(invoice, true, promise);
+    return handlePaymentIntentPromise(invoice, promise);
   } else if (stripe_customer_id) {
     const promise = StripeHelper.createPendingCharge(
       stripe_customer_id,
@@ -284,14 +284,13 @@ async function handleAutomaticPayment(
       invoice.processing_fee,
       'usd',
     );
-    return handlePaymentIntentPromise(invoice, false, promise);
+    return handlePaymentIntentPromise(invoice, promise);
   }
   return null;
 }
 
 async function handlePaymentIntentPromise(
   invoice: Invoice,
-  payment_stored: boolean,
   payment_intent_promise: Promise<
     | {
         paymentIntent: Stripe.Response<Stripe.PaymentIntent>;
@@ -309,11 +308,10 @@ async function handlePaymentIntentPromise(
     return null;
   } else {
     const { paymentIntent } = res;
-    console.log(paymentIntent);
     if (!paymentIntent) {
       throw Error('payment intent undefined?');
     }
-    if (payment_stored) {
+    if (paymentIntent.status === 'succeeded') {
       await invoice.update({ status: 'paid' });
     }
 

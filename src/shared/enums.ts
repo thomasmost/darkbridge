@@ -24,3 +24,8 @@ export enum InvoiceItemType {
   materials = 'materials',
   tax = 'tax',
 }
+
+export enum InvoiceStatus {
+  pending = 'pending',
+  paid = 'paid',
+}

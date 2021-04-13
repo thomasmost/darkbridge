@@ -38,4 +38,5 @@ export interface IInvoicePostBody
     > {
   appointment_id: string;
   invoice_items: InvoiceItemPostBody[];
+  client_secret?: string;
 }
