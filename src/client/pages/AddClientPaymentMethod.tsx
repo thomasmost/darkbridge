@@ -7,10 +7,10 @@ import React, { useEffect, useState } from 'react';
 import { ClientProfileAttributes } from '../../models/client_profile.model';
 import { getRequest, postRequest } from '../services/api.svc';
 
-import { CardSetupForm } from '../components/CardSetupForm';
 import { theme } from '../theme';
 import { StripeCardChangeEvent } from '../components/CardSection';
 import { Card } from '../elements/Card';
+import { CardSetupOffSession } from '../components/CardSetupOffSession';
 
 // todo(thomas) obnoxious typescript error during SSR
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -134,7 +134,7 @@ export const AddClientPaymentMethod: React.FC<
       <Card>{clientProfile.full_name}</Card>
       <Wrapper>
         <SvgContainer>{renderSvg(dots)}</SvgContainer>
-        <CardSetupForm
+        <CardSetupOffSession
           client_secret={client_secret}
           client_profile={clientProfile}
           onChange={(event) => changeDotsHandler(event, setDots)}

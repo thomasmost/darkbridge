@@ -6,11 +6,12 @@ import { Button } from '../elements/Button';
 import { Label } from '../elements/Label';
 import { InvoiceSection } from '../components/InvoiceSection';
 import styled from '@emotion/styled';
-import { IInvoicePostBody } from '../../shared/invoice.dto';
+import { IInvoiceCore, IInvoicePostBody } from '../../shared/invoice.dto';
 import { theme } from '../theme';
 import { postRequest } from '../services/api.svc';
-import { InvoiceItemType, InvoicePaymentMethod } from '../../shared/enums';
+import { InvoiceItemType, InvoiceStatus } from '../../shared/enums';
 import { toMajorUnits } from '../../helpers/currency.helper';
+import { InvoiceAttributes } from '../../models/invoice.model';
 
 const InfoContainer = styled.div`
   margin: 20px;
@@ -26,31 +27,35 @@ const InfoContainer = styled.div`
 type InvoiceReviewProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
   invoice: IInvoicePostBody | null;
+  setInvoice: (invoice: InvoiceAttributes) => void;
   includeTaxes: boolean;
 };
 
 const onSubmit = async (
   invoice: IInvoicePostBody,
-  appointment: AppointmentAttributes,
+  setInvoice: (invoice: InvoiceAttributes) => void,
   navigate: NavigateFn,
 ) => {
-  if (
-    invoice.payment_method === InvoicePaymentMethod.credit_card &&
-    !appointment.client_profile?.has_primary_payment_method
-  ) {
-    navigate('add-card');
-    return;
-  }
   invoice.invoice_items = invoice.invoice_items || [];
-  const { error } = await postRequest('invoice', 'json', invoice);
-  if (!error) {
-    navigate('success');
+  const { /*error,*/ data } = await postRequest<InvoiceAttributes>(
+    'invoice',
+    'json',
+    invoice,
+  );
+  if (data) {
+    setInvoice(data);
+    if (data?.status === InvoiceStatus.paid) {
+      navigate('success');
+    } else {
+      navigate('add-card');
+    }
   }
 };
 
 export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
   appointment,
   invoice,
+  setInvoice,
   includeTaxes,
 }) => {
   const navigate = useNavigate();
@@ -134,7 +139,7 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
           </label>
         </InfoContainer>
       )}
-      <Button onClick={() => onSubmit(invoice, appointment, navigate)}>
+      <Button onClick={() => onSubmit(invoice, setInvoice, navigate)}>
         Confirm Payment
       </Button>
     </div>

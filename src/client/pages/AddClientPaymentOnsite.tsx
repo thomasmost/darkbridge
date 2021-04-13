@@ -4,11 +4,14 @@ import { NavigateFn, RouteComponentProps, useNavigate } from '@reach/router';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { Button } from '../elements/Button';
 import styled from '@emotion/styled';
-import { IInvoicePostBody } from '../../shared/invoice.dto';
 import { theme } from '../theme';
 import { postRequest } from '../services/api.svc';
-import { InvoiceItemType, InvoicePaymentMethod } from '../../shared/enums';
+import { InvoiceItemType } from '../../shared/enums';
 import { toMajorUnits } from '../../helpers/currency.helper';
+import { CardSetupLive } from '../components/CardSetupLive';
+import { InvoiceAttributes } from '../../models/invoice.model';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 
 const InfoContainer = styled.div`
   margin: 20px;
@@ -23,28 +26,11 @@ const InfoContainer = styled.div`
 
 type AddClientPaymentOnsiteProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
-  invoice: IInvoicePostBody | null;
+  invoice: InvoiceAttributes | null;
   includeTaxes: boolean;
 };
 
-const onSubmit = async (
-  invoice: IInvoicePostBody,
-  appointment: AppointmentAttributes,
-  navigate: NavigateFn,
-) => {
-  if (
-    invoice.payment_method === InvoicePaymentMethod.credit_card &&
-    !appointment.client_profile?.has_primary_payment_method
-  ) {
-    navigate('add-payment');
-    return;
-  }
-  invoice.invoice_items = invoice.invoice_items || [];
-  const { error } = await postRequest('invoice', 'json', invoice);
-  if (!error) {
-    navigate('success');
-  }
-};
+const stripePromise = loadStripe((global as any).config.env.STRIPE_PUBLIC_KEY);
 
 export const AddClientPaymentOnsite: React.FC<AddClientPaymentOnsiteProps> = ({
   appointment,
@@ -52,8 +38,7 @@ export const AddClientPaymentOnsite: React.FC<AddClientPaymentOnsiteProps> = ({
 }) => {
   const navigate = useNavigate();
   if (!invoice) {
-    navigate('invoice');
-    return null;
+    throw Error('Must have an invoice by this stage');
   }
   const {
     payment_method,
@@ -64,6 +49,7 @@ export const AddClientPaymentOnsite: React.FC<AddClientPaymentOnsiteProps> = ({
     days_billed,
     processing_fee,
     invoice_items,
+    client_secret,
   } = invoice;
   const hourlyTotalInMinorUnits = (hourly_rate * minutes_billed) / 60;
   const dailyTotalInMinorUnits = daily_rate * days_billed;
@@ -84,17 +70,34 @@ export const AddClientPaymentOnsite: React.FC<AddClientPaymentOnsiteProps> = ({
   const total = toMajorUnits(
     time_total + materials_total + processing_fee + tax_total,
   );
+
+  const clientProfile = appointment.client_profile;
+
+  if (!clientProfile || !client_secret || !invoice) {
+    return <div>Loading...</div>;
+  }
+
+  if (!invoice.id) {
+    throw Error('should not happen at this point; need to fix typings');
+  }
+
   return (
-    <div>
+    <Elements stripe={stripePromise}>
       <InfoContainer>
         <label>
           Total: <span>${total}</span>
         </label>
         <div>Paid by {payment_method === 'cash' ? 'cash' : 'card'}</div>
       </InfoContainer>
-      <Button onClick={() => onSubmit(invoice, appointment, navigate)}>
+      <CardSetupLive
+        client_secret={client_secret}
+        invoice_id={invoice.id}
+        client_profile={clientProfile}
+        onChange={(event) => null}
+      />
+      {/* <Button onClick={() => onSubmit(invoice, appointment, navigate)}>
         Confirm Payment
-      </Button>
-    </div>
+      </Button> */}
+    </Elements>
   );
 };

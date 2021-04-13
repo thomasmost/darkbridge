@@ -18,6 +18,9 @@ import {
 import { StripeHelper } from '../helpers/stripe.helper';
 import { authUser } from './middlewares';
 import { Stripe } from 'stripe';
+import { InvoiceStatus } from '../shared/enums';
+import { Invoice } from '../models/invoice.model';
+import { NotFoundError } from '../helpers/error.helper';
 
 @prefix('/stripe')
 @securityAll([{ token: [] }])
@@ -88,6 +91,46 @@ export class StripeAPI {
       setupIntent: Stripe.SetupIntent;
     };
     await StripeHelper.addPrimaryPaymentMethod(client_profile_id, setupIntent);
+    ctx.status = 204;
+  }
+
+  @request('post', '/confirm_invoice_payment')
+  @operation('apiStripe_confirmInvoicePayment')
+  @summary('confirm payment on a pending invoice')
+  @body({
+    client_profile_id: {
+      type: 'string',
+      required: true,
+      description: 'client profile id for invoice',
+    },
+    invoice_id: {
+      type: 'string',
+      required: true,
+      description: 'invoice id to pay',
+    },
+    paymentIntent: swaggerRefFromDefinitionName(
+      'SuccessfulStripePaymentIntent',
+    ),
+  })
+  @responses({
+    ...baseCodes([204, 401]),
+  })
+  public static async confirmInvoicePayment(ctx: AuthenticatedRequestContext) {
+    const { client_profile_id, invoice_id, paymentIntent } = ctx.request
+      .body as {
+      client_profile_id: string;
+      invoice_id: string;
+      paymentIntent: Stripe.PaymentIntent;
+    };
+    if (paymentIntent.status === 'succeeded') {
+      const invoice = await Invoice.findByPk(invoice_id);
+      if (!invoice || invoice.client_profile_id !== client_profile_id) {
+        throw new NotFoundError();
+      }
+      invoice.status = InvoiceStatus.paid;
+      await invoice.save();
+    }
+    // await StripeHelper.addPrimaryPaymentMethod(client_profile_id, setupIntent);
     ctx.status = 204;
   }
 

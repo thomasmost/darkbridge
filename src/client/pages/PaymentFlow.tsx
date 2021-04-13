@@ -16,6 +16,7 @@ import { PaymentSuccess } from './PaymentSuccess';
 import { InvoiceView } from './InvoiceView';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { AddClientPaymentOnsite } from './AddClientPaymentOnsite';
+import { InvoiceAttributes } from '../../models/invoice.model';
 
 const HeadingText = styled.h2`
   margin-bottom: 20px;
@@ -66,7 +67,11 @@ export const PaymentFlow: React.FC<
   const { appointments } = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const navigate = useNavigate();
-  const [invoice, setInvoice] = useState<IInvoicePostBody | null>(null);
+  const [invoiceDraft, setInvoiceDraft] = useState<IInvoicePostBody | null>(
+    null,
+  );
+  const [invoice, setInvoice] = useState<InvoiceAttributes | null>(null);
+
   const {
     billingMethod,
     setBillingMethod,
@@ -111,8 +116,8 @@ export const PaymentFlow: React.FC<
       <Router>
         <InvoiceForm
           appointment={currentAppointment}
-          invoice={invoice}
-          setInvoice={setInvoice}
+          invoice={invoiceDraft}
+          setInvoice={setInvoiceDraft}
           billingMethod={billingMethod}
           setBillingMethod={setBillingMethod}
           includeAppointmentFee={includeAppointmentFee}
@@ -123,7 +128,8 @@ export const PaymentFlow: React.FC<
         />
         <InvoiceReview
           appointment={currentAppointment}
-          invoice={invoice}
+          invoice={invoiceDraft}
+          setInvoice={setInvoice}
           includeTaxes={includeTaxes}
           path="review"
         />
@@ -136,7 +142,7 @@ export const PaymentFlow: React.FC<
         />
         <PaymentSuccess
           appointment={currentAppointment}
-          invoice={invoice}
+          invoice={invoiceDraft}
           path="success"
         />
       </Router>

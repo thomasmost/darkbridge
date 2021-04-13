@@ -256,6 +256,17 @@ api.swagger({
           },
         },
       },
+      SuccessfulStripePaymentIntent: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+          },
+          created_at: {
+            type: 'integer',
+          },
+        },
+      },
       OmniResponseV0: {
         type: 'object',
         properties: {

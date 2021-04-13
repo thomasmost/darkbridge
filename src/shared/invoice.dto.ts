@@ -24,6 +24,7 @@ export interface IInvoiceCore
     | 'total_from_line_items'
   > {
   invoice_items: InvoiceItemPostBody[];
+  client_secret?: string;
 }
 
 export interface IInvoicePostBody
