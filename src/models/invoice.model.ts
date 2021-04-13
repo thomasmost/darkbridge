@@ -27,6 +27,7 @@ export interface InvoiceAttributes {
   total_to_be_charged: number;
   total_to_be_paid_out: number;
   client_secret: string | null;
+  stripe_payment_intent_id: string;
 }
 
 // Some attributes are optional in `Invoice.build` and `Invoice.create` calls
@@ -36,6 +37,7 @@ export type InvoiceCreationAttributes = Omit<
   | 'total_to_be_charged'
   | 'total_to_be_paid_out'
   | 'client_secret'
+  | 'stripe_payment_intent_id'
 >;
 
 export class Invoice
@@ -58,6 +60,7 @@ export class Invoice
   public invoice_items: InvoiceItemAttributes[];
   public total_to_be_charged!: number;
   public total_to_be_paid_out!: number;
+  public stripe_payment_intent_id!: string;
 
   // temporary virtual for storing a stripe secret
   public client_secret!: string | null;
@@ -197,6 +200,10 @@ export const InvoiceModel = Invoice.initWithPermissions(
         const daily_total = Math.ceil(daily_rate * days_billed);
         return flat_rate + hourly_total + daily_total + total_from_line_items;
       },
+      visible: toServiceProvider,
+    },
+    stripe_payment_intent_id: {
+      type: DataTypes.STRING,
       visible: toServiceProvider,
     },
     client_secret: {

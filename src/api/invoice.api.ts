@@ -311,8 +311,11 @@ async function handlePaymentIntentPromise(
     if (!paymentIntent) {
       throw Error('payment intent undefined?');
     }
+    const stripe_payment_intent_id = paymentIntent.id;
     if (paymentIntent.status === 'succeeded') {
-      await invoice.update({ status: 'paid' });
+      await invoice.update({ status: 'paid', stripe_payment_intent_id });
+    } else {
+      await invoice.update({ stripe_payment_intent_id });
     }
 
     const { client_secret } = paymentIntent;
