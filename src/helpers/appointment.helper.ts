@@ -7,6 +7,7 @@ import { ConflictError, LogicalError, NotFoundError } from './error.helper';
 import { User } from '../models/user.model';
 import { AppointmentPriority, AppointmentStatus } from '../shared/enums';
 import { AppointmentActivity } from '../models/appointment_activity.model';
+import { endOfDay } from 'date-fns';
 
 export const createAppointmentForClient = async (
   override_warnings: boolean,
@@ -241,4 +242,38 @@ export function validateAppointmentStatusChange(
   if (!transition.prior_statuses.includes(appointment.status)) {
     throw new LogicalError(transition.error_message);
   }
+}
+
+export async function getNextAvailableAppointmentSlot(
+  service_provider_user_id: string,
+) {
+  const now = new Date();
+  const laterBound = endOfDay(now);
+  const existingAppointments = await Appointment.findAll({
+    where: {
+      status: 'scheduled',
+      service_provider_user_id,
+      datetime_utc: {
+        [Op.lt]: laterBound,
+      },
+      datetime_end_utc: {
+        [Op.gte]: now,
+      },
+    },
+    order: [['datetime_utc', 'ASC']],
+  });
+
+  let suggestion = nextSuggestion(now);
+  for (const appointment of existingAppointments) {
+    const endSuggestion = DateTimeHelper.add(suggestion, 60, 'minutes');
+    if (DateTimeHelper.isBefore(appointment.datetime_utc, endSuggestion)) {
+      suggestion = nextSuggestion(appointment.datetime_end_utc);
+    }
+  }
+  return { suggestion };
+}
+
+function nextSuggestion(date: Date) {
+  const inThirty = DateTimeHelper.add(date, 30, 'minutes');
+  return DateTimeHelper.roundTimeToQuarterHour(inThirty);
 }

@@ -84,4 +84,15 @@ export class DateTimeHelper {
     const coeff = 1000 * 60;
     return new Date(Math.round(date.getTime() / coeff) * coeff);
   }
+
+  static roundTimeToQuarterHour(time: Date) {
+    const timeToReturn = new Date(time);
+
+    timeToReturn.setMilliseconds(
+      Math.round(timeToReturn.getMilliseconds() / 1000) * 1000,
+    );
+    timeToReturn.setSeconds(Math.round(timeToReturn.getSeconds() / 60) * 60);
+    timeToReturn.setMinutes(Math.round(timeToReturn.getMinutes() / 15) * 15);
+    return timeToReturn;
+  }
 }

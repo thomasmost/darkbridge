@@ -126,6 +126,16 @@ const loadOptions = async (name: string) => {
   return results;
 };
 
+async function fillInSuggestion(handleDateChange: (date: Date) => void) {
+  const res = await getRequest<{ suggestion: string }>(
+    'calendar/next_available_slot',
+  );
+  if (!res.error) {
+    const date = new Date(res.data.suggestion);
+    handleDateChange(date);
+  }
+}
+
 //eslint-disable-next-line max-lines-per-function
 export const AddAppointment: React.FC<RouteComponentProps> = () => {
   const [selectedDate, setDate] = useState(new Date());
@@ -146,6 +156,9 @@ export const AddAppointment: React.FC<RouteComponentProps> = () => {
     register('priority');
   }, [register]);
   const { user } = useAuth();
+  useEffect(() => {
+    fillInSuggestion(handleDateChange);
+  }, [user]);
   if (!user) {
     return null;
   }

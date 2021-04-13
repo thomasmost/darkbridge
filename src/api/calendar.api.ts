@@ -18,6 +18,7 @@ import {
 } from '@callteddy/koa-swagger-decorator';
 import { swaggerRefFromDefinitionName } from '../helpers/swagger.helper';
 import { authUser } from './middlewares';
+import { getNextAvailableAppointmentSlot } from '../helpers/appointment.helper';
 
 @prefix('/calendar')
 @securityAll([{ token: [] }])
@@ -40,6 +41,22 @@ export class CalendarAPI {
   })
   public static async getDailyInfo(ctx: AuthenticatedRequestContext) {
     ctx.body = await assembleDailyInfo(ctx.user.id);
+  }
+
+  @request('get', '/next_available_slot')
+  @operation('apiCalendar_nextAvailableSlot')
+  @summary('get the next available timeslot for an appointment')
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromDefinitionName('NextAvailableSlot'),
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+  })
+  public static async getNextAvailableSlot(ctx: AuthenticatedRequestContext) {
+    ctx.body = await getNextAvailableAppointmentSlot(ctx.user.id);
   }
 }
 

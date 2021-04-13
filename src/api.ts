@@ -107,6 +107,15 @@ api.swagger({
           },
         },
       },
+      NextAvailableSlot: {
+        type: 'object',
+        properties: {
+          suggestion: {
+            type: 'string',
+            example: `blah`,
+          },
+        },
+      },
       /**
   state: string;
   state_sales_tax: number;

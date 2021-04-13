@@ -3,8 +3,6 @@ import React from 'react';
 import { NavigateFn, RouteComponentProps, useNavigate } from '@reach/router';
 import { AppointmentAttributes } from '../../models/appointment.model';
 import { Button } from '../elements/Button';
-import { Label } from '../elements/Label';
-import { InvoiceSection } from '../components/InvoiceSection';
 import styled from '@emotion/styled';
 import { IInvoicePostBody } from '../../shared/invoice.dto';
 import { theme } from '../theme';
@@ -23,7 +21,7 @@ const InfoContainer = styled.div`
   }
 `;
 
-type InvoiceReviewProps = RouteComponentProps & {
+type AddClientPaymentOnsiteProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
   invoice: IInvoicePostBody | null;
   includeTaxes: boolean;
@@ -38,7 +36,7 @@ const onSubmit = async (
     invoice.payment_method === InvoicePaymentMethod.credit_card &&
     !appointment.client_profile?.has_primary_payment_method
   ) {
-    navigate('add-card');
+    navigate('add-payment');
     return;
   }
   invoice.invoice_items = invoice.invoice_items || [];
@@ -48,10 +46,9 @@ const onSubmit = async (
   }
 };
 
-export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
+export const AddClientPaymentOnsite: React.FC<AddClientPaymentOnsiteProps> = ({
   appointment,
   invoice,
-  includeTaxes,
 }) => {
   const navigate = useNavigate();
   if (!invoice) {
@@ -84,56 +81,17 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
     }
     return prev;
   }, 0);
-  const total = (
-    (time_total + materials_total + processing_fee + tax_total) /
-    100
-  ).toFixed(2);
+  const total = toMajorUnits(
+    time_total + materials_total + processing_fee + tax_total,
+  );
   return (
     <div>
-      <Label>Breakdown</Label>
-      <InvoiceSection
-        readonly
-        label="Time"
-        total={toMajorUnits(time_total)}
-      ></InvoiceSection>
-      <InvoiceSection
-        readonly
-        label="Materials"
-        total={toMajorUnits(materials_total)}
-      />
-      <InvoiceSection
-        zeroed={!includeTaxes}
-        readonly
-        label="Taxes"
-        total={toMajorUnits(tax_total)}
-      />
-      <InvoiceSection
-        readonly
-        label="Processing Fee"
-        total={toMajorUnits(processing_fee)}
-        disabled={payment_method === 'cash'}
-      >
-        <Label>
-          For digital payments, we add a small processing fee to cover solution
-          and service costs. The fee is added to the total incurred by the
-          client, so that the amount you receive stays the same. For more
-          information, see our Terms of Service.
-        </Label>
-      </InvoiceSection>
       <InfoContainer>
         <label>
           Total: <span>${total}</span>
         </label>
         <div>Paid by {payment_method === 'cash' ? 'cash' : 'card'}</div>
       </InfoContainer>
-      {!appointment.client_profile?.has_primary_payment_method && (
-        <InfoContainer>
-          <label>
-            You&apos;ll need to enter the client&apos;s card info on the next
-            screen
-          </label>
-        </InfoContainer>
-      )}
       <Button onClick={() => onSubmit(invoice, appointment, navigate)}>
         Confirm Payment
       </Button>

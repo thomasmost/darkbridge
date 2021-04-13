@@ -31,12 +31,16 @@ export interface InvoiceAttributes {
   invoice_items: Readonly<InvoiceItemAttributes[]>;
   total_to_be_charged: number;
   total_to_be_paid_out: number;
+  client_secret: string | null;
 }
 
 // Some attributes are optional in `Invoice.build` and `Invoice.create` calls
 export type InvoiceCreationAttributes = Omit<
   Optional<InvoiceAttributes, 'id' | 'created_at'>,
-  'invoice_items' | 'total_to_be_charged' | 'total_to_be_paid_out'
+  | 'invoice_items'
+  | 'total_to_be_charged'
+  | 'total_to_be_paid_out'
+  | 'client_secret'
 >;
 
 export class Invoice
@@ -59,6 +63,9 @@ export class Invoice
   public invoice_items: InvoiceItemAttributes[];
   public total_to_be_charged!: number;
   public total_to_be_paid_out!: number;
+
+  // temporary virtual for storing a stripe secret
+  public client_secret!: string | null;
 
   // timestamps!
   public readonly created_at!: number;
@@ -195,6 +202,11 @@ export const InvoiceModel = Invoice.initWithPermissions(
         const daily_total = Math.ceil(daily_rate * days_billed);
         return flat_rate + hourly_total + daily_total + total_from_line_items;
       },
+      visible: toServiceProvider,
+    },
+    client_secret: {
+      type: DataTypes.VIRTUAL(DataTypes.STRING),
+      swagger_type: 'string',
       visible: toServiceProvider,
     },
   },

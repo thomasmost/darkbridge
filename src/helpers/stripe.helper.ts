@@ -124,7 +124,7 @@ export abstract class StripeHelper {
     await client_profile.save();
   }
 
-  public static async createCharge(
+  public static async chargeExistingPaymentMethod(
     stripe_customer_id: string,
     stripe_payment_method_id: string,
     stripe_service_provider_account_id: string,
@@ -144,6 +144,39 @@ export abstract class StripeHelper {
         payment_method: stripe_payment_method_id,
         off_session: true,
         confirm: true,
+        transfer_data: {
+          destination: stripe_service_provider_account_id,
+        },
+      });
+      return { paymentIntent };
+    } catch (error) {
+      // Error code will be authentication_required if authentication is needed
+      console.log('Error code is: ', error.code);
+      const paymentIntentRetrieved = await stripe.paymentIntents.retrieve(
+        error.raw.payment_intent.id,
+      );
+      console.log('PI retrieved: ', paymentIntentRetrieved.id);
+      return { error };
+    }
+  }
+
+  public static async createPendingCharge(
+    stripe_customer_id: string,
+    stripe_service_provider_account_id: string,
+    amount: number,
+    application_fee_amount: number,
+    currency: 'usd',
+  ) {
+    if (amount % 1 !== 0) {
+      throw Error('Expected an amount in minor units; received a decimal');
+    }
+    try {
+      const paymentIntent = await stripe.paymentIntents.create({
+        payment_method_types: ['card'],
+        amount,
+        application_fee_amount,
+        currency,
+        customer: stripe_customer_id,
         transfer_data: {
           destination: stripe_service_provider_account_id,
         },

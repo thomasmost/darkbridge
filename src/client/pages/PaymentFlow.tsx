@@ -15,6 +15,7 @@ import { IInvoicePostBody } from '../../shared/invoice.dto';
 import { PaymentSuccess } from './PaymentSuccess';
 import { InvoiceView } from './InvoiceView';
 import { AppointmentAttributes } from '../../models/appointment.model';
+import { AddClientPaymentOnsite } from './AddClientPaymentOnsite';
 
 const HeadingText = styled.h2`
   margin-bottom: 20px;
@@ -127,6 +128,12 @@ export const PaymentFlow: React.FC<
           path="review"
         />
         <InvoiceView appointment={currentAppointment} path="view" />
+        <AddClientPaymentOnsite
+          appointment={currentAppointment}
+          invoice={invoice}
+          includeTaxes={includeTaxes}
+          path="add-card"
+        />
         <PaymentSuccess
           appointment={currentAppointment}
           invoice={invoice}

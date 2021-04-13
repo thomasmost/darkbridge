@@ -31,6 +31,7 @@ import { InvoicePaymentMethod } from '../shared/enums';
 import { StripeHelper } from '../helpers/stripe.helper';
 import { ClientProfile } from '../models/client_profile.model';
 import { User } from '../models/user.model';
+import Stripe from 'stripe';
 
 const postParams = {
   appointment_id: {
@@ -171,7 +172,11 @@ export class InvoiceAPI {
     if (!client_profile) {
       throw Error('This should never happen');
     }
-    handleAutomaticPayment(invoice, user, client_profile);
+    invoice.client_secret = await handleAutomaticPayment(
+      invoice,
+      user,
+      client_profile,
+    );
     invoice.invoice_items = items;
     ctx.status = 200;
     ctx.body = invoice;
@@ -262,7 +267,7 @@ async function handleAutomaticPayment(
 ) {
   const { stripe_customer_id, primary_payment_method_id } = client_profile;
   if (stripe_customer_id && primary_payment_method_id) {
-    const res = await StripeHelper.createCharge(
+    const promise = StripeHelper.chargeExistingPaymentMethod(
       stripe_customer_id,
       primary_payment_method_id,
       user.stripe_express_account_id,
@@ -270,11 +275,49 @@ async function handleAutomaticPayment(
       invoice.processing_fee,
       'usd',
     );
-    if (res.error) {
-      console.log('Failed to create a charge');
-    } else {
-      console.log(res.paymentIntent);
+    return handlePaymentIntentPromise(invoice, true, promise);
+  } else if (stripe_customer_id) {
+    const promise = StripeHelper.createPendingCharge(
+      stripe_customer_id,
+      user.stripe_express_account_id,
+      invoice.total_to_be_charged,
+      invoice.processing_fee,
+      'usd',
+    );
+    return handlePaymentIntentPromise(invoice, false, promise);
+  }
+  return null;
+}
+
+async function handlePaymentIntentPromise(
+  invoice: Invoice,
+  payment_stored: boolean,
+  payment_intent_promise: Promise<
+    | {
+        paymentIntent: Stripe.Response<Stripe.PaymentIntent>;
+        error?: undefined;
+      }
+    | {
+        paymentIntent: undefined;
+        error: Error;
+      }
+  >,
+) {
+  const res = await payment_intent_promise;
+  if (res.error) {
+    console.log('Failed to create a charge');
+    return null;
+  } else {
+    const { paymentIntent } = res;
+    console.log(paymentIntent);
+    if (!paymentIntent) {
+      throw Error('payment intent undefined?');
+    }
+    if (payment_stored) {
       await invoice.update({ status: 'paid' });
     }
+
+    const { client_secret } = paymentIntent;
+    return client_secret;
   }
 }
