@@ -35,6 +35,7 @@ import {
   ILineItem,
   InvoiceMaterialsFormSection,
 } from '../components/InvoiceMaterialsFormSection';
+import { ToggleContainer } from '../elements/ToggleContainer';
 
 type InvoiceFormProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
@@ -54,14 +55,6 @@ const AppointmentFeeContainer = styled.div`
   margin-bottom: 20px;
   width: 100%;
 `;
-const ToggleContainer = styled.div`
-  align-items: center;
-  justify-content: space-around;
-  display: flex;
-  width: 100%;
-  margin: 20px 0;
-`;
-
 const SectionControls = styled.div`
   padding: 20px 0 10px;
   display: flex;

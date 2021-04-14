@@ -43,14 +43,15 @@ const StyledCardForm = styled.form`
 
 export const CardSetupForm: React.FC<
   {
+    submitText: string;
     onSubmit: React.FormEventHandler<HTMLFormElement>;
   } & CardEntryChangeEvent
-> = ({ onSubmit, onChange }) => {
+> = ({ submitText, onSubmit, onChange }) => {
   const stripe = useStripe();
   return (
     <StyledCardForm onSubmit={onSubmit}>
       <CardSection onChange={onChange} />
-      <button disabled={!stripe}>Save Card</button>
+      <button disabled={!stripe}>{submitText}</button>
     </StyledCardForm>
   );
 };

@@ -68,5 +68,11 @@ export const CardSetupOffSession: React.FC<
     }
   };
 
-  return <CardSetupForm onChange={onChange} onSubmit={handleSubmit} />;
+  return (
+    <CardSetupForm
+      onChange={onChange}
+      onSubmit={handleSubmit}
+      submitText="Save Card"
+    />
+  );
 };

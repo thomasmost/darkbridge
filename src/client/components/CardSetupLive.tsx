@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Switch } from '@material-ui/core';
+import { useNavigate } from '@reach/router';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import { toast } from 'react-toastify';
 
 import { CardEntryChangeEvent } from './CardSection';
-import { toast } from 'react-toastify';
 import { postRequest } from '../services/api.svc';
 import { ClientProfileAttributes } from '../../models/client_profile.model';
-import { useNavigate } from '@reach/router';
 import { CardSetupForm } from './CardSetupForm';
+import { ToggleContainer } from '../elements/ToggleContainer';
 
 export const CardSetupLive: React.FC<
   {
@@ -18,6 +20,7 @@ export const CardSetupLive: React.FC<
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
+  const [setup_future_usage, changeFutureUsage] = useState<boolean>(true);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
     event,
@@ -60,6 +63,7 @@ export const CardSetupLive: React.FC<
         {
           client_profile_id,
           invoice_id,
+          setup_future_usage,
           paymentIntent,
         },
       );
@@ -67,12 +71,31 @@ export const CardSetupLive: React.FC<
         toast.error(add_res.error);
         return;
       }
-      navigate('/clients');
+      navigate('success');
       // The setup has succeeded. Display a success message and send
       // result.setupIntent.payment_method to your server to save the
       // card to a Customer
     }
   };
 
-  return <CardSetupForm onChange={onChange} onSubmit={handleSubmit} />;
+  return (
+    <>
+      <CardSetupForm
+        onChange={onChange}
+        onSubmit={handleSubmit}
+        submitText="Submit Payment"
+      />
+
+      <ToggleContainer>
+        <div>
+          Save Card for Future Payments
+          <Switch
+            color="primary"
+            checked={setup_future_usage}
+            onChange={(event) => changeFutureUsage(event.target.checked)}
+          />
+        </div>
+      </ToggleContainer>
+    </>
+  );
 };

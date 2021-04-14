@@ -109,18 +109,18 @@ export abstract class StripeHelper {
 
   public static async addPrimaryPaymentMethod(
     client_profile_id: string,
-    setup_intent: Stripe.SetupIntent,
+    intent: Stripe.SetupIntent | Stripe.PaymentIntent,
   ) {
     const client_profile = await ClientProfile.findByPk(client_profile_id);
     if (!client_profile) {
       throw new NotFoundError();
     }
-    if (typeof setup_intent.payment_method !== 'string') {
+    if (typeof intent.payment_method !== 'string') {
       throw Error(
-        `Received an unexpected payment method type: ${typeof setup_intent.payment_method}`,
+        `Received an unexpected payment method type: ${typeof intent.payment_method}`,
       );
     }
-    client_profile.primary_payment_method_id = setup_intent.payment_method;
+    client_profile.primary_payment_method_id = intent.payment_method;
     await client_profile.save();
   }
 

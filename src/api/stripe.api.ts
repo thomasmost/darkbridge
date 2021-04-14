@@ -21,6 +21,7 @@ import { Stripe } from 'stripe';
 import { InvoiceStatus } from '../shared/enums';
 import { Invoice } from '../models/invoice.model';
 import { NotFoundError } from '../helpers/error.helper';
+import { ClientProfile } from '../models/client_profile.model';
 
 @prefix('/stripe')
 @securityAll([{ token: [] }])
@@ -108,6 +109,11 @@ export class StripeAPI {
       required: true,
       description: 'invoice id to pay',
     },
+    setup_future_usage: {
+      type: 'boolean',
+      required: true,
+      description: 'can we save the card for automatic future payments',
+    },
     paymentIntent: swaggerRefFromDefinitionName(
       'SuccessfulStripePaymentIntent',
     ),
@@ -116,10 +122,15 @@ export class StripeAPI {
     ...baseCodes([204, 401]),
   })
   public static async confirmInvoicePayment(ctx: AuthenticatedRequestContext) {
-    const { client_profile_id, invoice_id, paymentIntent } = ctx.request
-      .body as {
+    const {
+      client_profile_id,
+      invoice_id,
+      setup_future_usage,
+      paymentIntent,
+    } = ctx.request.body as {
       client_profile_id: string;
       invoice_id: string;
+      setup_future_usage: boolean;
       paymentIntent: Stripe.PaymentIntent;
     };
     if (paymentIntent.status === 'succeeded') {
@@ -130,7 +141,12 @@ export class StripeAPI {
       invoice.status = InvoiceStatus.paid;
       await invoice.save();
     }
-    // await StripeHelper.addPrimaryPaymentMethod(client_profile_id, setupIntent);
+    if (setup_future_usage) {
+      await StripeHelper.addPrimaryPaymentMethod(
+        client_profile_id,
+        paymentIntent,
+      );
+    }
     ctx.status = 204;
   }
 
