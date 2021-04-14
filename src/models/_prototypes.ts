@@ -13,6 +13,7 @@ export interface PermissionedModelAttributeColumnOptions
   extends ModelAttributeColumnOptions {
   visible: Permissioner;
   model?: Model;
+  isMany?: boolean;
   swagger_definition_name?: string;
   swagger_type?: 'string' | 'integer' | 'number' | 'object' | 'boolean';
 }

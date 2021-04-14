@@ -3,7 +3,7 @@ import { PermissionedModelAttributeColumnOptions } from '../models/_prototypes';
 
 type SwaggerProperty = {
   $ref?: string;
-  type?: 'string' | 'integer' | 'number' | 'object' | 'boolean';
+  type?: 'string' | 'integer' | 'number' | 'object' | 'boolean' | 'array';
   example?: string;
   format?: 'uuid' | 'email';
   enum?: readonly string[];
@@ -40,6 +40,9 @@ const swaggerPropertyFromVirtual = (
   attribute: PermissionedModelAttributeColumnOptions,
 ) => {
   if (attribute.model) {
+    if (attribute.isMany) {
+      return arrayOf(attribute.model) as SwaggerProperty;
+    }
     return swaggerRefFromModel(attribute.model);
   }
   if (attribute.swagger_type) {

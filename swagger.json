@@ -572,6 +572,23 @@
         "security": [{ "token": [] }]
       }
     },
+    "/api/calendar/next_available_slot": {
+      "get": {
+        "summary": "get the next available timeslot for an appointment",
+        "description": "get the next available timeslot for an appointment",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/NextAvailableSlot" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["calendar"],
+        "operationId": "apiCalendar_nextAvailableSlot",
+        "security": [{ "token": [] }]
+      }
+    },
     "/api/omni/v0/service": {
       "get": {
         "summary": "query all the data required to use the app as a service provider/contractor",
@@ -747,6 +764,29 @@
         "security": [{ "token": [] }]
       }
     },
+    "/api/stripe/confirm_invoice_payment": {
+      "post": {
+        "summary": "confirm payment on a pending invoice",
+        "description": "confirm payment on a pending invoice",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/StripeConfirmInvoicePaymentPostBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["stripe"],
+        "operationId": "apiStripe_confirmInvoicePayment",
+        "security": [{ "token": [] }]
+      }
+    },
     "/api/stripe/refresh": {
       "get": {
         "summary": "refreshes and redirects to the express account url",
@@ -869,7 +909,14 @@
         "days_billed": { "type": "integer" },
         "currency_code": { "type": "string" },
         "total_from_line_items": { "type": "integer" },
-        "invoice_items": { "type": "string" }
+        "invoice_items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/InvoiceItem" }
+        },
+        "total_to_be_charged": { "type": "integer" },
+        "total_to_be_paid_out": { "type": "integer" },
+        "stripe_payment_intent_id": { "type": "string" },
+        "client_secret": { "type": "string" }
       }
     },
     "InvoiceItem": {
@@ -943,6 +990,10 @@
           "example": "Looks like you don't have any appointments today. Time to kick back! (Alternatively, you can head over to your Calendar to add a new job)"
         }
       }
+    },
+    "NextAvailableSlot": {
+      "type": "object",
+      "properties": { "suggestion": { "type": "string", "example": "blah" } }
     },
     "StateTaxInfo": {
       "type": "object",
@@ -1056,6 +1107,13 @@
         "usage": { "type": "string" }
       }
     },
+    "SuccessfulStripePaymentIntent": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "created_at": { "type": "integer" }
+      }
+    },
     "OmniResponseV0": {
       "type": "object",
       "properties": {
@@ -1148,7 +1206,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-04-07 18:14:25"
+          "example": "2021-04-14 15:37:49"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1182,7 +1240,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-04-07 18:14:25"
+          "example": "2021-04-14 15:37:49"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1455,6 +1513,24 @@
           "description": "client profile id to set up"
         },
         "setupIntent": { "$ref": "#/definitions/SuccessfulStripeSetupIntent" }
+      }
+    },
+    "StripeConfirmInvoicePaymentPostBody": {
+      "type": "object",
+      "required": ["client_profile_id", "invoice_id", "setup_future_usage"],
+      "properties": {
+        "client_profile_id": {
+          "type": "string",
+          "description": "client profile id for invoice"
+        },
+        "invoice_id": { "type": "string", "description": "invoice id to pay" },
+        "setup_future_usage": {
+          "type": "boolean",
+          "description": "can we save the card for automatic future payments"
+        },
+        "paymentIntent": {
+          "$ref": "#/definitions/SuccessfulStripePaymentIntent"
+        }
       }
     }
   },

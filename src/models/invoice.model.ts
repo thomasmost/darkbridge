@@ -4,7 +4,7 @@ import { toServiceProvider } from '../helpers/permissioners';
 
 import { sequelize } from '../sequelize';
 import { InvoicePaymentMethod, InvoiceStatus } from '../shared/enums';
-import { InvoiceItemAttributes } from './invoice_item.model';
+import { InvoiceItemAttributes, InvoiceItemModel } from './invoice_item.model';
 // import { InvoiceItemModel } from './invoice_item.model';
 import { PermissionedModel } from './_prototypes';
 
@@ -157,6 +157,8 @@ export const InvoiceModel = Invoice.initWithPermissions(
     },
     invoice_items: {
       type: DataTypes.VIRTUAL,
+      model: InvoiceItemModel,
+      isMany: true,
       visible: toServiceProvider,
     },
     total_to_be_charged: {
