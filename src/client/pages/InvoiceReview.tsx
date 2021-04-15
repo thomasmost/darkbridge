@@ -6,7 +6,7 @@ import { Button } from '../elements/Button';
 import { Label } from '../elements/Label';
 import { InvoiceSection } from '../components/InvoiceSection';
 import styled from '@emotion/styled';
-import { IInvoiceCore, IInvoicePostBody } from '../../shared/invoice.dto';
+import { IInvoicePostBody } from '../../shared/invoice.dto';
 import { theme } from '../theme';
 import { postRequest } from '../services/api.svc';
 import { InvoiceItemType, InvoiceStatus } from '../../shared/enums';
@@ -14,13 +14,23 @@ import { toMajorUnits } from '../../helpers/currency.helper';
 import { InvoiceAttributes } from '../../models/invoice.model';
 
 const InfoContainer = styled.div`
-  margin: 20px;
+  margin: ${theme.pad(4)};
   * {
     line-height: 2em;
     font-weight: 600;
     span {
       color: ${theme.buttonColorPassive};
     }
+  }
+`;
+
+const CardDetailsEntryMessage = styled.div`
+  padding: ${theme.pad(4)};
+  border-radius: 10px;
+  background-color: ${theme.blockColorDefault};
+  * {
+    line-height: 2em;
+    font-weight: 600;
   }
 `;
 
@@ -93,6 +103,9 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
     (time_total + materials_total + processing_fee + tax_total) /
     100
   ).toFixed(2);
+  const show_card_entry_warning =
+    payment_method === 'credit_card' &&
+    !appointment.client_profile?.has_primary_payment_method;
   return (
     <div>
       <Label>Breakdown</Label>
@@ -131,13 +144,13 @@ export const InvoiceReview: React.FC<InvoiceReviewProps> = ({
         </label>
         <div>Paid by {payment_method === 'cash' ? 'cash' : 'card'}</div>
       </InfoContainer>
-      {!appointment.client_profile?.has_primary_payment_method && (
-        <InfoContainer>
+      {show_card_entry_warning && (
+        <CardDetailsEntryMessage>
           <label>
             You&apos;ll need to enter the client&apos;s card info on the next
-            screen
+            screen.
           </label>
-        </InfoContainer>
+        </CardDetailsEntryMessage>
       )}
       <Button onClick={() => onSubmit(invoice, setInvoice, navigate)}>
         Confirm Payment
