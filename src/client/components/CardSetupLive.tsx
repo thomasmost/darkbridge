@@ -20,6 +20,7 @@ export const CardSetupLive: React.FC<
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
+  const [isRequestPending, setRequestPending] = useState<boolean>(false);
   const [setup_future_usage, changeFutureUsage] = useState<boolean>(true);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
@@ -29,7 +30,7 @@ export const CardSetupLive: React.FC<
     // which would refresh the page.
     event.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || isRequestPending) {
       // Stripe.js has not yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
@@ -44,12 +45,14 @@ export const CardSetupLive: React.FC<
       name: client_profile.full_name,
     };
 
+    setRequestPending(true);
     const result = await stripe.confirmCardPayment(client_secret, {
       payment_method: {
         card,
         billing_details,
       },
     });
+    setRequestPending(false);
 
     if (result.error) {
       toast.error(result.error.message);
