@@ -60,7 +60,7 @@ jobs:
         env:
           CI: true
       - name: copy index.js
-        run: cp build_lambda/* ./
+        run: cp dist_worker/* ./
       - name: zip
         uses: montudor/action-zip@v0.1.0
         with:
