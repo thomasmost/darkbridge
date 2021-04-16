@@ -15,8 +15,8 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "isolatedModules": false,
-    "outDir": "dist",
+    "outDir": "dist_worker",
   },
-  "include": ["index.ts"],
+  "include": ["src/worker.ts"],
   "exclude": []
 }
