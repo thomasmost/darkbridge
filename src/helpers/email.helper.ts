@@ -4,7 +4,7 @@ const DOMAIN = process.env.MAILGUN_DOMAIN;
 const API_KEY = process.env.MAILGUN_API_KEY;
 const NODE_ENV = process.env.NODE_ENV;
 
-type SendEmailPayload = {
+export type SendEmailPayload = {
   to: string;
   subject: string;
   text?: string;

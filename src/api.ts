@@ -28,6 +28,7 @@ import { permissionData } from './helpers/permissioners';
 import { InvoiceItemModel } from './models/invoice_item.model';
 import { TaxableLaborType } from './data/taxes';
 import { StripeAPI } from './api/stripe.api';
+import { assignTask } from './task';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -326,6 +327,12 @@ api.map(StripeAPI, {});
 
 api.get('/test_crash', () => {
   process.exit(1);
+});
+
+api.get('/test_worker', async () => {
+  console.log('assigning');
+  await assignTask();
+  console.log('done');
 });
 
 api.get('/timezone', async (ctx) => {
