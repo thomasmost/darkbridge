@@ -17,7 +17,7 @@
     "isolatedModules": false,
     "outDir": "dist_worker"
   },
-  "include": ["src/worker/index.ts"],
+  "include": ["src/worker.ts"],
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"

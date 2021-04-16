@@ -59,6 +59,8 @@ jobs:
           npm run build_lambda --if-present
         env:
           CI: true
+      - name: rename entry
+        run: mv dist_worker/worker.js dist_worker/index.js
       - name: copy index.js
         run: cp dist_worker/* ./
       - name: zip
