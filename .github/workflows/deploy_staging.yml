@@ -61,12 +61,10 @@ jobs:
           CI: true
       - name: rename entry
         run: mv dist_worker/worker.js dist_worker/index.js
-      - name: copy build
-        run: cp -r dist_worker/* ./
       - name: zip
         uses: montudor/action-zip@v0.1.0
         with:
-          args: zip -qq -r ./bundle.zip ./
+          args: zip -qq -r ./bundle.zip ./dist_worker/
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
