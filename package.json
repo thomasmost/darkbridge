@@ -4,12 +4,13 @@
   "description": "The core api, server, and web client for the Teddy application",
   "main": "src/index.ts",
   "scripts": {
-    "start": "pm2 start pm2.prod.yml && pm2 log",
+    "build_lambda": "tsc --project tsconfig.lambda.json",
     "dev": "pm2 start pm2.dev.yml",
-    "test": "jest",
-    "setup_db": "bash initialize_db.sh",
+    "lint": "eslint src --ext .ts,.tsx",
     "seed": "./node_modules/.bin/ts-node dev/seedData.ts",
-    "lint": "eslint src --ext .ts,.tsx"
+    "setup_db": "bash initialize_db.sh",
+    "start": "pm2 start pm2.prod.yml && pm2 log",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "@stripe/react-stripe-js": "^1.4.0",
     "@stripe/stripe-js": "^1.13.2",
     "@types/request": "^2.48.5",
+    "aws-sdk": "^2.888.0",
     "bcrypt": "^5.0.0",
     "date-fns": "^2.17.0",
     "date-fns-tz": "^1.1.3",
@@ -64,10 +66,10 @@
     "@types/http-terminator": "^2.0.1",
     "@types/jest": "^26.0.20",
     "@types/koa": "^2.11.6",
+    "@types/koa__cors": "^3.0.2",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-router": "^7.4.1",
     "@types/koa-static": "^4.0.1",
-    "@types/koa__cors": "^3.0.2",
     "@types/mailgun-js": "^0.22.11",
     "@types/node": "^14.14.22",
     "@types/node-fetch": "^2.5.8",
