@@ -1,18 +1,23 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "target": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "noEmit": false,
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "isolatedModules": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
+    "noEmit": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "isolatedModules": false,
+    "outDir": "dist_worker"
   },
-  "exclude": [],
-  "include": [
-    "src/worker.ts"
-  ],
+  "include": ["src/worker.ts"],
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"

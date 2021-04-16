@@ -21,6 +21,8 @@ jobs:
           npm run build_lambda --if-present
         env:
           CI: true
+      - name: rename entry
+        run: mv dist_worker/worker.js dist_worker/index.js
       - name: Install Zip Action
         uses: montudor/action-zip@v0.1.1
       - name: Zip output
