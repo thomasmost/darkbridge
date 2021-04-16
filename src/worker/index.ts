@@ -1,4 +1,4 @@
-import { sendEmail, SendEmailPayload } from './helpers/email.helper';
+import { sendEmail, SendEmailPayload } from '../helpers/email.helper';
 
 export const handler = async (event: {
   task: string;
