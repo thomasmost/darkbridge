@@ -64,8 +64,7 @@ jobs:
       - name: Install Zip Action
         uses: montudor/action-zip@v0.1.1
       - name: Zip output
-        run: zip -qq -r ../bundle.zip ./
-        working-directory: dist_worker
+        run: zip -qq -r ./bundle.zip ./views
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
