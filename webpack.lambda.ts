@@ -17,14 +17,11 @@ const config: webpack.Configuration = {
   entry: {
     server: ['./src/worker.ts'],
   },
-  // node: {
-  //   fs: 'empty',
-  // },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx', '.scss'],
+    extensions: ['.js', '.ts'],
   },
   output: {
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'commonjs',
     path: path.resolve('./dist_worker/'),
     filename: 'index.js',
   },
@@ -33,13 +30,13 @@ const config: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: [/\.ts$/, /\.tsx$/],
+        test: [/\.ts$/],
         exclude: /(node_modules)/,
         use: [
           {
             loader: 'ts-loader',
             options: {
-              configFile: 'tsconfig.json',
+              configFile: 'tsconfig.lambda.json',
             },
           },
         ],
