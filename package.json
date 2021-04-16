@@ -4,7 +4,7 @@
   "description": "The core api, server, and web client for the Teddy application",
   "main": "src/index.ts",
   "scripts": {
-    "build_lambda": "tsc --project tsconfig.lambda.json",
+    "build_lambda": "webpack --config webpack.lambda.ts",
     "dev": "pm2 start pm2.dev.yml",
     "lint": "eslint src --ext .ts,.tsx",
     "seed": "./node_modules/.bin/ts-node dev/seedData.ts",
