@@ -25,7 +25,7 @@ import {
   InvoiceItemAttributes,
   InvoiceItemModel,
 } from '../models/invoice_item.model';
-import { totalToBePaidOut } from '../helpers/invoice.helper';
+import { totalToBePaidOut, validateInvoice } from '../helpers/invoice.helper';
 // import { authUser } from './middlewares';
 import { InvoicePaymentMethod, InvoiceStatus } from '../shared/enums';
 import { StripeHelper } from '../helpers/stripe.helper';
@@ -153,6 +153,8 @@ export class InvoiceAPI {
       processing_fee,
       total_from_line_items,
     });
+
+    validateInvoice(unsaved_invoice);
 
     const { sumTotalFromLineItems, itemPromises } = processLineItems(
       unsaved_invoice,
