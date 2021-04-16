@@ -15,7 +15,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: npm install and build
+      - name: global npm install
+        run: |
+          npm ci
+      - name: local npm install and build
         run: |
           npm ci
           npm run build --if-present
@@ -28,7 +31,7 @@ jobs:
       - name: Install Zip Action
         uses: montudor/action-zip@v0.1.1
       - name: Zip output
-        run: zip -qq -r ../../bundle.zip ./ node_modules
+        run: zip -qq -r ../../bundle.zip ./
         working-directory: src/worker
       - name: default deploy
         uses: appleboy/lambda-action@master
