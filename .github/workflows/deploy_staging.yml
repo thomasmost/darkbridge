@@ -61,8 +61,8 @@ jobs:
           CI: true
       - name: rename entry
         run: mv dist_worker/worker.js dist_worker/index.js
-      - name: copy index.js
-        run: cp dist_worker/* ./
+      - name: copy build
+        run: cp -r dist_worker/* ./
       - name: zip
         uses: montudor/action-zip@v0.1.0
         with:
