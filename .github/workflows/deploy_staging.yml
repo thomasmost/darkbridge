@@ -41,38 +41,6 @@ jobs:
         uses: styfle/cancel-workflow-action@0.7.0
         with:
           access_token: ${{ github.token }}
-  deploy-worker:
-    name: Deploy Lambda
-    strategy:
-      matrix:
-        node-version: [14.x]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: npm install and build
-        run: |
-          npm ci
-          npm run build_lambda --if-present
-        env:
-          CI: true
-      - name: rename entry
-        run: mv dist_worker/worker.js dist_worker/index.js
-      - name: Install Zip Action
-        uses: montudor/action-zip@v0.1.1
-      - name: Zip output
-        run: zip -qq -r ./bundle.zip ./views
-      - name: default deploy
-        uses: appleboy/lambda-action@master
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: us-east-1
-          function_name: worker-staging
-          zip_file: bundle.zip
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
