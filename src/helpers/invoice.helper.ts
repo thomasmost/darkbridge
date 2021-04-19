@@ -1,5 +1,9 @@
 import { ValidationError } from 'sequelize';
 import { Invoice, InvoiceAttributes } from '../models/invoice.model';
+import {
+  InvoiceItem,
+  InvoiceItemAttributes,
+} from '../models/invoice_item.model';
 
 export function totalToBePaidOut(invoice: InvoiceAttributes) {
   const {
@@ -29,6 +33,22 @@ function validateAmountField(invoice: Invoice, field: keyof Invoice) {
     );
   }
 }
+function validateItem(item: InvoiceItemAttributes) {
+  const { amount_in_minor_units, quantity } = item;
+  if (
+    typeof amount_in_minor_units === 'number' &&
+    amount_in_minor_units % 1 !== 0
+  ) {
+    throw new ValidationError(
+      `Expected an amount in minor units; received a decimal in field amount_in_minor_units`,
+    );
+  }
+  if (typeof quantity === 'number' && quantity % 1 !== 0) {
+    throw new ValidationError(
+      `Expected an amount in minor units; received a decimal in field quantity`,
+    );
+  }
+}
 
 export function validateInvoice(invoice: Invoice) {
   console.log('Validating the invoice...');
@@ -37,4 +57,8 @@ export function validateInvoice(invoice: Invoice) {
   validateAmountField(invoice, 'flat_rate');
   validateAmountField(invoice, 'minutes_billed');
   validateAmountField(invoice, 'days_billed');
+  for (const item of invoice.invoice_items) {
+    validateItem(item, 'amount');
+    validateItem(item, 'quantity');
+  }
 }
