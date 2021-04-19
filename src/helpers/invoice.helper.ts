@@ -31,6 +31,7 @@ function validateAmountField(invoice: Invoice, field: keyof Invoice) {
 }
 
 export function validateInvoice(invoice: Invoice) {
+  console.log('Validating the invoice...');
   validateAmountField(invoice, 'hourly_rate');
   validateAmountField(invoice, 'daily_rate');
   validateAmountField(invoice, 'flat_rate');
