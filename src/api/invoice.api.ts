@@ -25,7 +25,11 @@ import {
   InvoiceItemAttributes,
   InvoiceItemModel,
 } from '../models/invoice_item.model';
-import { totalToBePaidOut, validateInvoice } from '../helpers/invoice.helper';
+import {
+  totalToBePaidOut,
+  validateInvoice,
+  validateInvoiceItem,
+} from '../helpers/invoice.helper';
 // import { authUser } from './middlewares';
 import { InvoicePaymentMethod, InvoiceStatus } from '../shared/enums';
 import { StripeHelper } from '../helpers/stripe.helper';
@@ -229,6 +233,7 @@ function processLineItems(
   const itemPromises = [];
   let sumTotalFromLineItems = 0;
   for (const item of invoice_items || []) {
+    validateInvoiceItem(item);
     const {
       amount_in_minor_units,
       currency_code,

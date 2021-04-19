@@ -33,7 +33,7 @@ function validateAmountField(invoice: Invoice, field: keyof Invoice) {
     );
   }
 }
-function validateItem(item: InvoiceItemAttributes) {
+export function validateInvoiceItem(item: InvoiceItemAttributes) {
   const { amount_in_minor_units, quantity } = item;
   if (
     typeof amount_in_minor_units === 'number' &&
@@ -57,8 +57,4 @@ export function validateInvoice(invoice: Invoice) {
   validateAmountField(invoice, 'flat_rate');
   validateAmountField(invoice, 'minutes_billed');
   validateAmountField(invoice, 'days_billed');
-  for (const item of invoice.invoice_items) {
-    validateItem(item);
-    validateItem(item);
-  }
 }
