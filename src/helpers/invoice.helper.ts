@@ -58,7 +58,7 @@ export function validateInvoice(invoice: Invoice) {
   validateAmountField(invoice, 'minutes_billed');
   validateAmountField(invoice, 'days_billed');
   for (const item of invoice.invoice_items) {
-    validateItem(item, 'amount');
-    validateItem(item, 'quantity');
+    validateItem(item);
+    validateItem(item);
   }
 }
