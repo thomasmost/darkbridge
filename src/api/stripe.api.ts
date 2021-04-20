@@ -21,7 +21,6 @@ import { Stripe } from 'stripe';
 import { InvoiceStatus } from '../shared/enums';
 import { Invoice } from '../models/invoice.model';
 import { NotFoundError } from '../helpers/error.helper';
-import { ClientProfile } from '../models/client_profile.model';
 
 @prefix('/stripe')
 @securityAll([{ token: [] }])

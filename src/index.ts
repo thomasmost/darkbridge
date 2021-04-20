@@ -18,7 +18,6 @@ import path from 'path';
 import Router from 'koa-router';
 import serveStatic from 'koa-static';
 import { userAgent } from 'koa-useragent';
-import { AsyncLocalStorage } from 'async_hooks';
 import { customAlphabet } from 'nanoid';
 
 import { createHttpTerminator } from 'http-terminator';

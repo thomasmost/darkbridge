@@ -152,7 +152,6 @@ const submitHandler = (
   // eslint-disable-next-line sonarjs/cognitive-complexity
 ) => {
   const appointment_id = appointment.id;
-  const client_profile = appointment.client_profile;
   const materials_total = materials.reduce<number>((subtotal, item) => {
     subtotal += item.amount_in_minor_units * item.quantity;
     return subtotal;

@@ -1,11 +1,9 @@
 import React from 'react';
 
-import { NavigateFn, RouteComponentProps, useNavigate } from '@reach/router';
+import { RouteComponentProps } from '@reach/router';
 import { AppointmentAttributes } from '../../models/appointment.model';
-import { Button } from '../elements/Button';
 import styled from '@emotion/styled';
 import { theme } from '../theme';
-import { postRequest } from '../services/api.svc';
 import { InvoiceItemType } from '../../shared/enums';
 import { toMajorUnits } from '../../helpers/currency.helper';
 import { CardSetupLive } from '../components/CardSetupLive';
@@ -30,13 +28,18 @@ type AddClientPaymentOnsiteProps = RouteComponentProps & {
   includeTaxes: boolean;
 };
 
-const stripePromise = loadStripe((global as any).config.env.STRIPE_PUBLIC_KEY);
+const stripePromise = loadStripe(
+  (global as {
+    config: {
+      env: { STRIPE_PUBLIC_KEY: string };
+    };
+  }).config.env.STRIPE_PUBLIC_KEY,
+);
 
 export const AddClientPaymentOnsite: React.FC<AddClientPaymentOnsiteProps> = ({
   appointment,
   invoice,
 }) => {
-  const navigate = useNavigate();
   if (!invoice) {
     throw Error('Must have an invoice by this stage');
   }
@@ -93,7 +96,7 @@ export const AddClientPaymentOnsite: React.FC<AddClientPaymentOnsiteProps> = ({
         client_secret={client_secret}
         invoice_id={invoice.id}
         client_profile={clientProfile}
-        onChange={(event) => null}
+        onChange={() => null}
       />
       {/* <Button onClick={() => onSubmit(invoice, appointment, navigate)}>
         Confirm Payment
