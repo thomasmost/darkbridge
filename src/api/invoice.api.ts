@@ -17,7 +17,7 @@ import { Invoice, InvoiceModel } from '../models/invoice.model';
 import {
   AuthenticationError,
   LogicalError,
-  ValidationError,
+  BadRequestError,
 } from '../helpers/error.helper';
 import { loadAndAuthorizeAppointment } from '../helpers/appointment.helper';
 import {
@@ -124,10 +124,10 @@ export class InvoiceAPI {
     } = ctx.request.body;
 
     if (currency_code !== 'USD') {
-      throw new ValidationError('Only USD invoices currently supported');
+      throw new BadRequestError('Only USD invoices currently supported');
     }
     if (minutes_billed && days_billed) {
-      throw new ValidationError('Billing for both hours and days is invalid');
+      throw new BadRequestError('Billing for both hours and days is invalid');
     }
 
     // For now users can only invoice their own appointments
@@ -246,7 +246,7 @@ function processLineItems(
 
     const invoice_id = unsaved_invoice.id;
     if (currency_code !== 'USD') {
-      throw new ValidationError('Non-USD currencies not yet supported');
+      throw new BadRequestError('Non-USD currencies not yet supported');
     }
 
     const { client_profile_id, service_provider_user_id } = unsaved_invoice;

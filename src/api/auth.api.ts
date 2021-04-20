@@ -4,7 +4,7 @@ import Koa from 'koa';
 import Router from 'koa-router';
 import { UserAgentContext } from 'koa-useragent';
 import validator from 'validator';
-import { AuthenticationError, ValidationError } from '../helpers/error.helper';
+import { AuthenticationError, BadRequestError } from '../helpers/error.helper';
 import { AuthToken, ClientType } from '../models/auth_token.model';
 import { issueToken } from '../helpers/auth_token.helper';
 import { User, UserModel } from '../models/user.model';
@@ -267,11 +267,11 @@ export class AuthAPI {
     const { email } = ctx.request.body;
 
     if (!email) {
-      throw new ValidationError('Email required to reset password');
+      throw new BadRequestError('Email required to reset password');
     }
 
     if (!validator.isEmail(email)) {
-      throw new ValidationError('Email not valid');
+      throw new BadRequestError('Email not valid');
     }
 
     const user = await User.findOne({
@@ -361,11 +361,11 @@ export class AuthAPI {
     console.log(`Found user ${user.given_name}!`);
 
     if (verificationRequest.fulfilled_at) {
-      throw new ValidationError('This token has already been used!');
+      throw new BadRequestError('This token has already been used!');
     }
 
     if (verificationRequest.created_at <= Date.now() - 30 * 60 * 1000) {
-      throw new ValidationError('This token has expired');
+      throw new BadRequestError('This token has expired');
     }
 
     const { password_salt } = user;
@@ -424,11 +424,11 @@ export class AuthAPI {
     console.log(`Found user ${user.given_name}!`);
 
     if (verificationRequest.fulfilled_at) {
-      throw new ValidationError('This token has already been used!');
+      throw new BadRequestError('This token has already been used!');
     }
 
     if (verificationRequest.created_at <= Date.now() - 24 * 60 * 60 * 1000) {
-      throw new ValidationError('This token has expired');
+      throw new BadRequestError('This token has expired');
     }
 
     if (verificationRequest.email_type === 'primary') {

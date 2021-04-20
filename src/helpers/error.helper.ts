@@ -8,7 +8,7 @@ class RoutineError extends Error {
   }
 }
 
-export class ValidationError extends RoutineError {
+export class BadRequestError extends RoutineError {
   constructor(message: string) {
     super(message);
     this.name = this.constructor.name;

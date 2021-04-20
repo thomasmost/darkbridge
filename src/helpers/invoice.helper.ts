@@ -1,4 +1,4 @@
-import { ValidationError } from './error.helper';
+import { BadRequestError } from './error.helper';
 import { Invoice, InvoiceAttributes } from '../models/invoice.model';
 import { InvoiceItemAttributes } from '../models/invoice_item.model';
 
@@ -25,7 +25,7 @@ function validateAmountField(invoice: Invoice, field: keyof Invoice) {
     return;
   }
   if (typeof value === 'number' && value % 1 !== 0) {
-    throw new ValidationError(
+    throw new BadRequestError(
       `Expected an amount in minor units; received a decimal in field ${field}`,
     );
   }
@@ -36,12 +36,12 @@ export function validateInvoiceItem(item: InvoiceItemAttributes) {
     typeof amount_in_minor_units === 'number' &&
     amount_in_minor_units % 1 !== 0
   ) {
-    throw new ValidationError(
+    throw new BadRequestError(
       `Expected an amount in minor units; received a decimal in field amount_in_minor_units`,
     );
   }
   if (typeof quantity === 'number' && quantity % 1 !== 0) {
-    throw new ValidationError(
+    throw new BadRequestError(
       `Expected an amount in minor units; received a decimal in field quantity`,
     );
   }

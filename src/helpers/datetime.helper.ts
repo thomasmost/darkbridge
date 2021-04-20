@@ -10,7 +10,7 @@ import {
   isBefore,
   isEqual,
 } from 'date-fns';
-import { ValidationError } from './error.helper';
+import { BadRequestError } from './error.helper';
 
 const DATETIME_LOCAL_REGEX = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (00|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/;
 
@@ -61,12 +61,12 @@ export class DateTimeHelper {
   static toUTC(datetime_local: string, timezone: string) {
     const lengthOfDateTimeString = datetime_local.length;
     if (lengthOfDateTimeString !== 19) {
-      throw new ValidationError(
+      throw new BadRequestError(
         'Expected a local datetime exactly 19 characters long',
       );
     }
     if (!datetime_local.match(DATETIME_LOCAL_REGEX)) {
-      throw new ValidationError(
+      throw new BadRequestError(
         "Expected a local datetime to exactly match the following format: 'YYYY-MM-DD HH:MM:SS'",
       );
     }

@@ -29,7 +29,7 @@ import { api } from './api';
 const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
 console.log(`NODE_ENV: ${NODE_ENV}`);
 
-import { AuthenticationError, ValidationError } from './helpers/error.helper';
+import { AuthenticationError, BadRequestError } from './helpers/error.helper';
 import { AuthToken } from './models/auth_token.model';
 import { consumeToken } from './helpers/auth_token.helper';
 import { SemiAuthenticatedRequestContext } from './api/types';
@@ -63,7 +63,7 @@ app.use(async (ctx, next) => {
   try {
     await next();
   } catch (err) {
-    if (err instanceof ValidationError) {
+    if (err instanceof BadRequestError) {
       ctx.status = 400;
       ctx.body = err.message;
       return;

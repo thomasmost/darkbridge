@@ -34,7 +34,7 @@ import {
   rescheduleAppointment,
   validateAppointmentStatusChange,
 } from '../helpers/appointment.helper';
-import { ValidationError } from '../helpers/error.helper';
+import { BadRequestError } from '../helpers/error.helper';
 import { AppointmentActivity } from '../models/appointment_activity.model';
 import { AppointmentStatus } from '../shared/enums';
 import { authUser } from './middlewares';
@@ -149,7 +149,7 @@ export class AppointmentAPI {
     const { before, after, beforeMs, afterMs } = ctx.query;
 
     if ((before && beforeMs) || (after && afterMs)) {
-      throw new ValidationError(
+      throw new BadRequestError(
         "Can't query with both millisecond time and string dates",
       );
     }
