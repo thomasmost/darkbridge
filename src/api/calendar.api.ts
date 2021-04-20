@@ -19,6 +19,7 @@ import {
 import { swaggerRefFromDefinitionName } from '../helpers/swagger.helper';
 import { authUser } from './middlewares';
 import { getNextAvailableAppointmentSlot } from '../helpers/appointment.helper';
+import { kirk } from '../helpers/log.helper';
 
 @prefix('/calendar')
 @securityAll([{ token: [] }])
@@ -61,6 +62,7 @@ export class CalendarAPI {
 }
 
 export const assembleDailyInfo = async (user_id: string) => {
+  kirk.info('Assembling...');
   const today = new Date();
   const appointments = await Appointment.findAll({
     where: {
@@ -90,7 +92,6 @@ export const assembleDailyInfo = async (user_id: string) => {
 
   for (const profile of profiles) {
     clientProfilesById[profile.id] = profile;
-    console.log(JSON.stringify(profile));
   }
 
   return dailyInfoFromData(appointments, clientProfilesById);

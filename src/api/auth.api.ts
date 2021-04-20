@@ -35,6 +35,7 @@ import {
   swaggerRefFromModel,
 } from '../helpers/swagger.helper';
 import { authUser } from './middlewares';
+import { kirk } from '../helpers/log.helper';
 
 export const authAPI = new Router();
 
@@ -205,7 +206,7 @@ export class AuthAPI {
         password_salt,
       });
     } catch (err) {
-      console.log('Registration failed due to ', err);
+      kirk.error('Registration failed due to ', err);
       throw new ConflictError('A user already exists with this email.');
     }
 
@@ -246,7 +247,7 @@ export class AuthAPI {
     try {
       await sendEmail(data);
     } catch (err) {
-      console.log(`Failed to send verification email; err=${err}`);
+      kirk.error(`Failed to send verification email; err=${err}`);
     }
 
     const cookie_options = {
@@ -359,7 +360,7 @@ export class AuthAPI {
       return;
     }
 
-    const user_id = verificationRequest.user_id;
+    const { user_id } = verificationRequest;
 
     const user = await User.findByPk(user_id);
 
@@ -368,7 +369,9 @@ export class AuthAPI {
       return;
     }
 
-    console.log(`Found user ${user.given_name}!`);
+    kirk.info(`Resetting password`, {
+      user_id,
+    });
 
     if (verificationRequest.fulfilled_at) {
       throw new BadRequestError('This token has already been used!');
@@ -406,7 +409,6 @@ export class AuthAPI {
   @responses(baseCodes([302, 400]))
   public static async verifyEmail(ctx: Koa.ParameterizedContext) {
     const token = ctx.query.token;
-    console.log('hello');
     if (!token) {
       ctx.body = 'No token provided';
       return;
@@ -422,7 +424,7 @@ export class AuthAPI {
       return;
     }
 
-    const user_id = verificationRequest.user_id;
+    const { user_id } = verificationRequest;
 
     const user = await User.findByPk(user_id);
 
@@ -431,7 +433,7 @@ export class AuthAPI {
       return;
     }
 
-    console.log(`Found user ${user.given_name}!`);
+    kirk.info(`Verifying email`, { user_id });
 
     if (verificationRequest.fulfilled_at) {
       throw new BadRequestError('This token has already been used!');
@@ -500,7 +502,7 @@ export class AuthAPI {
         throw Error('Missing token');
         // if !token log a warning
       }
-      console.log('FOUND TOKEN AND LOGGING OUT');
+      kirk.info('FOUND TOKEN AND LOGGING OUT');
       ctx.cookies.set('teddy_web_token', null);
 
       await token.update({

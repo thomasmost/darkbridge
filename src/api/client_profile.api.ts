@@ -28,6 +28,7 @@ import {
 } from '../helpers/swagger.helper';
 import { authUser } from './middlewares';
 import { NotFoundError } from '../helpers/error.helper';
+import { kirk } from '../helpers/log.helper';
 
 type BodyParameter = {
   type: 'string' | 'integer';
@@ -187,7 +188,7 @@ export class ClientProfileAPI {
       limit: 20,
     });
 
-    console.log(`Found: ${profiles.length}`);
+    kirk.info(`Found ${profiles.length} profiles`);
 
     ctx.status = 200;
     ctx.body = profiles;

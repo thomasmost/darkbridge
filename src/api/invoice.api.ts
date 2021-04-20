@@ -36,6 +36,7 @@ import { StripeHelper } from '../helpers/stripe.helper';
 import { ClientProfile } from '../models/client_profile.model';
 import { User } from '../models/user.model';
 import Stripe from 'stripe';
+import { kirk } from '../helpers/log.helper';
 
 const postParams = {
   appointment_id: {
@@ -312,7 +313,7 @@ async function handlePaymentIntentPromise(
 ) {
   const res = await payment_intent_promise;
   if (res.error) {
-    console.log('Failed to create a charge');
+    kirk.error('Failed to create a charge');
     return null;
   } else {
     const { paymentIntent } = res;

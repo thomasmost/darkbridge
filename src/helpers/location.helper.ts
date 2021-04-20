@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { Client } from '@googlemaps/google-maps-services-js';
+import { kirk } from './log.helper';
 const GoogleCloudClient = new Client({});
 
 type IPGeolocationResponse = {
@@ -66,14 +67,14 @@ export const getGeocodingForAddress = async (
     const result = geocodeResults[0];
 
     const { types, geometry } = result;
-    console.log(types);
+    kirk.info(types);
     const { location } = geometry;
     return {
       location,
     };
   } catch (err) {
     const error = err.response.data.error_message;
-    console.log(error);
+    kirk.error(error);
     return { error };
   }
 };

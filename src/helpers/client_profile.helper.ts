@@ -2,6 +2,7 @@ import { sequelize } from '../sequelize';
 import { ClientProfile } from '../models/client_profile.model';
 import { getTimeZone, getGeocodingForAddress } from './location.helper';
 import { StripeAddress, StripeHelper } from './stripe.helper';
+import { kirk } from './log.helper';
 
 export const createClientProfileForServiceProvider = async (
   created_by_user_id: string,
@@ -27,7 +28,9 @@ export const createClientProfileForServiceProvider = async (
   );
 
   if (error || !location) {
-    console.log('help');
+    kirk.error(
+      `Failed to find location data for ${address_street} ${address_city} ${address_state} ${address_postal_code}`,
+    );
     throw Error('Could not find this location, please try again later');
   }
 

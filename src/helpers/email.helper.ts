@@ -1,4 +1,5 @@
 import mailgun from 'mailgun-js';
+import { kirk } from './log.helper';
 
 const DOMAIN = process.env.MAILGUN_DOMAIN;
 const API_KEY = process.env.MAILGUN_API_KEY;
@@ -14,7 +15,7 @@ export type SendEmailPayload = {
 
 export const sendEmail = async (data: SendEmailPayload) => {
   if (!DOMAIN || !API_KEY) {
-    console.log(`Missing Mailgun Config:
+    kirk.warn(`Missing Mailgun Config:
 Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email integration
     `);
     return;
@@ -32,7 +33,7 @@ Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email 
     from: 'Teddy <notifications@callteddy.com>',
   };
   if (process.env.DEV_EMAIL) {
-    console.log(`Overriding with DEV_EMAIL: ${process.env.DEV_EMAIL}`);
+    kirk.warn(`Overriding with DEV_EMAIL: ${process.env.DEV_EMAIL}`);
     payload.to = process.env.DEV_EMAIL;
     payload.subject = `DEV: ${payload.subject}`;
     payload.text = `Originally sent to ${data.to}...\n\n ${data.text}`;

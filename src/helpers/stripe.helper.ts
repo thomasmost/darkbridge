@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { AuthenticatedRequestContext } from '../api/types';
 import { ClientProfile } from '../models/client_profile.model';
 import { NotFoundError } from './error.helper';
+import { kirk } from './log.helper';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2020-08-27',
 });
@@ -91,7 +92,7 @@ export abstract class StripeHelper {
         teddy_user_id,
       },
     });
-    console.log('Customer successfully created with id: ', customer.id);
+    kirk.info('Customer successfully created with id: ', customer.id);
     return customer;
   }
 
@@ -151,11 +152,11 @@ export abstract class StripeHelper {
       return { paymentIntent };
     } catch (error) {
       // Error code will be authentication_required if authentication is needed
-      console.log('Error code is: ', error.code);
+      kirk.error('Error code is: ', error.code);
       const paymentIntentRetrieved = await stripe.paymentIntents.retrieve(
         error.raw.payment_intent.id,
       );
-      console.log('PI retrieved: ', paymentIntentRetrieved.id);
+      kirk.info('PI retrieved: ', paymentIntentRetrieved.id);
       return { error };
     }
   }
@@ -184,11 +185,11 @@ export abstract class StripeHelper {
       return { paymentIntent };
     } catch (error) {
       // Error code will be authentication_required if authentication is needed
-      console.log('Error code is: ', error.code);
+      kirk.error('Error code is: ', error.code);
       const paymentIntentRetrieved = await stripe.paymentIntents.retrieve(
         error.raw.payment_intent.id,
       );
-      console.log('PI retrieved: ', paymentIntentRetrieved.id);
+      kirk.info('PI retrieved: ', paymentIntentRetrieved.id);
       return { error };
     }
   }

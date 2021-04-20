@@ -1,6 +1,7 @@
 import { AuthToken, ClientType } from '../models/auth_token.model';
 import { User } from '../models/user.model';
 import { AuthenticationError } from './error.helper';
+import { kirk } from './log.helper';
 
 export async function issueToken(
   user_id: string,
@@ -9,7 +10,11 @@ export async function issueToken(
   device_id: string,
 ) {
   // const requestId = store.requestId;
-  // console.log(`Issuing a new auth token for user_id ${user_id}; requestId=${requestId}`);
+  kirk.info(`Issuing a new auth token`, {
+    user_id,
+    auth_method,
+    client_type,
+  });
   const token = await AuthToken.create({
     user_id,
     auth_method,

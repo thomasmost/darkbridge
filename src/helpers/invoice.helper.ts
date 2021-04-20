@@ -1,6 +1,7 @@
 import { BadRequestError } from './error.helper';
 import { Invoice, InvoiceAttributes } from '../models/invoice.model';
 import { InvoiceItemAttributes } from '../models/invoice_item.model';
+import { kirk } from './log.helper';
 
 export function totalToBePaidOut(invoice: InvoiceAttributes) {
   const {
@@ -48,7 +49,7 @@ export function validateInvoiceItem(item: InvoiceItemAttributes) {
 }
 
 export function validateInvoice(invoice: Invoice) {
-  console.log('Validating the invoice...');
+  kirk.info('Validating the invoice...');
   validateAmountField(invoice, 'hourly_rate');
   validateAmountField(invoice, 'daily_rate');
   validateAmountField(invoice, 'flat_rate');

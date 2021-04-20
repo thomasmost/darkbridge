@@ -29,6 +29,7 @@ import { InvoiceItemModel } from './models/invoice_item.model';
 import { TaxableLaborType } from './data/taxes';
 import { StripeAPI } from './api/stripe.api';
 import { assignTask } from './task';
+import { kirk } from './helpers/log.helper';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -329,10 +330,14 @@ api.get('/test_crash', () => {
   process.exit(1);
 });
 
+api.get('/test_error', () => {
+  throw new Error('Foo');
+});
+
 api.get('/test_worker', async () => {
-  console.log('assigning');
+  kirk.info('assigning');
   await assignTask();
-  console.log('done');
+  kirk.info('done');
 });
 
 api.get('/timezone', async (ctx) => {

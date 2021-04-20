@@ -18,16 +18,19 @@ import path from 'path';
 import Router from 'koa-router';
 import serveStatic from 'koa-static';
 import { userAgent } from 'koa-useragent';
+import { AsyncLocalStorage } from 'async_hooks';
+import { customAlphabet } from 'nanoid';
 
 import { createHttpTerminator } from 'http-terminator';
 
 import request from 'request';
 
 import { api } from './api';
+import { kirk } from './helpers/log.helper';
 
 // Initialize constants
 const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
-console.log(`NODE_ENV: ${NODE_ENV}`);
+kirk.info(`NODE_ENV: ${NODE_ENV}`);
 
 import { AuthenticationError, BadRequestError } from './helpers/error.helper';
 import { AuthToken } from './models/auth_token.model';
@@ -38,6 +41,7 @@ import { tokenFromAuthorizationHeader, tokenFromCookies } from './api/auth.api';
 import App from './client/apps/App';
 import OnboardingApp from './client/apps/OnboardingApp';
 import UnauthorizedApp from './client/apps/UnauthorizedApp';
+import { asyncLocalStorage } from './node_hooks';
 
 const app = new Koa();
 app.use(userAgent);
@@ -47,7 +51,7 @@ const router = new Router();
 // this route needs to precede our wildcard route so that we can correctly get the application bundle
 if (NODE_ENV === 'development') {
   async function pipeRequestToDevServer(ctx: Koa.ParameterizedContext) {
-    console.log(ctx.req.url);
+    kirk.info(ctx.req.url);
     const stream = request('http://localhost:8080' + ctx.req.url);
     ctx.body = ctx.req.pipe(stream);
   }
@@ -57,6 +61,20 @@ if (NODE_ENV === 'development') {
   router.get('/build/unauthorized_app.js', pipeRequestToDevServer);
   router.get('/build/onboarding_app.js', pipeRequestToDevServer);
 }
+
+/** START AsyncLocalStorage request_id middleware **/
+app.use(async (_ctx: Koa.Context, next: Koa.Next) => {
+  // use x-request-id or fallback to a nanoid
+  const request_id: string = customAlphabet(
+    '1234567890abcdefghijklmnopqrstuvwxyz',
+    24,
+  )();
+  // every other Koa middleware will run within the AsyncLocalStorage context
+  await asyncLocalStorage.run({ request_id }, async () => {
+    return next();
+  });
+});
+/** END AsyncLocalStorage requestId middleware **/
 
 // Error Handler
 app.use(async (ctx, next) => {
@@ -138,7 +156,7 @@ app.use(bodyParser());
 app.use(router.routes()).use(router.allowedMethods());
 
 const server = app.listen(port, undefined, undefined, () => {
-  console.log(`Listening on port ${port}`);
+  kirk.info(`Listening on port ${port}`);
 });
 
 const terminator = createHttpTerminator({ server });
@@ -147,16 +165,16 @@ const terminator = createHttpTerminator({ server });
 
 process.on('message', async function (message) {
   if (message === 'shutdown') {
-    console.log('Received shutdown message');
+    kirk.info('Received shutdown message');
     await terminator.terminate();
-    console.log('Shutdown complete!');
+    kirk.info('Shutdown complete!');
     process.exit(0);
   }
 });
 
 process.on('SIGINT', async function () {
-  console.log('Received SIGINT');
+  kirk.info('Received SIGINT');
   await terminator.terminate();
-  console.log('Shutdown complete!');
+  kirk.info('Shutdown complete!');
   process.exit(0);
 });

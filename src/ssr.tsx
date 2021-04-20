@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { isRedirect, ServerLocation } from '@reach/router';
 import { SemiAuthenticatedRequestContext } from './api/types';
+import { kirk } from './helpers/log.helper';
 
 function setPublicConfigInScript() {
   // whitelisted env variables
@@ -38,7 +39,7 @@ export async function ssr(
         <ApplicationRoot isMobile={isMobile} />
       </ServerLocation>,
     );
-    console.log(`Rendering to: ${path.resolve('./views/index.html')}`);
+    kirk.info(`Rendering to: ${path.resolve('./views/index.html')}`);
     const indexFile = path.resolve('./views/index.html');
     let indexHtml = await util.promisify(fs.readFile)(indexFile, 'utf8');
 
