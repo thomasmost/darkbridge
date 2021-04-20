@@ -1,9 +1,6 @@
-import { ValidationError } from 'sequelize';
+import { ValidationError } from './error.helper';
 import { Invoice, InvoiceAttributes } from '../models/invoice.model';
-import {
-  InvoiceItem,
-  InvoiceItemAttributes,
-} from '../models/invoice_item.model';
+import { InvoiceItemAttributes } from '../models/invoice_item.model';
 
 export function totalToBePaidOut(invoice: InvoiceAttributes) {
   const {
