@@ -160,7 +160,7 @@ export class InvoiceAPI {
 
     validateInvoice(unsaved_invoice);
 
-    const { sumTotalFromLineItems, itemPromises } = processLineItems(
+    const { sumTotalFromLineItems, unsaved_items } = processLineItems(
       unsaved_invoice,
       invoice_items,
     );
@@ -172,6 +172,7 @@ export class InvoiceAPI {
       );
     }
     const invoice = await unsaved_invoice.save();
+    const itemPromises = unsaved_items.map((item) => item.save());
     const items = await Promise.all(itemPromises);
     await appointment.update({ invoice_id: invoice.id });
     const client_profile = await ClientProfile.findByPk(client_profile_id);
@@ -230,7 +231,7 @@ function processLineItems(
   unsaved_invoice: Invoice,
   invoice_items: InvoiceItemAttributes[],
 ) {
-  const itemPromises = [];
+  const unsaved_items = [];
   let sumTotalFromLineItems = 0;
   for (const item of invoice_items || []) {
     validateInvoiceItem(item);
@@ -251,7 +252,7 @@ function processLineItems(
     const { client_profile_id, service_provider_user_id } = unsaved_invoice;
 
     sumTotalFromLineItems += amount_in_minor_units * quantity;
-    const item_promise = InvoiceItem.create({
+    const unsaved_item = InvoiceItem.build({
       invoice_id,
       service_provider_user_id,
       client_profile_id,
@@ -262,9 +263,9 @@ function processLineItems(
       type,
       metadata,
     });
-    itemPromises.push(item_promise);
+    unsaved_items.push(unsaved_item);
   }
-  return { itemPromises, sumTotalFromLineItems };
+  return { unsaved_items, sumTotalFromLineItems };
 }
 
 async function handleAutomaticPayment(
