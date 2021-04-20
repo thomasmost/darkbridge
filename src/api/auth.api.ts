@@ -4,7 +4,11 @@ import Koa from 'koa';
 import Router from 'koa-router';
 import { UserAgentContext } from 'koa-useragent';
 import validator from 'validator';
-import { AuthenticationError, BadRequestError } from '../helpers/error.helper';
+import {
+  AuthenticationError,
+  BadRequestError,
+  ConflictError,
+} from '../helpers/error.helper';
 import { AuthToken, ClientType } from '../models/auth_token.model';
 import { issueToken } from '../helpers/auth_token.helper';
 import { User, UserModel } from '../models/user.model';
@@ -174,15 +178,15 @@ export class AuthAPI {
     const { email, password, confirm_password } = ctx.request.body;
 
     if (!email || !password || !confirm_password) {
-      throw new Error(DEFAULT_BAD_REQUEST_MESSAGE);
+      throw new BadRequestError(DEFAULT_BAD_REQUEST_MESSAGE);
     }
 
     if (!validator.isEmail(email)) {
-      throw new Error(DEFAULT_BAD_REQUEST_MESSAGE);
+      throw new BadRequestError(DEFAULT_BAD_REQUEST_MESSAGE);
     }
 
     if (password !== confirm_password) {
-      throw new Error('Passwords must match');
+      throw new BadRequestError('Passwords must match');
     }
     const password_salt = crypto.randomBytes(16).toString();
 
@@ -193,11 +197,17 @@ export class AuthAPI {
       BCRYPT_WORK_FACTOR,
     );
 
-    const user = await User.create({
-      email,
-      password_hash,
-      password_salt,
-    });
+    let user: User;
+    try {
+      user = await User.create({
+        email,
+        password_hash,
+        password_salt,
+      });
+    } catch (err) {
+      console.log('Registration failed due to ', err);
+      throw new ConflictError('A user already exists with this email.');
+    }
 
     const user_id = user.id;
     const email_type = 'primary';
