@@ -140,7 +140,7 @@ export class AuthAPI {
     const ok = await bcrypt.compare(seasoned_password, user.password_hash);
 
     if (!ok) {
-      throw Error(DEFAULT_FAILED_LOGIN_MESSAGE);
+      throw new AuthenticationError(DEFAULT_FAILED_LOGIN_MESSAGE);
     }
 
     let client_type: ClientType = 'web';
