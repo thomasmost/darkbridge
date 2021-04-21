@@ -25,7 +25,7 @@ import { createHttpTerminator } from 'http-terminator';
 import request from 'request';
 
 import { api } from './api';
-import { kirk } from './helpers/log.helper';
+import { kirk, requestLogger } from './helpers/log.helper';
 
 // Initialize constants
 const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
@@ -105,6 +105,9 @@ app.use(async (ctx: SemiAuthenticatedRequestContext, next) => {
   }
   await next();
 });
+
+// Request Logging
+app.use(requestLogger);
 
 app.use(async (ctx: SemiAuthenticatedRequestContext, next) => {
   if (ctx.user && ctx.url === '/login') {

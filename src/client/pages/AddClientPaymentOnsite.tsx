@@ -29,7 +29,7 @@ type AddClientPaymentOnsiteProps = RouteComponentProps & {
 };
 
 const stripePromise = loadStripe(
-  (global as {
+  ((global as unknown) as {
     config: {
       env: { STRIPE_PUBLIC_KEY: string };
     };

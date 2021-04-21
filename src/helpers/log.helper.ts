@@ -1,5 +1,7 @@
+import Koa from 'koa';
 import { Logger } from 'tslog';
 import { asyncLocalStorage } from '../node_hooks';
+import { SemiAuthenticatedRequestContext } from '../api/types';
 
 const kirk = new Logger({
   name: 'Server',
@@ -7,4 +9,54 @@ const kirk = new Logger({
     return asyncLocalStorage.getStore()?.request_id as string;
   },
 });
-export { kirk };
+
+const logRequest = (ctx: SemiAuthenticatedRequestContext, error?: Error) => {
+  const method = ctx.request.method;
+  const url = ctx.request.url;
+  const status = ctx.response.status;
+  // const status_text = ctx.response.message;
+
+  const request_id = asyncLocalStorage.getStore()?.request_id as string;
+  const user_id = ctx.user?.id || 'undefined';
+
+  const ordered_params: Record<string, string | number> = {
+    method,
+    url,
+    status,
+  };
+
+  const named_params: Record<string, string | number> = {
+    request_id,
+    user_id,
+  };
+
+  if (error) {
+    named_params.error = error.message;
+  }
+
+  let log_line = error ? 'REQUEST ERRORED:' : 'REQUEST COMPLETE:';
+  const ordered_keys = Object.keys(ordered_params);
+  for (const key of ordered_keys) {
+    log_line += ` ${ordered_params[key]}`;
+  }
+  const named_keys = Object.keys(named_params);
+  for (const key of named_keys) {
+    log_line += ` ${key}=${named_params[key]},`;
+  }
+  kirk.info(log_line);
+};
+
+const requestLogger = async (
+  ctx: SemiAuthenticatedRequestContext,
+  next: Koa.Next,
+) => {
+  try {
+    await next();
+  } catch (err) {
+    logRequest(ctx, err);
+    throw err;
+  }
+  logRequest(ctx);
+};
+
+export { kirk, requestLogger };
