@@ -32,16 +32,29 @@ function validateAmountField(invoice: Invoice, field: keyof Invoice) {
   }
 }
 export function validateInvoiceItem(item: InvoiceItemAttributes) {
-  const { amount_in_minor_units, quantity } = item;
-  if (
-    typeof amount_in_minor_units === 'number' &&
-    amount_in_minor_units % 1 !== 0
-  ) {
+  const { amount_in_minor_units, quantity, description, type } = item;
+  if (!type) {
+    throw new BadRequestError(`Invoice items must have a type`);
+  }
+  if (!description) {
+    throw new BadRequestError(`Invoice items must have a description`);
+  }
+  if (typeof amount_in_minor_units !== 'number') {
+    throw new BadRequestError(
+      `Expected a numeric amount_in_minor_units; received a ${typeof amount_in_minor_units}`,
+    );
+  }
+  if (typeof quantity !== 'number') {
+    throw new BadRequestError(
+      `Expected a numeric quantity; received a ${typeof quantity}`,
+    );
+  }
+  if (amount_in_minor_units % 1 !== 0) {
     throw new BadRequestError(
       `Expected an amount in minor units; received a decimal in field amount_in_minor_units`,
     );
   }
-  if (typeof quantity === 'number' && quantity % 1 !== 0) {
+  if (quantity % 1 !== 0) {
     throw new BadRequestError(
       `Expected an amount in minor units; received a decimal in field quantity`,
     );

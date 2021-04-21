@@ -13,7 +13,6 @@ import { AuthToken, ClientType } from '../models/auth_token.model';
 import { issueToken } from '../helpers/auth_token.helper';
 import { User, UserModel } from '../models/user.model';
 import { VerifyEmailRequest } from '../models/verify_email_request.model';
-import { sendEmail } from '../helpers/email.helper';
 import { ResetPasswordRequest } from '../models/reset_password_request.model';
 import { AuthenticatedRequestContext } from './types';
 import { ContractorProfile } from '../models/contractor_profile.model';
@@ -36,6 +35,7 @@ import {
 } from '../helpers/swagger.helper';
 import { authUser } from './middlewares';
 import { kirk } from '../helpers/log.helper';
+import { orderEmail } from '../task';
 
 export const authAPI = new Router();
 
@@ -245,7 +245,7 @@ export class AuthAPI {
       // 'v:token': verifyEmailRequest.verification_token,
     };
     try {
-      await sendEmail(data);
+      await orderEmail(data);
     } catch (err) {
       kirk.error(`Failed to send verification email; err=${err}`);
     }
@@ -312,7 +312,7 @@ export class AuthAPI {
       // 'v:host': '',
       // 'v:token': resetPasswordRequest.verification_token,
     };
-    await sendEmail(data);
+    await orderEmail(data);
     ctx.status = 204;
   }
 
