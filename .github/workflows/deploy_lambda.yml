@@ -3,39 +3,6 @@ on: workflow_dispatch
 name: Deploy Lambda
 
 jobs:
-  deploy-dependencies:
-    name: Deploy Dependency Layer
-    strategy:
-      matrix:
-        node-version: [14.x]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: npm install and build
-        run: npm ci
-        working-directory: worker-dependencies/
-        env:
-          CI: true
-      - name: rename entry
-        run: mv worker-dependencies/node_modules worker-dependencies/nodejs/node_modules
-      - name: Install Zip Action
-        uses: montudor/action-zip@v0.1.1
-      - name: Zip output
-        run: zip -qq -r ./bundle.zip ./
-        working-directory: worker-dependencies/
-      - name: AWS Lambda Layer Publish
-        uses: taotao2345/aws-lambda-publishlayer@v1.0.0
-        env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        with:
-          layer_name: worker-dependencies
-          zip_file: worker-dependencies/bundle.zip
   deploy-worker:
     name: Deploy Lambda
     runs-on: ubuntu-latest
