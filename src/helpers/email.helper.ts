@@ -42,7 +42,7 @@ Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email 
     payload.to = process.env.DEV_EMAIL;
     payload.subject = `DEV: ${payload.subject}`;
     payload.text = `Originally sent to ${data.to}...\n\n ${data.text}`;
-    payload.html = `Originally sent to ${data.to}...\n\n ${data.html}`;
+    payload.html = `<strong>Originally sent to ${data.to}...</strong><hr/>\n\n ${data.html}`;
   }
 
   return new Promise((resolve, reject) => {
