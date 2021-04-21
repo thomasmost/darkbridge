@@ -7,7 +7,13 @@ const lambda = new AWS.Lambda({
 const params = {
   FunctionName: 'worker-staging',
   InvokeArgs: JSON.stringify({
-    greeting: 'hello',
+    task: 'send_email',
+    data: {
+      from: 'staging@callteddy.com',
+      to: 'tomismore@gmail.com',
+      subject: 'Hello',
+      html: '<h1>Hello there</h1>',
+    },
   }),
 };
 

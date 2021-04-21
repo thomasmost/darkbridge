@@ -28,9 +28,14 @@ Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email 
 
   const mg = mailgun({ apiKey: API_KEY, domain: DOMAIN });
 
+  const from =
+    NODE_ENV === 'production'
+      ? 'Teddy <notifications@callteddy.com>'
+      : `Teddy (${NODE_ENV}) <${NODE_ENV}@callteddy.com>`;
+
   const payload = {
     ...data,
-    from: 'Teddy <notifications@callteddy.com>',
+    from,
   };
   if (process.env.DEV_EMAIL) {
     kirk.warn(`Overriding with DEV_EMAIL: ${process.env.DEV_EMAIL}`);

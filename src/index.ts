@@ -75,6 +75,11 @@ app.use(async (_ctx: Koa.Context, next: Koa.Next) => {
 });
 /** END AsyncLocalStorage requestId middleware **/
 
+// Request Logging
+// Since this happens at the very end of a request
+// it should be initialized directly after the request_id
+app.use(requestLogger);
+
 // Error Handler
 app.use(async (ctx, next) => {
   try {
@@ -105,9 +110,6 @@ app.use(async (ctx: SemiAuthenticatedRequestContext, next) => {
   }
   await next();
 });
-
-// Request Logging
-app.use(requestLogger);
 
 app.use(async (ctx: SemiAuthenticatedRequestContext, next) => {
   if (ctx.user && ctx.url === '/login') {
