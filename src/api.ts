@@ -28,8 +28,9 @@ import { permissionData } from './helpers/permissioners';
 import { InvoiceItemModel } from './models/invoice_item.model';
 import { TaxableLaborType } from './data/taxes';
 import { StripeAPI } from './api/stripe.api';
-import { assignTask } from './task';
+import { orderEmail } from './task';
 import { kirk } from './helpers/log.helper';
+import { DateTimeHelper } from './helpers/datetime.helper';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -334,10 +335,17 @@ api.get('/test_error', () => {
   throw new Error('Foo');
 });
 
-api.get('/test_worker', async () => {
-  kirk.info('assigning');
-  await assignTask();
-  kirk.info('done');
+api.get('/test_worker', async (ctx) => {
+  kirk.info('Assigning task to worker');
+  const date = new Date();
+  const formatted = DateTimeHelper.formatToPureDateTime(date);
+  await orderEmail({
+    to: 'thomas@callteddy.com',
+    subject: `Hey, it's ${formatted}`,
+    html: `<h3>${formatted}</h3>`,
+  });
+  kirk.info('Assignment Complete');
+  ctx.status = 204;
 });
 
 api.get('/timezone', async (ctx) => {
