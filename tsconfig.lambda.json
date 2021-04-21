@@ -1,19 +1,15 @@
 {
+  "extends": "./tsconfig",
   "compilerOptions": {
-    "target": "esnext",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
+    "lib": [
+      "es2016",
+      "esnext.asynciterable"
+    ],
     "skipLibCheck": true,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": false,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
     "isolatedModules": false,
     "outDir": "dist_worker",
   },
