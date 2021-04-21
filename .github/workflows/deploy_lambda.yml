@@ -38,9 +38,6 @@ jobs:
           zip_file: worker-dependencies/bundle.zip
   deploy-worker:
     name: Deploy Lambda
-    strategy:
-      matrix:
-        node-version: [14.x]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -54,7 +51,7 @@ jobs:
           npm run build_lambda --if-present
         env:
           CI: true
-      - name: rename entry
+      - name: rename entrypoint
         run: mv dist_worker/worker.js dist_worker/index.js
       - name: Install Zip Action
         uses: montudor/action-zip@v0.1.1

@@ -5,9 +5,6 @@ name: Deploy Layer
 jobs:
   deploy-dependencies:
     name: Deploy Dependency Layer
-    strategy:
-      matrix:
-        node-version: [14.x]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -20,8 +17,10 @@ jobs:
         working-directory: worker-dependencies/
         env:
           CI: true
-      - name: rename entry
-        run: mv worker-dependencies/node_modules worker-dependencies/nodejs/node_modules
+      - name: nest dependencies for layer
+        run: |
+          mkdir worker-dependencies/nodejs
+          mv worker-dependencies/node_modules worker-dependencies/nodejs/node_modules
       - name: Install Zip Action
         uses: montudor/action-zip@v0.1.1
       - name: Zip output
