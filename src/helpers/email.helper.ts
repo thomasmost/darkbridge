@@ -42,7 +42,9 @@ Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email 
     payload.to = process.env.DEV_EMAIL;
     payload.subject = `DEV: ${payload.subject}`;
     payload.text = `Originally sent to ${data.to}...\n\n ${data.text}`;
-    payload.html = `<strong>Originally sent to ${data.to}...</strong><hr/>\n\n ${data.html}`;
+    payload.html = `<strong>Originally sent to ${data.to}...</strong>
+      <hr />
+      ${data.html}`;
   }
 
   return new Promise((resolve, reject) => {
@@ -54,3 +56,51 @@ Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email 
     });
   });
 };
+
+const header = `<div style="background-color: #101042; padding: 20px; margin-top: 20px; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+  <img style="height: 60px; margin: auto; display: block;" src="https://staging.callteddy.com/logo_light.png" />
+</div>`;
+
+/*
+  <img style="height: 20px; display: inline-block;" src="https://staging.callteddy.com/logo_light.png" />
+*/
+
+const footer = `<footer style="margin-top: 40px; color: #999; font-size: .9em;">
+  © 2021 Teddy Labs, Inc. •
+  <a style="color: #999; text-decoration: none;" href="mailto:support@callteddy.com">Contact Support</a>
+</footer>`;
+
+const wrap = (template: string) =>
+  `<div style="background-color: #daedfd; padding: 20px;">
+    <div style="max-width: 600px; margin: auto;">
+      ${header}
+      <div style="background-color: white; padding: 20px; margin-bottom: 20px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+        ${template}
+        ${footer}
+      </div>
+    </div>
+  </div>`;
+
+export const resetPasswordTemplate = (
+  HOST_DOMAIN: string,
+  verification_token: string,
+) =>
+  wrap(`
+<h2 style="margin-top: 0;">Reset password</h2>
+<div>
+  To reset your password,
+  <a href="${HOST_DOMAIN}/reset_password/${verification_token}">click here</a>.
+</div>`);
+
+export const verifyEmailTemplate = (
+  HOST_DOMAIN: string,
+  verification_token: string,
+) =>
+  wrap(`
+<h2 style="margin-top: 0;">Verify your email</h2>
+<div>
+    To verify your email,
+    <a href="${HOST_DOMAIN}/api/auth/verify_email?token=${verification_token}">
+      click here
+    </a>.
+</div>`);

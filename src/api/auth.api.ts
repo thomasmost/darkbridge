@@ -36,6 +36,10 @@ import {
 import { authUser } from './middlewares';
 import { kirk } from '../helpers/log.helper';
 import { orderEmail } from '../task';
+import {
+  resetPasswordTemplate,
+  verifyEmailTemplate,
+} from '../helpers/email.helper';
 
 export const authAPI = new Router();
 
@@ -189,6 +193,12 @@ export class AuthAPI {
     if (password !== confirm_password) {
       throw new BadRequestError('Passwords must match');
     }
+
+    if (!process.env.HOST_DOMAIN) {
+      kirk.error('Missing HOST_DOMAIN in config');
+      return;
+    }
+
     const password_salt = crypto.randomBytes(16).toString();
 
     const seasoned_password = `${password_salt}:${password}`;
@@ -232,14 +242,10 @@ export class AuthAPI {
     const data = {
       to: email,
       subject: 'Welcome!',
-      html: `
-<div>
-    To verify your email,
-    <a href="${process.env.HOST_DOMAIN}/api/auth/verify_email?token=${verifyEmailRequest.verification_token}">
-      click here
-    </a>.
-</div>
-`,
+      html: verifyEmailTemplate(
+        process.env.HOST_DOMAIN,
+        verifyEmailRequest.verification_token,
+      ),
       text: `To verify your email, visit ${process.env.HOST_DOMAIN}/api/auth/verify_email?token=${verifyEmailRequest.verification_token}`,
       // 'v:host': '',
       // 'v:token': verifyEmailRequest.verification_token,
@@ -285,6 +291,11 @@ export class AuthAPI {
       throw new BadRequestError('Email not valid');
     }
 
+    if (!process.env.HOST_DOMAIN) {
+      kirk.error('Missing HOST_DOMAIN in config');
+      return;
+    }
+
     const user = await User.findOne({
       where: {
         email,
@@ -303,11 +314,10 @@ export class AuthAPI {
     const data = {
       to: email,
       subject: 'Reset your password',
-      html: `
-<div>
-    To reset your password, <a href="${process.env.HOST_DOMAIN}/reset_password/${resetPasswordRequest.verification_token}">click here</a>.
-</div>
-`,
+      html: resetPasswordTemplate(
+        process.env.HOST_DOMAIN,
+        resetPasswordRequest.verification_token,
+      ),
       text: `To reset your password, visit ${process.env.HOST_DOMAIN}/reset_password/${resetPasswordRequest.verification_token}`,
       // 'v:host': '',
       // 'v:token': resetPasswordRequest.verification_token,
