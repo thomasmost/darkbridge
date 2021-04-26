@@ -9,10 +9,10 @@ export enum AppointmentStatus {
 }
 
 export enum AppointmentPriority {
-  P0 = 'P0',
-  P1 = 'P1',
-  P2 = 'P2',
-  P3 = 'P3',
+  Emergency = 'Emergency',
+  Urgent = 'Urgent',
+  Important = 'Important',
+  Discretionary = 'Discretionary',
 }
 
 export enum InvoicePaymentMethod {

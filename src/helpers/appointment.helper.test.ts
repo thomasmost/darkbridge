@@ -26,7 +26,7 @@ function buildTestAppointment(status: AppointmentStatus, date?: string) {
     address_postal_code: '11211',
     timezone: 'America/New_York',
     timezone_offset: -5,
-    priority: AppointmentPriority.P2,
+    priority: AppointmentPriority.Important,
     status,
   });
 }

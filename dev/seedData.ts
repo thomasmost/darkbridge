@@ -168,7 +168,7 @@ async function createAppointmentsForUserDay(
     const datetimeLocal = date + ' ' + apptTime;
     const randomSummary =
       summaries[Math.floor(Math.random() * summaries.length)];
-    const randomPriority = AppointmentPriority.P2;
+    const randomPriority = AppointmentPriority.Important;
     const randomDuration = 60;
     const promise = createAppointmentForClient(
       true,
