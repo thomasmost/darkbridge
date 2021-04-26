@@ -80,6 +80,10 @@ app.use(async (_ctx: Koa.Context, next: Koa.Next) => {
 // it should be initialized directly after the request_id
 app.use(requestLogger);
 
+app.on('error', (err /*ctx*/) => {
+  kirk.error('Application emitted an error event:', err.name /*err*/);
+});
+
 // Error Handler
 app.use(async (ctx, next) => {
   try {

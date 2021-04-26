@@ -3,6 +3,10 @@ import { Logger } from 'tslog';
 import { asyncLocalStorage } from '../node_hooks';
 import { SemiAuthenticatedRequestContext } from '../api/types';
 
+interface StatusedError extends Error {
+  status?: number;
+}
+
 const kirk = new Logger({
   name: 'Server',
   requestId: (): string => {
@@ -10,10 +14,16 @@ const kirk = new Logger({
   },
 });
 
-const logRequest = (ctx: SemiAuthenticatedRequestContext, error?: Error) => {
+const logRequest = (
+  ctx: SemiAuthenticatedRequestContext,
+  error?: StatusedError,
+) => {
   const method = ctx.request.method;
   const url = ctx.request.url;
-  const status = ctx.response.status;
+  let status = ctx.response.status;
+  if (error) {
+    status = error.status || 500;
+  }
   // const status_text = ctx.response.message;
 
   const request_id = asyncLocalStorage.getStore()?.request_id as string;

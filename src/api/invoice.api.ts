@@ -180,11 +180,13 @@ export class InvoiceAPI {
     if (!client_profile) {
       throw Error('This should never happen');
     }
-    invoice.client_secret = await handleAutomaticPayment(
-      invoice,
-      user,
-      client_profile,
-    );
+    if (invoice.payment_method === 'credit_card') {
+      invoice.client_secret = await handleAutomaticPayment(
+        invoice,
+        user,
+        client_profile,
+      );
+    }
     invoice.invoice_items = items;
     ctx.status = 200;
     ctx.body = invoice;
