@@ -9,6 +9,7 @@ interface StatusedError extends Error {
 
 const kirk = new Logger({
   name: 'Server',
+  type: process.env.NODE_ENV === 'development' ? 'pretty' : 'json',
   requestId: (): string => {
     return asyncLocalStorage.getStore()?.request_id as string;
   },
