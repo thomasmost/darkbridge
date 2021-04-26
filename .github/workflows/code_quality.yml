@@ -79,6 +79,7 @@ jobs:
           MYSQL_HOST: 0.0.0.0
           MYSQL_USERNAME: root
           MYSQL_PASSWORD: github_password
+          HOST_DOMAIN: http://localhost:9000
         run: |
           echo Running test suite...
           npm run test
