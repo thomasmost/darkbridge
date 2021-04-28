@@ -48,7 +48,7 @@ export class OmniAPI {
     'query all the data required to use the app as a service provider/contractor',
   )
   @description(
-    'This endpoint will be used to immediately load all the data the app is likely to need for an average session. This includes the full current user with contractor profile, all appointments from one month in the past to one month in the future, the daily calendar data, and all client profiles created by the logged in user',
+    'This endpoint will be used to immediately load all the data the app is likely to need for an average session. This includes the full current user with contractor profile, all appointments from one (1) month in the past to six (6) months in the future, the daily calendar data, and all client profiles created by the logged in user',
   )
   @responses(omniResponsesV0)
   public static async getOmniDataV0(ctx: AuthenticatedRequestContext) {
@@ -60,7 +60,7 @@ export class OmniAPI {
         service_provider_user_id: user_id,
         datetime_utc: {
           [Op.gte]: subMonths(new Date(), 1),
-          [Op.lte]: addMonths(new Date(), 1),
+          [Op.lte]: addMonths(new Date(), 6),
         },
       },
       order: [['datetime_utc', 'ASC']],
@@ -107,6 +107,7 @@ export class OmniAPI {
     const iso_states = isoStates();
 
     ctx.body = {
+      // This is poorly named now, oops
       allAppointmentsWithinMonth,
       clients,
       currentUser,
