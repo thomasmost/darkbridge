@@ -217,6 +217,14 @@ api.swagger({
           },
         },
       },
+      StripePublicKeyResponse: {
+        type: 'object',
+        properties: {
+          STRIPE_PUBLIC_KEY: {
+            type: 'string',
+          },
+        },
+      },
       StripeClientSecretResponse: {
         type: 'object',
         properties: {
