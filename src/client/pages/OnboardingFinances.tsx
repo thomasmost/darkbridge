@@ -25,7 +25,9 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
   }
 
   const onSubmit = async (data: FinancesFormFields) => {
-    console.log(data);
+    data.appointment_fee = data.appointment_fee * 100;
+    data.hourly_rate = data.hourly_rate * 100;
+    data.daily_rate = data.daily_rate * 100;
     await putRequest('contractor_profile', 'text', data);
     navigate('bank');
   };
@@ -38,7 +40,9 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
         <Input
           name="appointment_fee"
           placeholder="$"
-          defaultValue={user?.contractor_profile?.appointment_fee}
+          defaultValue={
+            user?.contractor_profile?.appointment_fee_in_major_units
+          }
           type="number"
           ref={register({ required: false })}
         />
@@ -48,7 +52,9 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
             <Input
               name="hourly_rate"
               placeholder="$"
-              defaultValue={user?.contractor_profile?.hourly_rate}
+              defaultValue={
+                user?.contractor_profile?.hourly_rate_in_major_units
+              }
               step="5"
               type="number"
               ref={register({ required: false })}
@@ -59,7 +65,7 @@ export const OnboardingFinances: React.FC<RouteComponentProps> = () => {
             <Input
               name="daily_rate"
               placeholder="$"
-              defaultValue={user?.contractor_profile?.daily_rate}
+              defaultValue={user?.contractor_profile?.daily_rate_in_major_units}
               step="5"
               type="number"
               ref={register({ required: false })}
