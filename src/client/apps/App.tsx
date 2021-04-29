@@ -54,7 +54,6 @@ const AppContainer = styled.div`
 const App = ({ isMobile }: { isMobile?: boolean }) => {
   const { isPWAWidth } = usePWA();
   const shouldRenderPWA = isPWAWidth || isMobile;
-  console.log('jesus were rerendering');
 
   const Main = styled.main`
     background-color: ${theme.applicationBackgroundColor};
