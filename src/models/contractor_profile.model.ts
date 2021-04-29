@@ -25,6 +25,9 @@ export interface ContractorProfileAttributes {
   appointment_fee: number;
   hourly_rate: number;
   daily_rate: number;
+  appointment_fee_in_major_units: number;
+  hourly_rate_in_major_units: number;
+  daily_rate_in_major_units: number;
   estimated_yearly_income: number;
   estimated_yearly_expenses: number;
   onboarding_completed: boolean;
@@ -38,7 +41,12 @@ type ContractorProfileCreationAttributes = Optional<
 
 export type ContractorProfileUpdateAttributes = Omit<
   ContractorProfileAttributes,
-  'id' | 'created_at' | 'user_id'
+  | 'id'
+  | 'created_at'
+  | 'user_id'
+  | 'appointment_fee_in_major_units'
+  | 'hourly_rate_in_major_units'
+  | 'daily_rate_in_major_units'
 >;
 
 export class ContractorProfile
@@ -57,6 +65,9 @@ export class ContractorProfile
   public appointment_fee: number;
   public hourly_rate: number;
   public daily_rate: number;
+  public appointment_fee_in_major_units: number;
+  public hourly_rate_in_major_units: number;
+  public daily_rate_in_major_units: number;
   public estimated_yearly_income: number;
   public estimated_yearly_expenses: number;
 
@@ -109,15 +120,42 @@ export const ContractorProfileModel = ContractorProfile.initWithPermissions(
       visible: toUser,
     },
     appointment_fee: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER, // in minor units
       visible: toUser,
     },
     hourly_rate: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER, // in minor units
       visible: toUser,
     },
     daily_rate: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER, // in minor units
+      visible: toUser,
+    },
+    appointment_fee_in_major_units: {
+      type: DataTypes.VIRTUAL(DataTypes.NUMBER),
+      get: function () {
+        const appointment_fee = this.getDataValue('appointment_fee');
+        if (!appointment_fee) return null;
+        return appointment_fee / 100;
+      },
+      visible: toUser,
+    },
+    hourly_rate_in_major_units: {
+      type: DataTypes.VIRTUAL(DataTypes.NUMBER),
+      get: function () {
+        const appointment_fee = this.getDataValue('hourly_rate');
+        if (!appointment_fee) return null;
+        return appointment_fee / 100;
+      },
+      visible: toUser,
+    },
+    daily_rate_in_major_units: {
+      type: DataTypes.VIRTUAL(DataTypes.NUMBER),
+      get: function () {
+        const appointment_fee = this.getDataValue('daily_rate');
+        if (!appointment_fee) return null;
+        return appointment_fee / 100;
+      },
       visible: toUser,
     },
     estimated_yearly_income: {

@@ -111,24 +111,24 @@ export const InvoiceModel = Invoice.initWithPermissions(
       visible: toServiceProvider,
     },
     flat_rate: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER, // in minor units
       allowNull: false,
       defaultValue: 0,
       visible: toServiceProvider,
     },
     processing_fee: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER, // in minor units
       allowNull: false,
       visible: toServiceProvider,
     },
     daily_rate: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER, // in minor units
       allowNull: false,
       defaultValue: 0,
       visible: toServiceProvider,
     },
     hourly_rate: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER, // in minor units
       allowNull: false,
       defaultValue: 0,
       visible: toServiceProvider,
