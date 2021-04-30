@@ -141,7 +141,7 @@ router.get(/\/onboarding/, async (ctx: SemiAuthenticatedRequestContext) => {
 });
 
 // Wildcard Route
-router.get(/\//, async (ctx: SemiAuthenticatedRequestContext) => {
+router.get(/^(?!\/?api).+$/, async (ctx: SemiAuthenticatedRequestContext) => {
   if (ctx.req.url && ctx.req.url.split('.').length > 1) {
     // file request
     return;
