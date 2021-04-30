@@ -40,6 +40,7 @@ import { tokenFromAuthorizationHeader, tokenFromCookies } from './api/auth.api';
 import App from './client/apps/App';
 import OnboardingApp from './client/apps/OnboardingApp';
 import UnauthorizedApp from './client/apps/UnauthorizedApp';
+import SecuredClientPortal from './client/apps/SecuredClientPortal';
 import { asyncLocalStorage } from './node_hooks';
 
 const app = new Koa();
@@ -59,6 +60,7 @@ if (NODE_ENV === 'development') {
   router.get('/build/app.js', pipeRequestToDevServer);
   router.get('/build/unauthorized_app.js', pipeRequestToDevServer);
   router.get('/build/onboarding_app.js', pipeRequestToDevServer);
+  router.get('/build/client_portal_app.js', pipeRequestToDevServer);
 }
 
 /** START AsyncLocalStorage request_id middleware **/
@@ -138,6 +140,17 @@ router.get(/\/onboarding/, async (ctx: SemiAuthenticatedRequestContext) => {
     ctx.redirect('/login');
   }
   await ssr(ctx, OnboardingApp, 'onboarding_app.js');
+});
+
+router.get(
+  /\/e\/client_portal/,
+  async (ctx: SemiAuthenticatedRequestContext) => {
+    await ssr(ctx, SecuredClientPortal, 'client_portal_app.js');
+  },
+);
+
+router.get(/\/e\//, async (ctx: SemiAuthenticatedRequestContext) => {
+  await ssr(ctx, SecuredClientPortal, 'client_portal_app.js');
 });
 
 // Wildcard Route
