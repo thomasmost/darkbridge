@@ -35,6 +35,17 @@ create table `reset_password_request` (
   INDEX(user_id)
 );
 
+create table `client_confirmation_request` (
+  verification_token varchar(255) NOT NULL PRIMARY KEY,
+  created_at BIGINT NOT NULL,
+  fulfilled_at BIGINT NULL,
+  fulfilled_with VARCHAR(255) NOT NULL,
+  email_sent_to VARCHAR(255) NOT NULL,
+  client_profile_id VARCHAR(255) NOT NULL,
+  appointment_id VARCHAR(255) NULL,
+  INDEX(client_profile_id)
+);
+
 create table `auth_token` (
   id VARCHAR(255) NOT NULL PRIMARY KEY,
   created_at BIGINT NOT NULL,

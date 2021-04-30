@@ -82,7 +82,7 @@ export const createAppointmentForClient = async (
     `update appointment set coordinates=ST_GeomFromText('POINT(${lat} ${lng})') WHERE id='${appointment.id}'`,
   );
 
-  return Appointment.findByPk(appointment.id);
+  return Appointment.findByPk(appointment.id) as Promise<Appointment>;
 };
 
 export async function rescheduleAppointment(

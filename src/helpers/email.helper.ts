@@ -1,4 +1,5 @@
 import mailgun from 'mailgun-js';
+import { html } from './html';
 import { kirk } from './log.helper';
 
 const DOMAIN = process.env.MAILGUN_DOMAIN;
@@ -81,26 +82,77 @@ const wrap = (template: string) =>
     </div>
   </div>`;
 
-export const resetPasswordTemplate = (
-  HOST_DOMAIN: string,
-  verification_token: string,
-) =>
-  wrap(`
-<h2 style="margin-top: 0;">Reset password</h2>
-<div>
-  To reset your password,
-  <a href="${HOST_DOMAIN}/reset_password/${verification_token}">click here</a>.
-</div>`);
+export function constructEmail<T extends string>(
+  templateFn: (
+    ...values: (Record<T, string | number> & Record<'HOST_DOMAIN', string>)[]
+  ) => string,
+  values: Omit<Record<T, string | number>, 'HOST_DOMAIN'>,
+) {
+  if (!process.env.HOST_DOMAIN) {
+    kirk.error('Missing host domain in config');
+    throw Error('Missing host domain');
+  }
+  const data: Record<T, string | number> & Record<'HOST_DOMAIN', string> = {
+    ...values,
+    HOST_DOMAIN: process.env.HOST_DOMAIN,
+  } as Record<T, string | number> & Record<'HOST_DOMAIN', string>;
+  const bodyContents = templateFn(data);
+  return wrap(bodyContents);
+}
 
-export const verifyEmailTemplate = (
-  HOST_DOMAIN: string,
-  verification_token: string,
-) =>
-  wrap(`
-<h2 style="margin-top: 0;">Verify your email</h2>
-<div>
+export const resetPasswordTemplate = html`<h2 style="margin-top: 0;">
+    Reset password
+  </h2>
+  <div>
+    To reset your password,
+    <a href="${'HOST_DOMAIN'}/reset_password/${'verification_token'}"
+      >click here</a
+    >.
+  </div>`;
+
+export const verifyEmailTemplate = html`<h2 style="margin-top: 0;">
+    Verify your email
+  </h2>
+  <div>
     To verify your email,
-    <a href="${HOST_DOMAIN}/api/auth/verify_email?token=${verification_token}">
-      click here
-    </a>.
-</div>`);
+    <a
+      href="${'HOST_DOMAIN'}/api/auth/verify_email?token=${'verification_token'}"
+    >
+      click here </a
+    >.
+  </div>`;
+
+export const ClientConfirmationRequestTemplate = html` <h2
+    style="margin-top: 0;"
+  >
+    Confirm your appointment
+  </h2>
+  <div style="margin-bottom: 20px; font-size: 1.2em;">Hi ${'client_name'},</div>
+  <div style="margin-bottom: 20px; font-size: 1.2em;">
+    ${'service_provider_name'} ${'with_company'}has scheduled a service
+    appointment for ${'appointment_date_and_time'}.
+  </div>
+  <div style="margin-bottom: 20px; font-size: 1.2em;">
+    Please confirm your appointment by entering your payment information through
+    our secure portal.
+  </div>
+  <div style="margin: 20px 0; font-size: 1.2em;">
+    <a
+      href="${'HOST_DOMAIN'}/c/setup/${'verification_token'}"
+      style="padding: 10px; border-radius: 5px; background-color: #45A3F7; color: white; text-decoration: none;"
+    >
+      Confirm appointment
+    </a>
+  </div>
+  <div style="margin: 20px 0;">
+    Doesn't look right? You can cancel
+    <a href="${'HOST_DOMAIN'}/api/client_setup/${'verification_token'}/cancel"
+      >here</a
+    >. You may also
+    <a
+      href="${'HOST_DOMAIN'}/api/client_setup/${'verification_token'}/confirm_wo_payment"
+    >
+      confirm without payment details</a
+    >
+    if you plan to pay by cash or check.
+  </div>`;

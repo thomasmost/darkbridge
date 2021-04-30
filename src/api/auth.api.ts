@@ -37,6 +37,7 @@ import { authUser } from './middlewares';
 import { kirk } from '../helpers/log.helper';
 import { orderEmail } from '../task';
 import {
+  constructEmail,
   resetPasswordTemplate,
   verifyEmailTemplate,
 } from '../helpers/email.helper';
@@ -194,11 +195,6 @@ export class AuthAPI {
       throw new BadRequestError('Passwords must match');
     }
 
-    if (!process.env.HOST_DOMAIN) {
-      kirk.error('Missing HOST_DOMAIN in config');
-      return;
-    }
-
     const password_salt = crypto.randomBytes(16).toString();
 
     const seasoned_password = `${password_salt}:${password}`;
@@ -242,10 +238,9 @@ export class AuthAPI {
     const data = {
       to: email,
       subject: 'Welcome!',
-      html: verifyEmailTemplate(
-        process.env.HOST_DOMAIN,
-        verifyEmailRequest.verification_token,
-      ),
+      html: constructEmail(verifyEmailTemplate, {
+        verification_token: verifyEmailRequest.verification_token,
+      }),
       text: `To verify your email, visit ${process.env.HOST_DOMAIN}/api/auth/verify_email?token=${verifyEmailRequest.verification_token}`,
       // 'v:host': '',
       // 'v:token': verifyEmailRequest.verification_token,
@@ -314,10 +309,9 @@ export class AuthAPI {
     const data = {
       to: email,
       subject: 'Reset your password',
-      html: resetPasswordTemplate(
-        process.env.HOST_DOMAIN,
-        resetPasswordRequest.verification_token,
-      ),
+      html: constructEmail(resetPasswordTemplate, {
+        verification_token: resetPasswordRequest.verification_token,
+      }),
       text: `To reset your password, visit ${process.env.HOST_DOMAIN}/reset_password/${resetPasswordRequest.verification_token}`,
       // 'v:host': '',
       // 'v:token': resetPasswordRequest.verification_token,
