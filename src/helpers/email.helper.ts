@@ -138,7 +138,7 @@ export const ClientConfirmationRequestTemplate = html` <h2
   </div>
   <div style="margin: 20px 0; font-size: 1.2em;">
     <a
-      href="${'HOST_DOMAIN'}/c/setup/${'verification_token'}"
+      href="${'HOST_DOMAIN'}/e/client_portal/${'verification_token'}/setup"
       style="padding: 10px; border-radius: 5px; background-color: #45A3F7; color: white; text-decoration: none;"
     >
       Confirm appointment
@@ -146,11 +146,11 @@ export const ClientConfirmationRequestTemplate = html` <h2
   </div>
   <div style="margin: 20px 0;">
     Doesn't look right? You can cancel
-    <a href="${'HOST_DOMAIN'}/api/client_setup/${'verification_token'}/cancel"
+    <a href="${'HOST_DOMAIN'}/e/client_portal/${'verification_token'}/cancel"
       >here</a
     >. You may also
     <a
-      href="${'HOST_DOMAIN'}/api/client_setup/${'verification_token'}/confirm_wo_payment"
+      href="${'HOST_DOMAIN'}/e/client_portal/${'verification_token'}/confirm_wo_payment"
     >
       confirm without payment details</a
     >

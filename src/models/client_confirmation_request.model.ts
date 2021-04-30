@@ -78,7 +78,7 @@ ClientConfirmationRequest.init(
     // Other model options go here
     sequelize,
     modelName: 'ClientConfirmationRequest',
-    tableName: 'client_setup_request',
+    tableName: 'client_confirmation_request',
     timestamps: false,
   },
 );

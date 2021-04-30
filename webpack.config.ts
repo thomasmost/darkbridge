@@ -7,6 +7,7 @@ const config: webpack.Configuration = {
   entry: {
     app: './src/client/index.tsx',
     unauthorized_app: './src/client/index_unauthorized.tsx',
+    client_portal_app: './src/client/index_client_portal.tsx',
     onboarding_app: './src/client/index_onboarding.tsx',
   },
   module: {

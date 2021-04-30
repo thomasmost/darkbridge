@@ -1,6 +1,7 @@
 import Koa from 'koa';
 import { AuthAPI } from './api/auth.api';
 import { AppointmentAPI } from './api/appointment.api';
+import { ClientConfirmationAPI } from './api/client_confirmation.api';
 import { ContractorProfileAPI } from './api/contractor_profile.api';
 import { UserAPI } from './api/user.api';
 import { ClientProfileAPI } from './api/client_profile.api';
@@ -331,6 +332,7 @@ api.map(InvoiceAPI, {});
 api.map(CalendarAPI, {});
 api.map(ContractorProfileAPI, {});
 api.map(ClientProfileAPI, {});
+api.map(ClientConfirmationAPI, {});
 api.map(AuthAPI, {});
 api.map(OmniAPI, {});
 api.map(StripeAPI, {});

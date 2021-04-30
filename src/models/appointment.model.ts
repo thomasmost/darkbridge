@@ -53,6 +53,7 @@ export interface AppointmentAttributes {
   timezone_friendly: string;
   duration_minutes: number;
   requires_followup: boolean;
+  client_confirmed: boolean;
   rating_of_service: number;
   rating_of_client: number;
   client_profile?: Readonly<ClientProfileAttributes>;
@@ -88,6 +89,7 @@ export type AppointmentCreationAttributes = Omit<
   | 'requires_followup'
   | 'parent_appointment_id'
   | 'invoice_id'
+  | 'client_confirmed'
 >;
 
 export class Appointment
@@ -121,6 +123,7 @@ export class Appointment
   public summary!: string;
   public notes: string;
   public requires_followup!: boolean;
+  public client_confirmed!: boolean;
   public rating_of_service: number;
   public rating_of_client: number;
   public client_profile: ClientProfileAttributes;
@@ -299,6 +302,10 @@ export const AppointmentModel = Appointment.initWithPermissions(
       visible: toServiceProvider,
     },
     requires_followup: {
+      type: DataTypes.BOOLEAN,
+      visible: toServiceProvider,
+    },
+    client_confirmed: {
       type: DataTypes.BOOLEAN,
       visible: toServiceProvider,
     },
