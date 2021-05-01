@@ -3,8 +3,9 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { Redirect, Router } from '@reach/router';
 import { theme } from '../theme';
-import { AuthProvider } from '../AuthProvider';
 import { CancelAppointmentByClient } from '../pages/CancelAppointmentByClient';
+import { ExpiredClientPortal } from '../pages/ExpiredClientPortal';
+import { Page404 } from '../pages/404';
 
 if (typeof window !== 'undefined') {
   require('react-toastify/dist/ReactToastify.css');
@@ -51,7 +52,10 @@ const SecuredClientPortal = () => {
       <Main>
         <Logo height="64px" src="/logo_dark.svg" />
         <Router basepath="e/client_portal">
+          <Redirect from="/" to="404" />
+          <Page404 path="404" />
           <CancelAppointmentByClient path=":token/cancel" />
+          <ExpiredClientPortal path=":token/expired" />
         </Router>
       </Main>
     </AppContainer>

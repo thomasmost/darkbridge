@@ -25,6 +25,8 @@ import { Appointment, AppointmentModel } from '../models/appointment.model';
 import { baseCodes, swaggerRefFromModel } from '../helpers/swagger.helper';
 import { AppointmentStatus } from '../shared/enums';
 import { kirk } from '../helpers/log.helper';
+import { issueClientConfirmationRequest } from '../helpers/client_confirmation_request.helper';
+import { User } from '../models/user.model';
 
 type BodyParameter = {
   type: 'string' | 'integer' | 'boolean';
@@ -91,11 +93,8 @@ export class ClientConfirmationAPI {
     204: {
       description: 'Success',
     },
-    401: {
-      description: 'Unauthorized',
-    },
+    ...baseCodes([400, 404]),
   })
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   public static async cancelAppointment(ctx: SemiAuthenticatedRequestContext) {
     const { token } = ctx.request.body;
     const confirmation_request = await ClientConfirmationRequest.findByPk(
@@ -124,6 +123,69 @@ export class ClientConfirmationAPI {
     appointment.status = AppointmentStatus.canceled;
     confirmation_request.fulfilled_at = Date.now();
     await Promise.all([appointment.save(), confirmation_request.save()]);
+    ctx.status = 204;
+  }
+
+  @request('post', '/request_new')
+  @operation('apiClientConfirmation_requestNewToken')
+  @summary('request a refreshed token sent to the original email address')
+  @body({
+    token: {
+      type: 'string',
+      required: true,
+      description: 'the original client profile request',
+    },
+  })
+  @responses({
+    204: {
+      description: 'Success',
+    },
+    ...baseCodes([400, 404]),
+  })
+  public static async requestNewToken(ctx: SemiAuthenticatedRequestContext) {
+    const { token } = ctx.request.body;
+    const confirmation_request = await ClientConfirmationRequest.findByPk(
+      token,
+    );
+
+    if (!confirmation_request) {
+      throw new NotFoundError();
+    }
+
+    if (
+      !confirmation_request.fulfilled_at &&
+      confirmation_request.created_at > Date.now() - 8 * 60 * 60 * 1000
+    ) {
+      throw new BadRequestError(
+        `Can't request a new token based on a valid one`,
+      );
+    }
+
+    const appointment = await Appointment.findByPk(
+      confirmation_request.appointment_id,
+    );
+
+    if (!appointment) {
+      throw new NotFoundError();
+    }
+    const { service_provider_user_id } = appointment;
+
+    const user = await User.findByPk(service_provider_user_id);
+    if (!user) {
+      const appointment_id = appointment.id;
+      kirk.error(`Can't find user for appointment`, {
+        appointment_id,
+        service_provider_user_id,
+      });
+      throw new Error(`Can't find uesr`);
+    }
+
+    issueClientConfirmationRequest(
+      user,
+      confirmation_request.client_profile_id,
+      appointment.id,
+    );
+
     ctx.status = 204;
   }
 }

@@ -5,7 +5,8 @@ import { ClientConfirmationRequest } from '../models/client_confirmation_request
 import { User } from '../models/user.model';
 import { orderEmail } from '../task';
 import {
-  ClientConfirmationRequestTemplate,
+  clientConfirmationRequestTemplate,
+  clientConfirmationRequestWithoutPaymentDetailsNeededTemplate,
   constructEmail,
   SendEmailPayload,
 } from './email.helper';
@@ -53,10 +54,38 @@ export const issueClientConfirmationRequest = async (
     email_sent_to,
   });
 
+  if (profile.primary_payment_method_id) {
+    // already have a payment method
+    const emailData: SendEmailPayload = {
+      to: email_sent_to,
+      subject: 'Confirm your appointment',
+      html: constructEmail(
+        clientConfirmationRequestWithoutPaymentDetailsNeededTemplate,
+        {
+          verification_token: request.verification_token,
+          appointment_date_and_time: `${format(
+            new Date(appointment.datetime_local),
+            'LLLL do',
+          )} at ${format(new Date(appointment.datetime_local), 'h:mm a')}`,
+          client_name: profile.given_name,
+          service_provider_name: `${current_user.given_name} ${current_user.family_name}`,
+          with_company: current_user.contractor_profile?.company_name
+            ? `with ${current_user.contractor_profile?.company_name} `
+            : '',
+        },
+      ),
+      text: `Confirm your appointment by entering your payment info through our 
+      secure portal by visiting ${process.env.HOST_DOMAIN}/api/client_confirmation/confirm/${request.verification_token}`,
+    };
+
+    await orderEmail(emailData);
+    return;
+  }
+
   const emailData: SendEmailPayload = {
     to: email_sent_to,
     subject: 'Confirm your appointment',
-    html: constructEmail(ClientConfirmationRequestTemplate, {
+    html: constructEmail(clientConfirmationRequestTemplate, {
       verification_token: request.verification_token,
       appointment_date_and_time: `${format(
         new Date(appointment.datetime_local),

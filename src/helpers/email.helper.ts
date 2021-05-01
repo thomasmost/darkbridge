@@ -122,7 +122,7 @@ export const verifyEmailTemplate = html`<h2 style="margin-top: 0;">
     >.
   </div>`;
 
-export const ClientConfirmationRequestTemplate = html` <h2
+export const clientConfirmationRequestTemplate = html` <h2
     style="margin-top: 0;"
   >
     Confirm your appointment
@@ -155,4 +155,33 @@ export const ClientConfirmationRequestTemplate = html` <h2
       confirm without payment details</a
     >
     if you plan to pay by cash or check.
+  </div>`;
+
+// this name is... rough
+export const clientConfirmationRequestWithoutPaymentDetailsNeededTemplate = html` <h2
+    style="margin-top: 0;"
+  >
+    Confirm your appointment
+  </h2>
+  <div style="margin-bottom: 20px; font-size: 1.2em;">Hi ${'client_name'},</div>
+  <div style="margin-bottom: 20px; font-size: 1.2em;">
+    ${'service_provider_name'} ${'with_company'}has scheduled a service
+    appointment for ${'appointment_date_and_time'}.
+  </div>
+  <div style="margin-bottom: 20px; font-size: 1.2em;">
+    We already have your card on file! Please confirm your appointment below:
+  </div>
+  <div style="margin: 20px 0; font-size: 1.2em;">
+    <a
+      href="${'HOST_DOMAIN'}/api/client_confirmation/confirm/${'verification_token'}"
+      style="padding: 10px; border-radius: 5px; background-color: #45A3F7; color: white; text-decoration: none;"
+    >
+      Confirm appointment
+    </a>
+  </div>
+  <div style="margin: 20px 0;">
+    Doesn't look right? You can cancel
+    <a href="${'HOST_DOMAIN'}/e/client_portal/${'verification_token'}/cancel"
+      >here</a
+    >.
   </div>`;

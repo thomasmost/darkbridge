@@ -7,6 +7,7 @@ import { theme } from '../theme';
 import { AppointmentCard } from '../components/AppointmentCard';
 import { Button } from '../elements/Button';
 import { AppointmentAttributes } from '../../models/appointment.model';
+import { AppointmentStatus } from '../../shared/enums';
 
 const WarningHeader = styled.h3`
   font-size: 1.6em;
@@ -35,10 +36,19 @@ async function submit(token: string) {
       return;
     }
     toast.success('Appointment canceled');
-    // navigate('/login');
   } catch (err) {
     toast.error('Request failed');
   }
+}
+
+function renderCancelActions(token: string) {
+  return (
+    <>
+      <WarningHeader>Are you sure?</WarningHeader>
+      <p>We&apos;ll let your service provider know.</p>
+      <Button onClick={() => submit(token)}>Cancel Appointment</Button>
+    </>
+  );
 }
 
 export const CancelAppointmentByClient: React.FC<
@@ -52,10 +62,6 @@ export const CancelAppointmentByClient: React.FC<
   ] = useState<AppointmentAttributes | null>(null);
 
   useEffect(() => {
-    if (currentAppointment) {
-      return;
-    }
-
     fetch(`/api/client_confirmation/appointment/${token}`, {
       headers: {
         Accept: mimeType,
@@ -67,28 +73,30 @@ export const CancelAppointmentByClient: React.FC<
         const data = await response.json();
         setAppointment(data);
       } else {
-        const message = await response.text();
-        toast.error(message);
+        // const message = await response.text();
+        navigate('expired');
       }
     });
   }, [token]);
 
-  if (!currentAppointment) {
-    return <div>Loading...</div>;
-  }
   if (!token) {
     navigate('/404');
     return null;
   }
+  if (!currentAppointment) {
+    return <div>Loading...</div>;
+  }
+  const isAlreadyCanceled =
+    currentAppointment.status === AppointmentStatus.canceled;
   return (
     <div>
       <WarningHeader>
-        Cancel your appointment: {currentAppointment.summary}
+        {isAlreadyCanceled
+          ? `Your appointment for "${currentAppointment.summary}" has already been canceled`
+          : `Cancel your appointment: ${currentAppointment.summary}`}
       </WarningHeader>
       <AppointmentCard appointment={currentAppointment} warning />
-      <WarningHeader>Are you sure?</WarningHeader>
-      <p>We&apos;ll let your service provider know.</p>
-      <Button onClick={() => submit(token)}>Cancel Appointment</Button>
+      {!isAlreadyCanceled && renderCancelActions(token)}
     </div>
   );
 };
