@@ -27,24 +27,6 @@ import { NotFoundError } from '../helpers/error.helper';
 @middlewaresAll(authUser)
 @tagsAll(['stripe'])
 export class StripeAPI {
-  @request('get', '/public_key')
-  @operation('apiStripe_getPublicKey')
-  @summary('Fetches our public key for interacting with the Stripe API')
-  @responses({
-    200: {
-      description: 'Success',
-      schema: swaggerRefFromDefinitionName('StripePublicKeyResponse'),
-    },
-    ...baseCodes([401]),
-  })
-  public static async getPublicKey(ctx: AuthenticatedRequestContext) {
-    const { STRIPE_PUBLIC_KEY } = process.env;
-    ctx.status = 200;
-    ctx.body = {
-      STRIPE_PUBLIC_KEY,
-    };
-  }
-
   @request('post', '/onboard')
   @operation('apiStripe_onboard')
   @summary('onboards currently logged in user with Stripe Express account')
@@ -165,6 +147,24 @@ export class StripeAPI {
       );
     }
     ctx.status = 204;
+  }
+
+  @request('get', '/public_key')
+  @operation('apiStripe_getPublicKey')
+  @summary('Fetches our public key for interacting with the Stripe API')
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromDefinitionName('StripePublicKeyResponse'),
+    },
+    ...baseCodes([401]),
+  })
+  public static async getPublicKey(ctx: AuthenticatedRequestContext) {
+    const { STRIPE_PUBLIC_KEY } = process.env;
+    ctx.status = 200;
+    ctx.body = {
+      STRIPE_PUBLIC_KEY,
+    };
   }
 
   @request('get', '/refresh')

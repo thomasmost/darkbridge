@@ -41,74 +41,6 @@ const SESSION_NO_LONGER_VALID = 'This session is no longer valid';
 @prefix('/client_confirmation')
 @tagsAll(['clientConfirmation'])
 export class ClientConfirmationAPI {
-  @request('get', '/appointment/{token}')
-  @operation('apiClientConfirmation_getAppointment')
-  @summary(
-    'get the relevant appointment with a temporary client confirmation request',
-  )
-  @path({
-    token: { type: 'string', required: true, description: 'token' },
-  })
-  @responses({
-    200: {
-      description: 'Success',
-      schema: swaggerRefFromModel(AppointmentModel),
-    },
-    ...baseCodes([400]),
-  })
-  public static async getAppointment(ctx: SemiAuthenticatedRequestContext) {
-    const { token } = ctx.validatedParams;
-    kirk.info('Getting an appointment for client confirmation', {
-      token,
-    });
-    const confirmation_request = await authenticateClientConfirmationToken(
-      token,
-    );
-
-    const appointment = await Appointment.findByPk(
-      confirmation_request.appointment_id,
-    );
-
-    ctx.body = appointment;
-    ctx.status = 200;
-  }
-
-  @request('put', '/cancel')
-  @operation('apiClientConfirmation_cancelAppointment')
-  @summary('cancel an appointment through the secured client portal')
-  @body({
-    token: {
-      type: 'string',
-      required: true,
-      description: 'the client profile request',
-    },
-  })
-  @responses({
-    204: {
-      description: 'Success',
-    },
-    ...baseCodes([400, 404]),
-  })
-  public static async cancelAppointment(ctx: SemiAuthenticatedRequestContext) {
-    const { token } = ctx.request.body;
-    const confirmation_request = await authenticateClientConfirmationToken(
-      token,
-    );
-
-    const appointment = await Appointment.findByPk(
-      confirmation_request.appointment_id,
-    );
-
-    if (!appointment) {
-      throw new NotFoundError();
-    }
-
-    appointment.status = AppointmentStatus.canceled;
-    confirmation_request.fulfilled_at = Date.now();
-    await Promise.all([appointment.save(), confirmation_request.save()]);
-    ctx.status = 204;
-  }
-
   @request('post', '/request_new')
   @operation('apiClientConfirmation_requestNewToken')
   @summary('request a refreshed token sent to the original email address')
@@ -262,6 +194,73 @@ export class ClientConfirmationAPI {
       confirmation_request.client_profile_id,
     );
     ctx.body = client;
+  }
+  @request('get', '/appointment/{token}')
+  @operation('apiClientConfirmation_getAppointment')
+  @summary(
+    'get the relevant appointment with a temporary client confirmation request',
+  )
+  @path({
+    token: { type: 'string', required: true, description: 'token' },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(AppointmentModel),
+    },
+    ...baseCodes([400]),
+  })
+  public static async getAppointment(ctx: SemiAuthenticatedRequestContext) {
+    const { token } = ctx.validatedParams;
+    kirk.info('Getting an appointment for client confirmation', {
+      token,
+    });
+    const confirmation_request = await authenticateClientConfirmationToken(
+      token,
+    );
+
+    const appointment = await Appointment.findByPk(
+      confirmation_request.appointment_id,
+    );
+
+    ctx.body = appointment;
+    ctx.status = 200;
+  }
+
+  @request('put', '/cancel')
+  @operation('apiClientConfirmation_cancelAppointment')
+  @summary('cancel an appointment through the secured client portal')
+  @body({
+    token: {
+      type: 'string',
+      required: true,
+      description: 'the client profile request',
+    },
+  })
+  @responses({
+    204: {
+      description: 'Success',
+    },
+    ...baseCodes([400, 404]),
+  })
+  public static async cancelAppointment(ctx: SemiAuthenticatedRequestContext) {
+    const { token } = ctx.request.body;
+    const confirmation_request = await authenticateClientConfirmationToken(
+      token,
+    );
+
+    const appointment = await Appointment.findByPk(
+      confirmation_request.appointment_id,
+    );
+
+    if (!appointment) {
+      throw new NotFoundError();
+    }
+
+    appointment.status = AppointmentStatus.canceled;
+    confirmation_request.fulfilled_at = Date.now();
+    await Promise.all([appointment.save(), confirmation_request.save()]);
+    ctx.status = 204;
   }
 }
 

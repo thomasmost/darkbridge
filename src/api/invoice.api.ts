@@ -18,6 +18,7 @@ import {
   AuthenticationError,
   LogicalError,
   BadRequestError,
+  NotYetImplementedError,
 } from '../helpers/error.helper';
 import { loadAndAuthorizeAppointment } from '../helpers/appointment.helper';
 import {
@@ -190,6 +191,21 @@ export class InvoiceAPI {
     invoice.invoice_items = items;
     ctx.status = 200;
     ctx.body = invoice;
+  }
+
+  @request('post', '/{id}/poll_for_payment')
+  @operation('apiInvoice_pollForPayment')
+  @summary('create a new invoice')
+  @body({})
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(InvoiceModel),
+    },
+    ...baseCodes([401, 405]),
+  })
+  public static async pollForPayment(/*ctx: AuthenticatedRequestContext*/) {
+    throw new NotYetImplementedError();
   }
 
   @request('get', '/{id}')

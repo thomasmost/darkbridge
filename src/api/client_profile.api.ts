@@ -27,7 +27,7 @@ import {
   swaggerRefFromModel,
 } from '../helpers/swagger.helper';
 import { authUser } from './middlewares';
-import { NotFoundError } from '../helpers/error.helper';
+import { NotFoundError, NotYetImplementedError } from '../helpers/error.helper';
 import { kirk } from '../helpers/log.helper';
 
 type BodyParameter = {
@@ -139,6 +139,63 @@ export class ClientProfileAPI {
 
     ctx.status = 200;
     ctx.body = profile;
+  }
+
+  @request('post', '/{id}/request_for_payment_method')
+  @operation('apiClientProfile_issueRequestForPaymentMethod')
+  @summary('issue a request for the client to set up a credit card')
+  @path({
+    id: {
+      type: 'string',
+      required: true,
+      description: 'id of the client profile',
+    },
+  })
+  @body({
+    appointment_id: {
+      type: 'string',
+      required: true,
+      description: 'the appointment id',
+    },
+    invoice_id: {
+      type: 'string',
+      required: true,
+      description: 'the invoice id',
+    },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(ClientProfileModel),
+    },
+    ...baseCodes([400, 401]),
+  })
+  public static async issueRequestForPaymentMethod(
+    ctx: AuthenticatedRequestContext,
+  ) {
+    const user = ctx.user;
+
+    const { id } = ctx.validatedParams;
+
+    // const { appointment_id, invoice_id } = ctx.request.body as {
+    //   appointment_id: string;
+    //   invoice_id: string;
+    // };
+
+    const clientProfile = await ClientProfile.findByPk(id);
+
+    const user_id = user.id;
+    const client_profile_id = clientProfile?.id;
+
+    if (!clientProfile || clientProfile.created_by_user_id !== user_id) {
+      kirk.error(`Client profile not found or mismatched`, {
+        user_id,
+        client_profile_id,
+      });
+      throw new NotFoundError();
+    }
+
+    throw new NotYetImplementedError();
   }
 
   @request('get', '')

@@ -8,6 +8,16 @@ class RoutineError extends Error {
   }
 }
 
+export class NotYetImplementedError extends Error {
+  status: number;
+  constructor() {
+    super('NOT YET IMPLEMENTED');
+    this.name = this.constructor.name;
+    this.status = 405;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
 export class BadRequestError extends RoutineError {
   constructor(message: string) {
     super(message);
