@@ -416,6 +416,156 @@
         "security": [{ "token": [] }]
       }
     },
+    "/api/client_confirmation/request_new": {
+      "post": {
+        "summary": "request a refreshed token sent to the original email address",
+        "description": "request a refreshed token sent to the original email address",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/ClientConfirmationRequestNewPostBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "400": { "description": "Bad Request" },
+          "404": { "description": "Not Found" }
+        },
+        "tags": ["clientConfirmation"],
+        "operationId": "apiClientConfirmation_requestNewToken",
+        "security": []
+      }
+    },
+    "/api/client_confirmation/setup_intent": {
+      "post": {
+        "summary": "creates a setup intent with stripe and returns a sensitive client_secret",
+        "description": "creates a setup intent with stripe and returns a sensitive client_secret",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/ClientConfirmationSetupIntentPostBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/StripeClientSecretResponse" }
+          },
+          "400": { "description": "Bad Request" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" }
+        },
+        "tags": ["clientConfirmation"],
+        "operationId": "apiClientConfirmation_createSetupIntent",
+        "security": []
+      }
+    },
+    "/api/client_confirmation/add_payment_method": {
+      "post": {
+        "summary": "add a payment method to a client",
+        "description": "add a payment method to a client",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/ClientConfirmationAddPaymentMethodPostBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["clientConfirmation"],
+        "operationId": "apiClientConfirmation_addPaymentMethod",
+        "security": []
+      }
+    },
+    "/api/client_confirmation/profile/{token}": {
+      "get": {
+        "summary": "get a single client profile for the token",
+        "description": "get a single client profile for the token",
+        "parameters": [
+          {
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "token",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/ClientProfile" }
+          },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" }
+        },
+        "tags": ["clientConfirmation"],
+        "operationId": "apiClientCConfirmation_getProfile",
+        "security": []
+      }
+    },
+    "/api/client_confirmation/appointment/{token}": {
+      "get": {
+        "summary": "get the relevant appointment with a temporary client confirmation request",
+        "description": "get the relevant appointment with a temporary client confirmation request",
+        "parameters": [
+          {
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "token",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/Appointment" }
+          },
+          "400": { "description": "Bad Request" }
+        },
+        "tags": ["clientConfirmation"],
+        "operationId": "apiClientConfirmation_getAppointment",
+        "security": []
+      }
+    },
+    "/api/client_confirmation/cancel": {
+      "put": {
+        "summary": "cancel an appointment through the secured client portal",
+        "description": "cancel an appointment through the secured client portal",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/ClientConfirmationCancelPutBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Success" },
+          "400": { "description": "Bad Request" },
+          "404": { "description": "Not Found" }
+        },
+        "tags": ["clientConfirmation"],
+        "operationId": "apiClientConfirmation_cancelAppointment",
+        "security": []
+      }
+    },
     "/api/contractor_profile": {
       "put": {
         "summary": "update the logged in contractor profile with a subset of valid fields",
@@ -497,6 +647,40 @@
         },
         "tags": ["clientProfile"],
         "operationId": "apiClientProfile_query",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/client_profile/{id}/request_for_payment_method": {
+      "post": {
+        "summary": "issue a request for the client to set up a credit card",
+        "description": "issue a request for the client to set up a credit card",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id of the client profile",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/ClientProfileRequestForPaymentMethodPostBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/ClientProfile" }
+          },
+          "400": { "description": "Bad Request" },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["clientProfile"],
+        "operationId": "apiClientProfile_issueRequestForPaymentMethod",
         "security": [{ "token": [] }]
       }
     },
@@ -592,7 +776,7 @@
     "/api/omni/v0/service": {
       "get": {
         "summary": "query all the data required to use the app as a service provider/contractor",
-        "description": "This endpoint will be used to immediately load all the data the app is likely to need for an average session. This includes the full current user with contractor profile, all appointments from one month in the past to one month in the future, the daily calendar data, and all client profiles created by the logged in user",
+        "description": "This endpoint will be used to immediately load all the data the app is likely to need for an average session. This includes the full current user with contractor profile, all appointments from one (1) month in the past to six (6) months in the future, the daily calendar data, and all client profiles created by the logged in user",
         "parameters": [],
         "responses": {
           "200": {
@@ -671,6 +855,31 @@
         },
         "tags": ["invoice"],
         "operationId": "apiInvoice_create",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/invoice/{id}/poll_for_payment": {
+      "post": {
+        "summary": "create a new invoice",
+        "description": "create a new invoice",
+        "parameters": [
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": { "$ref": "#/definitions/InvoicePollForPaymentPostBody" },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/Invoice" }
+          },
+          "401": { "description": "Unauthorized" },
+          "405": { "description": "Method Not Allowed" }
+        },
+        "tags": ["invoice"],
+        "operationId": "apiInvoice_pollForPayment",
         "security": [{ "token": [] }]
       }
     },
@@ -787,6 +996,23 @@
         "security": [{ "token": [] }]
       }
     },
+    "/api/stripe/public_key": {
+      "get": {
+        "summary": "Fetches our public key for interacting with the Stripe API",
+        "description": "Fetches our public key for interacting with the Stripe API",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/StripePublicKeyResponse" }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "tags": ["stripe"],
+        "operationId": "apiStripe_getPublicKey",
+        "security": [{ "token": [] }]
+      }
+    },
     "/api/stripe/refresh": {
       "get": {
         "summary": "refreshes and redirects to the express account url",
@@ -824,7 +1050,10 @@
             "completed"
           ]
         },
-        "priority": { "type": "string", "enum": ["P0", "P1", "P2", "P3"] },
+        "priority": {
+          "type": "string",
+          "enum": ["Emergency", "Urgent", "Important", "Discretionary"]
+        },
         "client_profile_id": { "type": "string" },
         "datetime_utc": { "type": "string" },
         "datetime_end_utc": { "type": "string" },
@@ -843,6 +1072,7 @@
         "notes": { "type": "string" },
         "duration_minutes": { "type": "integer" },
         "requires_followup": { "type": "boolean" },
+        "client_confirmed": { "type": "boolean" },
         "parent_appointment_id": { "type": "string" },
         "invoice_id": { "type": "string" },
         "rating_of_client": { "type": "integer" },
@@ -884,9 +1114,12 @@
           "type": "string",
           "enum": ["electrical", "hvac", "plumbing", "carpentry", "handiwork"]
         },
-        "appointment_fee": { "type": "integer" },
-        "hourly_rate": { "type": "integer" },
-        "daily_rate": { "type": "integer" },
+        "appointment_fee": { "type": "string" },
+        "hourly_rate": { "type": "string" },
+        "daily_rate": { "type": "string" },
+        "appointment_fee_in_major_units": { "type": "string" },
+        "hourly_rate_in_major_units": { "type": "string" },
+        "daily_rate_in_major_units": { "type": "string" },
         "estimated_yearly_income": { "type": "integer" },
         "estimated_yearly_expenses": { "type": "integer" },
         "onboarding_completed": { "type": "boolean" }
@@ -901,10 +1134,10 @@
         "service_provider_user_id": { "type": "string" },
         "status": { "type": "string", "enum": ["pending", "paid"] },
         "payment_method": { "type": "string", "enum": ["cash", "credit_card"] },
-        "flat_rate": { "type": "integer" },
-        "processing_fee": { "type": "integer" },
-        "daily_rate": { "type": "integer" },
-        "hourly_rate": { "type": "integer" },
+        "flat_rate": { "type": "string" },
+        "processing_fee": { "type": "string" },
+        "daily_rate": { "type": "string" },
+        "hourly_rate": { "type": "string" },
         "minutes_billed": { "type": "integer" },
         "days_billed": { "type": "integer" },
         "currency_code": { "type": "string" },
@@ -946,6 +1179,7 @@
         "phone": { "type": "string" },
         "family_name": { "type": "string" },
         "given_name": { "type": "string" },
+        "has_connected_stripe": { "type": "boolean" },
         "contractor_profile": { "$ref": "#/definitions/ContractorProfile" }
       }
     },
@@ -1085,6 +1319,10 @@
         }
       }
     },
+    "StripePublicKeyResponse": {
+      "type": "object",
+      "properties": { "STRIPE_PUBLIC_KEY": { "type": "string" } }
+    },
     "StripeClientSecretResponse": {
       "type": "object",
       "properties": { "client_secret": { "type": "string" } }
@@ -1206,7 +1444,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-04-14 15:37:49"
+          "example": "2021-05-03 12:15:45"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1240,7 +1478,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-04-14 15:37:49"
+          "example": "2021-05-03 12:15:45"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1287,6 +1525,44 @@
       "required": ["rating"],
       "properties": {
         "rating": { "type": "integer", "description": "from 1 to 5" }
+      }
+    },
+    "ClientConfirmationRequestNewPostBody": {
+      "type": "object",
+      "required": ["token"],
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "the original client profile request"
+        }
+      }
+    },
+    "ClientConfirmationSetupIntentPostBody": {
+      "type": "object",
+      "required": ["token"],
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "client confirmation token to set up"
+        }
+      }
+    },
+    "ClientConfirmationAddPaymentMethodPostBody": {
+      "type": "object",
+      "required": ["token"],
+      "properties": {
+        "token": { "type": "string", "description": "the token" },
+        "setupIntent": { "$ref": "#/definitions/SuccessfulStripeSetupIntent" }
+      }
+    },
+    "ClientConfirmationCancelPutBody": {
+      "type": "object",
+      "required": ["token"],
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "the client profile request"
+        }
       }
     },
     "ContractorProfilePutBody": {
@@ -1396,6 +1672,17 @@
         }
       }
     },
+    "ClientProfileRequestForPaymentMethodPostBody": {
+      "type": "object",
+      "required": ["appointment_id", "invoice_id"],
+      "properties": {
+        "appointment_id": {
+          "type": "string",
+          "description": "the appointment id"
+        },
+        "invoice_id": { "type": "string", "description": "the invoice id" }
+      }
+    },
     "ClientProfilePutBody": {
       "type": "object",
       "properties": {
@@ -1494,6 +1781,7 @@
         }
       }
     },
+    "InvoicePollForPaymentPostBody": { "type": "object", "properties": {} },
     "StripeSetupIntentPostBody": {
       "type": "object",
       "required": ["client_profile_id"],
