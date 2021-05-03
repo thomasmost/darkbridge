@@ -65,7 +65,7 @@ const ActionBadge = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-around;
-  background-color: ${theme.blockColorActive};
+  background-color: ${theme.blockColorDefault};
   color: ${theme.activeLinkColor};
   border-radius: 40px;
   width: 100%;
@@ -77,6 +77,9 @@ const ActionBadge = styled.div`
     margin-right: 0;
   }
   cursor: default;
+`;
+const ActionBadgeActive = styled(ActionBadge)`
+  background-color: ${theme.blockColorActive};
 `;
 
 const IconTextPair = styled.div`
@@ -135,7 +138,7 @@ export const ClientDetailsCard: React.FC<ClientProfileCardProps> = ({
           </IconTextPair>
         </ActionButton>
         {!client.has_primary_payment_method && (
-          <ActionButton to={`/add-client-payment-method/${client.id}`}>
+          <ActionBadge>
             <IconTextPair>
               <Icon name="Wallet" />
               <span
@@ -145,13 +148,13 @@ export const ClientDetailsCard: React.FC<ClientProfileCardProps> = ({
                   marginLeft: theme.pad(2),
                 }}
               >
-                Add Payment Method
+                No Payment Method
               </span>
             </IconTextPair>
-          </ActionButton>
+          </ActionBadge>
         )}
         {client.has_primary_payment_method && (
-          <ActionBadge>
+          <ActionBadgeActive>
             <IconTextPair>
               <Icon name="Wallet" />
               <span
@@ -164,7 +167,7 @@ export const ClientDetailsCard: React.FC<ClientProfileCardProps> = ({
                 Has Payment Method
               </span>
             </IconTextPair>
-          </ActionBadge>
+          </ActionBadgeActive>
         )}
       </ActionRow>
     </Card>

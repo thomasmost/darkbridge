@@ -6,6 +6,7 @@ import { theme } from '../theme';
 import { CancelAppointmentByClient } from '../pages/CancelAppointmentByClient';
 import { ExpiredClientPortal } from '../pages/ExpiredClientPortal';
 import { Page404 } from '../pages/404';
+import { AddClientPaymentMethod } from '../pages/AddClientPaymentMethod';
 
 if (typeof window !== 'undefined') {
   require('react-toastify/dist/ReactToastify.css');
@@ -56,6 +57,7 @@ const SecuredClientPortal = () => {
           <Page404 path="404" />
           <CancelAppointmentByClient path=":token/cancel" />
           <ExpiredClientPortal path=":token/expired" />
+          <AddClientPaymentMethod path=":token/setup" />
         </Router>
       </Main>
     </AppContainer>

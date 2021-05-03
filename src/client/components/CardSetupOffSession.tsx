@@ -10,10 +10,11 @@ import { CardSetupForm } from './CardSetupForm';
 
 export const CardSetupOffSession: React.FC<
   {
+    token: string;
     client_secret: string;
     client_profile: ClientProfileAttributes;
   } & CardEntryChangeEvent
-> = ({ client_profile, client_secret, onChange }) => {
+> = ({ token, client_profile, client_secret, onChange }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -55,11 +56,14 @@ export const CardSetupOffSession: React.FC<
     } else {
       toast.success('Card added!');
       const { setupIntent } = result;
-      const client_profile_id = client_profile.id;
-      const add_res = await postRequest('stripe/add_payment_method', 'text', {
-        client_profile_id,
-        setupIntent,
-      });
+      const add_res = await postRequest(
+        'client_confirmation/add_payment_method',
+        'text',
+        {
+          token,
+          setupIntent,
+        },
+      );
       if (add_res.error) {
         toast.error(add_res.error);
         return;

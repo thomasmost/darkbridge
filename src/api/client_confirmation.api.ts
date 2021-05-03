@@ -7,31 +7,36 @@ import {
   request,
   summary,
   prefix,
-  securityAll,
   tagsAll,
   responses,
   operation,
-  middlewaresAll,
   path,
 } from '@callteddy/koa-swagger-decorator';
-import {
-  ContractorProfile,
-  ContractorProfileUpdateAttributes,
-} from '../models/contractor_profile.model';
-import { authUser } from './middlewares';
 import { ClientConfirmationRequest } from '../models/client_confirmation_request.model';
 import { BadRequestError, NotFoundError } from '../helpers/error.helper';
 import { Appointment, AppointmentModel } from '../models/appointment.model';
-import { baseCodes, swaggerRefFromModel } from '../helpers/swagger.helper';
+import {
+  baseCodes,
+  swaggerRefFromDefinitionName,
+  swaggerRefFromModel,
+} from '../helpers/swagger.helper';
 import { AppointmentStatus } from '../shared/enums';
 import { kirk } from '../helpers/log.helper';
 import { issueClientConfirmationRequest } from '../helpers/client_confirmation_request.helper';
 import { User } from '../models/user.model';
+import {
+  ClientProfile,
+  ClientProfileModel,
+} from '../models/client_profile.model';
+import { StripeHelper } from '../helpers/stripe.helper';
+import Stripe from 'stripe';
 
 type BodyParameter = {
   type: 'string' | 'integer' | 'boolean';
   description: string;
 };
+
+const SESSION_NO_LONGER_VALID = 'This session is no longer valid';
 
 @prefix('/client_confirmation')
 @tagsAll(['clientConfirmation'])
@@ -56,20 +61,9 @@ export class ClientConfirmationAPI {
     kirk.info('Getting an appointment for client confirmation', {
       token,
     });
-    const confirmation_request = await ClientConfirmationRequest.findByPk(
+    const confirmation_request = await authenticateClientConfirmationToken(
       token,
     );
-
-    if (!confirmation_request) {
-      throw new NotFoundError();
-    }
-
-    if (
-      confirmation_request.fulfilled_at ||
-      confirmation_request.created_at <= Date.now() - 8 * 60 * 60 * 1000
-    ) {
-      throw new BadRequestError('This session is no longer valid');
-    }
 
     const appointment = await Appointment.findByPk(
       confirmation_request.appointment_id,
@@ -97,20 +91,9 @@ export class ClientConfirmationAPI {
   })
   public static async cancelAppointment(ctx: SemiAuthenticatedRequestContext) {
     const { token } = ctx.request.body;
-    const confirmation_request = await ClientConfirmationRequest.findByPk(
+    const confirmation_request = await authenticateClientConfirmationToken(
       token,
     );
-
-    if (!confirmation_request) {
-      throw new NotFoundError();
-    }
-
-    if (
-      confirmation_request.fulfilled_at ||
-      confirmation_request.created_at <= Date.now() - 8 * 60 * 60 * 1000
-    ) {
-      throw new BadRequestError('This session is no longer valid');
-    }
 
     const appointment = await Appointment.findByPk(
       confirmation_request.appointment_id,
@@ -188,4 +171,113 @@ export class ClientConfirmationAPI {
 
     ctx.status = 204;
   }
+
+  @request('post', '/setup_intent')
+  @operation('apiClientConfirmation_createSetupIntent')
+  @summary(
+    'creates a setup intent with stripe and returns a sensitive client_secret',
+  )
+  @body({
+    token: {
+      type: 'string',
+      required: true,
+      description: 'client confirmation token to set up',
+    },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromDefinitionName('StripeClientSecretResponse'),
+    },
+    ...baseCodes([400, 401, 404]),
+  })
+  public static async createSetupIntent(ctx: AuthenticatedRequestContext) {
+    const { token } = ctx.request.body;
+    const confirmation_request = await authenticateClientConfirmationToken(
+      token,
+    );
+
+    const { client_profile_id } = confirmation_request;
+
+    const setupIntent = await StripeHelper.getCustomerPaymentSetupIntent(
+      client_profile_id,
+    );
+    const { client_secret } = setupIntent;
+    ctx.body = {
+      client_secret,
+    };
+  }
+
+  @request('post', '/add_payment_method')
+  @operation('apiClientConfirmation_addPaymentMethod')
+  @summary('add a payment method to a client')
+  @body({
+    token: {
+      type: 'string',
+      required: true,
+      description: 'the token',
+    },
+    setupIntent: swaggerRefFromDefinitionName('SuccessfulStripeSetupIntent'),
+  })
+  @responses({
+    ...baseCodes([204, 401]),
+  })
+  public static async addPaymentMethod(ctx: AuthenticatedRequestContext) {
+    const { token, setupIntent } = ctx.request.body as {
+      token: string;
+      setupIntent: Stripe.SetupIntent;
+    };
+
+    const confirmation_request = await authenticateClientConfirmationToken(
+      token,
+    );
+    const { client_profile_id } = confirmation_request;
+
+    await StripeHelper.addPrimaryPaymentMethod(client_profile_id, setupIntent);
+    ctx.status = 204;
+  }
+
+  @request('get', '/profile/{token}')
+  @operation('apiClientCConfirmation_getProfile')
+  @summary('get a single client profile for the token')
+  @path({
+    token: { type: 'string', required: true, description: 'token' },
+  })
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(ClientProfileModel),
+    },
+    ...baseCodes([401, 404]),
+  })
+  public static async getClientById(ctx: AuthenticatedRequestContext) {
+    const { token } = ctx.validatedParams;
+    kirk.info('apiClientCConfirmation_getProfile', {
+      token,
+    });
+    const confirmation_request = await authenticateClientConfirmationToken(
+      token,
+    );
+    const client = await ClientProfile.findByPk(
+      confirmation_request.client_profile_id,
+    );
+    ctx.body = client;
+  }
 }
+
+const authenticateClientConfirmationToken = async (token: string) => {
+  const confirmation_request = await ClientConfirmationRequest.findByPk(token);
+
+  if (!confirmation_request) {
+    throw new NotFoundError();
+  }
+
+  if (
+    confirmation_request.fulfilled_at ||
+    confirmation_request.created_at <= Date.now() - 8 * 60 * 60 * 1000
+  ) {
+    throw new BadRequestError(SESSION_NO_LONGER_VALID);
+  }
+
+  return confirmation_request;
+};

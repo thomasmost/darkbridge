@@ -89,8 +89,8 @@ const changeDotsHandler = (
 };
 
 export const AddClientPaymentMethod: React.FC<
-  RouteComponentProps<{ client_profile_id: string }>
-> = ({ client_profile_id }) => {
+  RouteComponentProps<{ token: string }>
+> = ({ token }) => {
   const [dots, setDots] = useState<number>(0);
   const [client_secret, setClientSecret] = useState<string>('');
   // const navigate = useNavigate();
@@ -101,13 +101,13 @@ export const AddClientPaymentMethod: React.FC<
 
   const initialLoad = async () => {
     const clientPromise = getRequest<ClientProfileAttributes>(
-      `client_profile/${client_profile_id}`,
+      `client_confirmation/profile/${token}`,
     );
     const secretPromise = postRequest<{ client_secret: string }>(
-      `stripe/setup_intent`,
+      `client_confirmation/setup_intent`,
       'json',
       {
-        client_profile_id,
+        token,
       },
     );
     const [clientRes, secretRes] = await Promise.all([
@@ -123,7 +123,10 @@ export const AddClientPaymentMethod: React.FC<
 
   useEffect(() => {
     initialLoad();
-  }, []);
+  }, [token]);
+  if (!token) {
+    return null;
+  }
 
   if (!clientProfile || !client_secret) {
     return <div>Loading...</div>;
@@ -135,6 +138,7 @@ export const AddClientPaymentMethod: React.FC<
       <Wrapper>
         <SvgContainer>{renderSvg(dots)}</SvgContainer>
         <CardSetupOffSession
+          token={token}
           client_secret={client_secret}
           client_profile={clientProfile}
           onChange={(event) => changeDotsHandler(event, setDots)}
