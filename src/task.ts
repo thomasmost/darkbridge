@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { SendEmailPayload } from './helpers/email.helper';
+import { kirk } from './helpers/log.helper';
 
 const lambda = new AWS.Lambda({
   region: 'us-east-1',
@@ -19,5 +20,9 @@ export async function assignTask(task: Task, data: unknown) {
 }
 
 export async function orderEmail(data: SendEmailPayload) {
+  kirk.info('Ordering an email to the worker lambda');
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
   return assignTask('send_email', data);
 }
