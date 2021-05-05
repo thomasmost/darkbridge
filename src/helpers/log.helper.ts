@@ -16,6 +16,22 @@ const kirk = new Logger({
   },
 });
 
+const constructLogLine = (
+  ordered_params: Record<string, string | number>,
+  named_params: Record<string, string | number>,
+) => {
+  let log_line = '';
+  const ordered_keys = Object.keys(ordered_params);
+  for (const key of ordered_keys) {
+    log_line += ` ${ordered_params[key]}`;
+  }
+  const named_keys = Object.keys(named_params);
+  for (const key of named_keys) {
+    log_line += ` ${key}=${named_params[key]},`;
+  }
+  return log_line;
+};
+
 const logRequest = (
   ctx: SemiAuthenticatedRequestContext & UserAgentContext,
 ) => {
@@ -27,7 +43,6 @@ const logRequest = (
   const ordered_params: Record<string, string | number> = {
     method,
     url,
-    status,
   };
 
   const named_params: Record<string, string | number> = {
@@ -39,15 +54,10 @@ const logRequest = (
     return;
   }
 
-  let log_line = 'REQUEST MADE:';
-  const ordered_keys = Object.keys(ordered_params);
-  for (const key of ordered_keys) {
-    log_line += ` ${ordered_params[key]}`;
-  }
-  const named_keys = Object.keys(named_params);
-  for (const key of named_keys) {
-    log_line += ` ${key}=${named_params[key]},`;
-  }
+  const log_line = `REQUEST MADE: ${constructLogLine(
+    ordered_params,
+    named_params,
+  )}`;
   kirk.info(log_line);
 };
 
@@ -94,14 +104,7 @@ const logRequestEnd = (
   }
 
   let log_line = error ? 'REQUEST ERRORED:' : 'REQUEST COMPLETE:';
-  const ordered_keys = Object.keys(ordered_params);
-  for (const key of ordered_keys) {
-    log_line += ` ${ordered_params[key]}`;
-  }
-  const named_keys = Object.keys(named_params);
-  for (const key of named_keys) {
-    log_line += ` ${key}=${named_params[key]},`;
-  }
+  log_line += constructLogLine(ordered_params, named_params);
   kirk.info(log_line);
 };
 
