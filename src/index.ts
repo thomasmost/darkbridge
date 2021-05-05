@@ -126,7 +126,9 @@ app.use(async (ctx: SemiAuthenticatedRequestContext, next) => {
 });
 
 router.get('/healthz', async (ctx) => {
-  await sequelize.authenticate();
+  await sequelize.authenticate({
+    logging: false,
+  });
   ctx.status = 200;
 });
 
