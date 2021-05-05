@@ -74,8 +74,7 @@ export const issueClientConfirmationRequest = async (
             : '',
         },
       ),
-      text: `Confirm your appointment by entering your payment info through our 
-      secure portal by visiting ${process.env.HOST_DOMAIN}/api/client_confirmation/confirm/${request.verification_token}`,
+      text: `Confirm your appointment by visiting ${process.env.HOST_DOMAIN}/api/client_confirmation/confirm/${request.verification_token}`,
     };
 
     await orderEmail(emailData);

@@ -24,9 +24,11 @@ export async function orderEmail(data: SendEmailPayload) {
   if (process.env.NODE_ENV === 'test') {
     return;
   }
+  let taskAssignmentPromise;
   try {
-    return assignTask('send_email', data);
+    taskAssignmentPromise = assignTask('send_email', data);
   } catch (err) {
     kirk.error('Task assignment failed', err);
   }
+  return taskAssignmentPromise;
 }
