@@ -18,10 +18,47 @@ const kirk = new Logger({
 
 const logRequest = (
   ctx: SemiAuthenticatedRequestContext & UserAgentContext,
+) => {
+  const method = ctx.request.method;
+  const url = ctx.request.url;
+
+  const request_id = asyncLocalStorage.getStore()?.request_id as string;
+
+  const ordered_params: Record<string, string | number> = {
+    method,
+    url,
+    status,
+  };
+
+  const named_params: Record<string, string | number> = {
+    request_id,
+  };
+
+  if (url === '/healthz') {
+    // don't log successful health checks
+    return;
+  }
+
+  let log_line = 'REQUEST MADE:';
+  const ordered_keys = Object.keys(ordered_params);
+  for (const key of ordered_keys) {
+    log_line += ` ${ordered_params[key]}`;
+  }
+  const named_keys = Object.keys(named_params);
+  for (const key of named_keys) {
+    log_line += ` ${key}=${named_params[key]},`;
+  }
+  kirk.info(log_line);
+};
+
+const logRequestEnd = (
+  ctx: SemiAuthenticatedRequestContext & UserAgentContext,
+  startMs: number,
   error?: StatusedError,
 ) => {
   const method = ctx.request.method;
   const url = ctx.request.url;
+  const timeElapsed = Date.now() - startMs;
   let status = ctx.response.status;
   if (error) {
     status = error.status || 500;
@@ -40,6 +77,7 @@ const logRequest = (
 
   const named_params: Record<string, string | number> = {
     request_id,
+    timeElapsed,
     browser,
     version,
     os,
@@ -71,13 +109,15 @@ const requestLogger = async (
   ctx: SemiAuthenticatedRequestContext & UserAgentContext,
   next: Koa.Next,
 ) => {
+  logRequest(ctx);
+  const startMs = Date.now();
   try {
     await next();
   } catch (err) {
-    logRequest(ctx, err);
+    logRequestEnd(ctx, startMs, err);
     throw err;
   }
-  logRequest(ctx);
+  logRequestEnd(ctx, startMs);
 };
 
 export { kirk, requestLogger };
