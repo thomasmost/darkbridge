@@ -32,7 +32,6 @@ const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
 kirk.info(`NODE_ENV: ${NODE_ENV}`);
 
 import { AuthenticationError, BadRequestError } from './helpers/error.helper';
-import { AuthToken } from './models/auth_token.model';
 import { consumeToken } from './helpers/auth_token.helper';
 import { SemiAuthenticatedRequestContext } from './api/types';
 import { ssr } from './ssr';
@@ -42,6 +41,7 @@ import OnboardingApp from './client/apps/OnboardingApp';
 import UnauthorizedApp from './client/apps/UnauthorizedApp';
 import SecuredClientPortal from './client/apps/SecuredClientPortal';
 import { asyncLocalStorage } from './node_hooks';
+import { sequelize } from './sequelize';
 
 const app = new Koa();
 app.use(userAgent);
@@ -126,10 +126,7 @@ app.use(async (ctx: SemiAuthenticatedRequestContext, next) => {
 });
 
 router.get('/healthz', async (ctx) => {
-  await AuthToken.findOne({
-    order: ['created_at'],
-    logging: false,
-  });
+  await sequelize.authenticate();
   ctx.status = 200;
 });
 

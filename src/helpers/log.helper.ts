@@ -2,6 +2,7 @@ import Koa from 'koa';
 import { Logger } from 'tslog';
 import { asyncLocalStorage } from '../node_hooks';
 import { SemiAuthenticatedRequestContext } from '../api/types';
+import { UserAgentContext } from 'koa-useragent';
 
 interface StatusedError extends Error {
   status?: number;
@@ -16,7 +17,7 @@ const kirk = new Logger({
 });
 
 const logRequest = (
-  ctx: SemiAuthenticatedRequestContext,
+  ctx: SemiAuthenticatedRequestContext & UserAgentContext,
   error?: StatusedError,
 ) => {
   const method = ctx.request.method;
@@ -29,6 +30,7 @@ const logRequest = (
 
   const request_id = asyncLocalStorage.getStore()?.request_id as string;
   const user_id = ctx.user?.id || 'undefined';
+  const { browser, version, os, platform } = ctx.userAgent;
 
   const ordered_params: Record<string, string | number> = {
     method,
@@ -38,11 +40,19 @@ const logRequest = (
 
   const named_params: Record<string, string | number> = {
     request_id,
+    browser,
+    version,
+    os,
+    platform,
     user_id,
   };
 
   if (error) {
     named_params.error = error.message;
+  }
+  if (!error && url === '/healthz') {
+    // don't log successful health checks
+    return;
   }
 
   let log_line = error ? 'REQUEST ERRORED:' : 'REQUEST COMPLETE:';
@@ -58,7 +68,7 @@ const logRequest = (
 };
 
 const requestLogger = async (
-  ctx: SemiAuthenticatedRequestContext,
+  ctx: SemiAuthenticatedRequestContext & UserAgentContext,
   next: Koa.Next,
 ) => {
   try {
