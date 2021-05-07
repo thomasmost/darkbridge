@@ -864,6 +864,13 @@
         "description": "create a new invoice",
         "parameters": [
           {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          },
+          {
             "name": "data",
             "description": "request body",
             "schema": { "$ref": "#/definitions/InvoicePollForPaymentPostBody" },
@@ -1444,7 +1451,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-05-03 12:15:45"
+          "example": "2021-05-07 18:48:39"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1478,7 +1485,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-05-03 12:15:45"
+          "example": "2021-05-07 18:48:39"
         },
         "duration_minutes": {
           "type": "integer",

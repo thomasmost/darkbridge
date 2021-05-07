@@ -196,6 +196,9 @@ export class InvoiceAPI {
   @request('post', '/{id}/poll_for_payment')
   @operation('apiInvoice_pollForPayment')
   @summary('create a new invoice')
+  @path({
+    id: { type: 'string', required: true, description: 'id' },
+  })
   @body({})
   @responses({
     200: {
