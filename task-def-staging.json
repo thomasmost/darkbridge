@@ -23,6 +23,10 @@
       },
       "environment": [
         {
+          "name": "AWS_ACCESS_KEY_ID",
+          "value": "AKIA3ONY3EZIX3SUPW5X"
+        },
+        {
           "name": "MYSQL_PORT",
           "value": "3306"
         },
@@ -44,6 +48,10 @@
         }
       ],
       "secrets": [
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_FARGATE_SERVER_AWS_SECRET_KEY-kzu6Fx"
+        },
         {
           "name": "MYSQL_HOST",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MYSQL_HOST-v01lbv"

@@ -32,8 +32,13 @@ export abstract class StripeHelper {
   public static async onboardUser(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
     try {
+      kirk.info('Creating Stripe Express account for user', {
+        user_id: user.id,
+      });
       const account = await stripe.accounts.create({ type: 'express' });
       user.stripe_express_account_id = account.id;
+
+      kirk.info('Stripe Express account created');
 
       await user.save();
 
@@ -44,6 +49,10 @@ export abstract class StripeHelper {
       );
       ctx.body = { url: accountLinkURL };
     } catch (err) {
+      kirk.error(
+        'Creating Stripe Express account or generating an account link failed',
+        err,
+      );
       ctx.status = 500;
       ctx.message = err.message;
     }

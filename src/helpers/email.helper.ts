@@ -100,6 +100,12 @@ export function constructEmail<T extends string>(
   return wrap(bodyContents);
 }
 
+export const testEmailTemplate = html`<h2 style="margin-top: 0;">Test Email</h2>
+  <div>
+    Well done, you've received a test email! It's ${'date'} The host domain is
+    ${'HOST_DOMAIN'}, and your name is ${'user_name'}
+  </div>`;
+
 export const resetPasswordTemplate = html`<h2 style="margin-top: 0;">
     Reset password
   </h2>

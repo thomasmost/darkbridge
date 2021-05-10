@@ -32,6 +32,7 @@ import { StripeAPI } from './api/stripe.api';
 import { orderEmail } from './task';
 import { kirk } from './helpers/log.helper';
 import { DateTimeHelper } from './helpers/datetime.helper';
+import { constructEmail, testEmailTemplate } from './helpers/email.helper';
 // import { AppConfig } from './config';
 
 export const api = new SwaggerRouter();
@@ -349,11 +350,16 @@ api.get('/test_worker', async (ctx) => {
   kirk.info('Assigning task to worker');
   const date = new Date();
   const formatted = DateTimeHelper.formatToPureDateTime(date);
-  await orderEmail({
+  const data = {
     to: 'thomas@callteddy.com',
-    subject: `Hey, it's ${formatted}`,
-    html: `<h3>${formatted}</h3>`,
-  });
+    subject: 'Reset your password',
+    html: constructEmail(testEmailTemplate, {
+      user_name: 'Thomas',
+      date: formatted,
+    }),
+    text: `This is a test`,
+  };
+  await orderEmail(data);
   kirk.info('Assignment Complete');
   ctx.status = 204;
 });
