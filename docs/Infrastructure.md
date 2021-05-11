@@ -96,3 +96,7 @@ docker run -d -p 80:80 [tag_name]
 ## Connecting to RDS
 
 See [Database Management](/docs/DatabaseManagement.md)
+
+## Connecting to a Worker
+
+See [Workers](/docs/Workers.md)
