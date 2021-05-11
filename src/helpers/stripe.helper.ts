@@ -32,8 +32,10 @@ export abstract class StripeHelper {
   public static async onboardUser(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
     try {
+      const header_origin = ctx.headers.origin;
       kirk.info('Creating Stripe Express account for user', {
         user_id: user.id,
+        header_origin,
       });
       const account = await stripe.accounts.create({ type: 'express' });
       user.stripe_express_account_id = account.id;
@@ -42,7 +44,7 @@ export abstract class StripeHelper {
 
       await user.save();
 
-      const origin = `${ctx.headers.origin}`;
+      const origin = `${process.env.HOST_DOMAIN}/onboarding/complete`;
       const accountLinkURL = await StripeHelper.generateAccountLink(
         account.id,
         origin,
