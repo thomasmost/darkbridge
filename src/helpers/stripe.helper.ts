@@ -17,6 +17,8 @@ export type StripeAddress = {
   postal_code: string;
 };
 
+const usPhoneRegex = /^(1?)([0-9]{3}|[0-9]{3})[0-9]{3}[0-9]{4}$/;
+
 export abstract class StripeHelper {
   private static async generateAccountLink(accountID: string, origin: string) {
     return stripe.accountLinks
@@ -31,13 +33,35 @@ export abstract class StripeHelper {
 
   public static async onboardUser(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
+    const strippedPhone = user.phone.replace(/\D/g, '');
+    // Stripe is picky about phone numbers so let's make sure it's valid
+    const phone = strippedPhone.match(usPhoneRegex) ? strippedPhone : undefined;
+    const product_description = 'Residential field service';
     try {
       const header_origin = ctx.headers.origin;
       kirk.info('Creating Stripe Express account for user', {
         user_id: user.id,
+        phone,
+        product_description,
         header_origin,
       });
-      const account = await stripe.accounts.create({ type: 'express' });
+      const account = await stripe.accounts.create({
+        type: 'express',
+        email: user.email,
+        business_type: 'individual',
+        individual: {
+          phone: phone,
+          first_name: user.given_name,
+          last_name: user.family_name,
+        },
+        business_profile: {
+          support_phone: phone,
+          support_email: user.email,
+          product_description,
+        },
+        country: 'US',
+        default_currency: 'USD',
+      });
       user.stripe_express_account_id = account.id;
 
       kirk.info('Stripe Express account created');

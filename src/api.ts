@@ -352,7 +352,7 @@ api.get('/test_worker', async (ctx) => {
   const formatted = DateTimeHelper.formatToPureDateTime(date);
   const data = {
     to: 'thomas@callteddy.com',
-    subject: 'Reset your password',
+    subject: 'Test Email',
     html: constructEmail(testEmailTemplate, {
       user_name: 'Thomas',
       date: formatted,
