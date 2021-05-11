@@ -18,7 +18,7 @@ import {
   AuthenticationError,
   LogicalError,
   BadRequestError,
-  NotYetImplementedError,
+  NotFoundError,
 } from '../helpers/error.helper';
 import { loadAndAuthorizeAppointment } from '../helpers/appointment.helper';
 import {
@@ -207,8 +207,65 @@ export class InvoiceAPI {
     },
     ...baseCodes([401, 405]),
   })
-  public static async pollForPayment(/*ctx: AuthenticatedRequestContext*/) {
-    throw new NotYetImplementedError();
+  public static async pollForPayment(ctx: AuthenticatedRequestContext) {
+    const user = ctx.user;
+    const { id } = ctx.validatedParams;
+    const invoice = await Invoice.findByPk(id);
+    if (!invoice) {
+      throw new NotFoundError();
+    }
+    if (invoice.status === InvoiceStatus.paid) {
+      kirk.info('pollForPayment: Invoice already paid!', {
+        invoice_id: id,
+      });
+      ctx.status = 204;
+      ctx.body = invoice;
+    }
+    const { client_profile_id } = invoice;
+    const clientProfile = await ClientProfile.findByPk(client_profile_id);
+
+    if (!clientProfile) {
+      throw new NotFoundError();
+    }
+
+    if (!clientProfile.has_primary_payment_method) {
+      kirk.info('pollForPayment: No payment method added', {
+        invoice_id: id,
+      });
+      ctx.status = 204;
+      ctx.body = invoice;
+      return;
+    }
+
+    const result = await StripeHelper.chargeExistingPaymentMethod(
+      clientProfile.stripe_customer_id,
+      clientProfile.primary_payment_method_id,
+      user.stripe_express_account_id,
+      invoice.total_to_be_charged,
+      invoice.processing_fee,
+      'usd',
+    );
+
+    const { paymentIntent } = result;
+
+    if (!paymentIntent) {
+      const error = result.error;
+      kirk.error('pollForPayment: Charging payment method failed', {
+        error,
+      });
+      return;
+    }
+
+    kirk.error('pollForPayment: Successfully processed payment', {
+      invoice_id: id,
+    });
+
+    invoice.stripe_payment_intent_id = paymentIntent.id;
+    invoice.status = InvoiceStatus.paid;
+    await invoice.save();
+
+    ctx.status = 204;
+    ctx.body = invoice;
   }
 
   @request('get', '/{id}')

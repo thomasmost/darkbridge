@@ -27,8 +27,18 @@ import {
   swaggerRefFromModel,
 } from '../helpers/swagger.helper';
 import { authUser } from './middlewares';
-import { NotFoundError, NotYetImplementedError } from '../helpers/error.helper';
+import { NotFoundError } from '../helpers/error.helper';
 import { kirk } from '../helpers/log.helper';
+import {
+  clientPaymentRequestTemplate,
+  constructEmail,
+  SendEmailPayload,
+} from '../helpers/email.helper';
+import { ClientConfirmationRequest } from '../models/client_confirmation_request.model';
+import { Invoice } from '../models/invoice.model';
+import { Appointment } from '../models/appointment.model';
+import { format } from 'date-fns-tz';
+import { orderEmail } from '../task';
 
 type BodyParameter = {
   type: 'string' | 'integer';
@@ -141,6 +151,7 @@ export class ClientProfileAPI {
     ctx.body = profile;
   }
 
+  // eslint-disable-next-line max-lines-per-function
   @request('post', '/{id}/request_for_payment_method')
   @operation('apiClientProfile_issueRequestForPaymentMethod')
   @summary('issue a request for the client to set up a credit card')
@@ -177,17 +188,25 @@ export class ClientProfileAPI {
 
     const { id } = ctx.validatedParams;
 
-    // const { appointment_id, invoice_id } = ctx.request.body as {
-    //   appointment_id: string;
-    //   invoice_id: string;
-    // };
+    const { appointment_id, invoice_id } = ctx.request.body as {
+      appointment_id: string;
+      invoice_id: string;
+    };
 
-    const clientProfile = await ClientProfile.findByPk(id);
+    const appointmentPromise = Appointment.findByPk(appointment_id);
+    const clientProfilePromise = ClientProfile.findByPk(id);
+    const invoicePromise = Invoice.findByPk(invoice_id);
+
+    const [appointment, clientProfile, invoice] = await Promise.all([
+      appointmentPromise,
+      clientProfilePromise,
+      invoicePromise,
+    ]);
 
     const user_id = user.id;
     const client_profile_id = clientProfile?.id;
 
-    if (!clientProfile || clientProfile.created_by_user_id !== user_id) {
+    if (!client_profile_id || clientProfile?.created_by_user_id !== user_id) {
       kirk.error(`Client profile not found or mismatched`, {
         user_id,
         client_profile_id,
@@ -195,7 +214,55 @@ export class ClientProfileAPI {
       throw new NotFoundError();
     }
 
-    throw new NotYetImplementedError();
+    if (!invoice || !appointment) {
+      kirk.error(`Invoice or appointment not found or mismatched`, {
+        user_id,
+        invoice_id,
+        appointment_id,
+      });
+      throw new NotFoundError();
+    }
+
+    if (clientProfile.has_primary_payment_method) {
+      kirk.error(
+        'Cannot request payment info for a client who already has a primary payment method',
+      );
+      throw Error(
+        'Cannot request payment info for a client who already has a primary payment method',
+      );
+    }
+
+    const email_sent_to = clientProfile.email;
+
+    const request = await ClientConfirmationRequest.create({
+      appointment_id,
+      client_profile_id,
+      email_sent_to,
+    });
+
+    const total = invoice.total_to_be_charged;
+
+    const emailData: SendEmailPayload = {
+      to: clientProfile.email,
+      subject: 'Request for Payment',
+      html: constructEmail(clientPaymentRequestTemplate, {
+        verification_token: request.verification_token,
+        appointment_date_and_time: `${format(
+          new Date(appointment.datetime_local),
+          'LLLL do',
+        )} at ${format(new Date(appointment.datetime_local), 'h:mm a')}`,
+        client_name: clientProfile.given_name,
+        service_provider_name: `${user.given_name} ${user.family_name}`,
+        with_company: user.contractor_profile?.company_name
+          ? `with ${user.contractor_profile?.company_name} `
+          : '',
+        invoice_total: total.toFixed(2),
+      }),
+      text: `Please enter your payment info through our 
+        secure portal at ${process.env.HOST_DOMAIN}/e/client_confirmation/${request.verification_token}/setup`,
+    };
+
+    await orderEmail(emailData);
   }
 
   @request('get', '')

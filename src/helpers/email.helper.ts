@@ -150,7 +150,7 @@ export const clientConfirmationRequestTemplate = html` <h2
       Confirm appointment
     </a>
   </div>
-  <div style="margin: 20px 0;">
+  <div style="margin: 20px 0; font-size: 1.2em;">
     Doesn't look right? You can cancel
     <a href="${'HOST_DOMAIN'}/e/client_portal/${'verification_token'}/cancel"
       >here</a
@@ -190,4 +190,24 @@ export const clientConfirmationRequestWithoutPaymentDetailsNeededTemplate = html
     <a href="${'HOST_DOMAIN'}/e/client_portal/${'verification_token'}/cancel"
       >here</a
     >.
+  </div>`;
+
+export const clientPaymentRequestTemplate = html` <h2 style="margin-top: 0;">
+    Enter your payment details
+  </h2>
+  <div style="margin-bottom: 20px; font-size: 1.2em;">Hi ${'client_name'},</div>
+  <div style="margin-bottom: 20px; font-size: 1.2em;">
+    ${'service_provider_name'} ${'with_company'} has created an invoice of
+    $${'invoice_total'} for your appointment on ${'appointment_date_and_time'}.
+  </div>
+  <div style="margin-bottom: 20px; font-size: 1.2em;">
+    Please enter your payment information through our secure portal.
+  </div>
+  <div style="margin: 20px 0; font-size: 1.2em;">
+    <a
+      href="${'HOST_DOMAIN'}/e/client_portal/${'verification_token'}/setup"
+      style="padding: 10px; border-radius: 5px; background-color: #45A3F7; color: white; text-decoration: none;"
+    >
+      Pay now
+    </a>
   </div>`;
