@@ -672,12 +672,10 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success",
-            "schema": { "$ref": "#/definitions/ClientProfile" }
-          },
+          "204": { "description": "Success" },
           "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" }
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not Found" }
         },
         "tags": ["clientProfile"],
         "operationId": "apiClientProfile_issueRequestForPaymentMethod",
@@ -1451,7 +1449,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-05-07 18:48:39"
+          "example": "2021-05-12 13:36:11"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1485,7 +1483,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-05-07 18:48:39"
+          "example": "2021-05-12 13:36:11"
         },
         "duration_minutes": {
           "type": "integer",
