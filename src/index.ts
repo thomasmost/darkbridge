@@ -156,15 +156,12 @@ router.get(/\/e\//, async (ctx: SemiAuthenticatedRequestContext) => {
 router.get(/^(?!\/?api).+$/, async (ctx: SemiAuthenticatedRequestContext) => {
   if (ctx.req.url && ctx.req.url.split('.').length > 1) {
     // file request
-    kirk.debug('requesting file:', {
+    kirk.debug('Requesting file in wildcard router middleware', {
       url: ctx.req.url,
     });
     return;
   }
 
-  kirk.debug('not requesting file:', {
-    url: ctx.req.url,
-  });
   if (!ctx.req.url) {
     ctx.status = 400;
     return;
@@ -176,7 +173,7 @@ router.get(/^(?!\/?api).+$/, async (ctx: SemiAuthenticatedRequestContext) => {
   await ssr(ctx, App, 'app.js');
 });
 
-app.use(serveStatic(path.resolve('./public')));
+app.use(serveStatic(path.resolve('./public'), { hidden: true }));
 
 app.use(bodyParser());
 
