@@ -39,6 +39,7 @@ import { Invoice } from '../models/invoice.model';
 import { Appointment } from '../models/appointment.model';
 import { format } from 'date-fns-tz';
 import { orderEmail } from '../task';
+import { toMajorUnits } from '../helpers/currency.helper';
 
 type BodyParameter = {
   type: 'string' | 'integer';
@@ -175,11 +176,7 @@ export class ClientProfileAPI {
     },
   })
   @responses({
-    200: {
-      description: 'Success',
-      schema: swaggerRefFromModel(ClientProfileModel),
-    },
-    ...baseCodes([400, 401]),
+    ...baseCodes([204, 400, 401, 404]),
   })
   public static async issueRequestForPaymentMethod(
     ctx: AuthenticatedRequestContext,
@@ -256,13 +253,14 @@ export class ClientProfileAPI {
         with_company: user.contractor_profile?.company_name
           ? `with ${user.contractor_profile?.company_name} `
           : '',
-        invoice_total: total.toFixed(2),
+        invoice_total: toMajorUnits(total),
       }),
       text: `Please enter your payment info through our 
         secure portal at ${process.env.HOST_DOMAIN}/e/client_confirmation/${request.verification_token}/setup`,
     };
 
     await orderEmail(emailData);
+    ctx.status = 204;
   }
 
   @request('get', '')
