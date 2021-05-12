@@ -124,7 +124,7 @@ export const verifyEmailTemplate = html`<h2 style="margin-top: 0;">
     <a
       href="${'HOST_DOMAIN'}/api/auth/verify_email?token=${'verification_token'}"
     >
-      click here </a
+      click here</a
     >.
   </div>`;
 
