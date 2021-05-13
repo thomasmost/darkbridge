@@ -195,7 +195,7 @@ export class InvoiceAPI {
 
   @request('post', '/{id}/poll_for_payment')
   @operation('apiInvoice_pollForPayment')
-  @summary('create a new invoice')
+  @summary('poll for a successful payment on a pending invoice')
   @path({
     id: { type: 'string', required: true, description: 'id' },
   })
@@ -302,6 +302,52 @@ export class InvoiceAPI {
       return;
     }
     invoice.invoice_items = items;
+    ctx.body = invoice;
+  }
+
+  @request('put', '/{id}/reset_pending_to_cash')
+  @operation('apiInvoice_resetPendingToCash')
+  @summary('reset a pending invoice to cash and mark paid')
+  @path({
+    id: { type: 'string', required: true, description: 'id' },
+  })
+  @body({})
+  @responses({
+    200: {
+      description: 'Success',
+      schema: swaggerRefFromModel(InvoiceModel),
+    },
+    ...baseCodes([400, 401, 405]),
+  })
+  public static async resetPendingToCash(ctx: AuthenticatedRequestContext) {
+    const user = ctx.user;
+    const { id } = ctx.validatedParams;
+    const invoice = await Invoice.findByPk(id);
+    if (!invoice) {
+      throw new NotFoundError();
+    }
+
+    kirk.info('resetPendingToCash', {
+      user_id: user.id,
+      invoice_id: id,
+    });
+
+    if (invoice.status !== InvoiceStatus.pending) {
+      kirk.error('resetPendingToCash: Invoice must be in a pending state', {
+        user_id: user.id,
+        invoice_id: id,
+        invoice_status: invoice.status,
+      });
+      ctx.status = 400;
+    }
+
+    invoice.processing_fee = 0;
+    invoice.payment_method = InvoicePaymentMethod.cash;
+    invoice.status = InvoiceStatus.paid;
+
+    await invoice.save();
+
+    ctx.status = 200;
     ctx.body = invoice;
   }
 }
