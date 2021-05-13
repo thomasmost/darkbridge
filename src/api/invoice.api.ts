@@ -218,7 +218,7 @@ export class InvoiceAPI {
       kirk.info('pollForPayment: Invoice already paid!', {
         invoice_id: id,
       });
-      ctx.status = 204;
+      ctx.status = 200;
       ctx.body = invoice;
     }
     const { client_profile_id } = invoice;
@@ -232,7 +232,7 @@ export class InvoiceAPI {
       kirk.info('pollForPayment: No payment method added', {
         invoice_id: id,
       });
-      ctx.status = 204;
+      ctx.status = 200;
       ctx.body = invoice;
       return;
     }
@@ -264,7 +264,7 @@ export class InvoiceAPI {
     invoice.status = InvoiceStatus.paid;
     await invoice.save();
 
-    ctx.status = 204;
+    ctx.status = 200;
     ctx.body = invoice;
   }
 
