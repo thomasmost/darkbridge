@@ -858,8 +858,8 @@
     },
     "/api/invoice/{id}/poll_for_payment": {
       "post": {
-        "summary": "create a new invoice",
-        "description": "create a new invoice",
+        "summary": "poll for a successful payment on a pending invoice",
+        "description": "poll for a successful payment on a pending invoice",
         "parameters": [
           {
             "name": "id",
@@ -911,6 +911,41 @@
         },
         "tags": ["invoice"],
         "operationId": "apiInvoice_getById",
+        "security": [{ "token": [] }]
+      }
+    },
+    "/api/invoice/{id}/reset_pending_to_cash": {
+      "put": {
+        "summary": "reset a pending invoice to cash and mark paid",
+        "description": "reset a pending invoice to cash and mark paid",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "description": "request body",
+            "schema": {
+              "$ref": "#/definitions/InvoiceResetPendingToCashPutBody"
+            },
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/Invoice" }
+          },
+          "400": { "description": "Bad Request" },
+          "401": { "description": "Unauthorized" },
+          "405": { "description": "Method Not Allowed" }
+        },
+        "tags": ["invoice"],
+        "operationId": "apiInvoice_resetPendingToCash",
         "security": [{ "token": [] }]
       }
     },
@@ -1449,7 +1484,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-05-12 13:36:11"
+          "example": "2021-05-13 19:34:04"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1483,7 +1518,7 @@
         "datetime_local": {
           "type": "string",
           "description": "a representation of the local time of the appointment, which must exactly match the following format: 'YYYY-MM-DD HH-MM-SS'",
-          "example": "2021-05-12 13:36:11"
+          "example": "2021-05-13 19:34:04"
         },
         "duration_minutes": {
           "type": "integer",
@@ -1787,6 +1822,7 @@
       }
     },
     "InvoicePollForPaymentPostBody": { "type": "object", "properties": {} },
+    "InvoiceResetPendingToCashPutBody": { "type": "object", "properties": {} },
     "StripeSetupIntentPostBody": {
       "type": "object",
       "required": ["client_profile_id"],
