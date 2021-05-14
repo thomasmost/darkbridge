@@ -163,10 +163,42 @@ export class ClientConfirmationAPI {
     const confirmation_request = await authenticateClientConfirmationToken(
       token,
     );
-    const { client_profile_id } = confirmation_request;
+    const { client_profile_id, appointment_id } = confirmation_request;
 
     await StripeHelper.addPrimaryPaymentMethod(client_profile_id, setupIntent);
+    const appointment = await Appointment.findByPk(appointment_id);
+    if (!appointment) throw Error();
+    await appointment.update({ client_confirmed: true });
+    confirmation_request.fulfilled_at = Date.now();
+    confirmation_request.fulfilled_with = 'confirmed_with_payment_details';
+    await confirmation_request.save();
     ctx.status = 204;
+  }
+
+  @request('get', '/confirm/{token}')
+  @operation('apiClientConfirmation_confirmAppointment')
+  @summary('add a payment method to a client')
+  @path({
+    token: { type: 'string', required: true, description: 'token' },
+  })
+  @responses({
+    ...baseCodes([204, 401, 404]),
+  })
+  public static async confirmAppointment(ctx: AuthenticatedRequestContext) {
+    const { token } = ctx.validatedParams as { token: string };
+
+    const confirmation_request = await authenticateClientConfirmationToken(
+      token,
+    );
+    const { appointment_id } = confirmation_request;
+
+    const appointment = await Appointment.findByPk(appointment_id);
+    if (!appointment) throw Error();
+    await appointment.update({ client_confirmed: true });
+    confirmation_request.fulfilled_at = Date.now();
+    confirmation_request.fulfilled_with = 'confirmed_without_payment_details';
+    await confirmation_request.save();
+    ctx.redirect(`/e/client_portal/confirmed`);
   }
 
   @request('get', '/profile/{token}')
@@ -259,6 +291,7 @@ export class ClientConfirmationAPI {
 
     appointment.status = AppointmentStatus.canceled;
     confirmation_request.fulfilled_at = Date.now();
+    confirmation_request.fulfilled_with = 'cancellation';
     await Promise.all([appointment.save(), confirmation_request.save()]);
     ctx.status = 204;
   }

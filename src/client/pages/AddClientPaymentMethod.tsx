@@ -1,4 +1,4 @@
-import { RouteComponentProps } from '@reach/router';
+import { RouteComponentProps, useNavigate } from '@reach/router';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import styled from '@emotion/styled';
@@ -93,7 +93,7 @@ export const AddClientPaymentMethod: React.FC<
 > = ({ token }) => {
   const [dots, setDots] = useState<number>(0);
   const [client_secret, setClientSecret] = useState<string>('');
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [
     clientProfile,
     setClientProfile,
@@ -142,6 +142,7 @@ export const AddClientPaymentMethod: React.FC<
           client_secret={client_secret}
           client_profile={clientProfile}
           onChange={(event) => changeDotsHandler(event, setDots)}
+          onSuccess={() => navigate(`confirmed`)}
         />
       </Wrapper>
     </Elements>

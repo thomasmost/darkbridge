@@ -17,10 +17,6 @@ import {
 } from '../helpers/swagger.helper';
 import { StripeHelper } from '../helpers/stripe.helper';
 import { authUser } from './middlewares';
-import { Stripe } from 'stripe';
-import { InvoiceStatus } from '../shared/enums';
-import { Invoice } from '../models/invoice.model';
-import { NotFoundError } from '../helpers/error.helper';
 
 @prefix('/stripe')
 @securityAll([{ token: [] }])
@@ -69,84 +65,6 @@ export class StripeAPI {
     ctx.body = {
       client_secret,
     };
-  }
-
-  @request('post', '/add_payment_method')
-  @operation('apiStripe_addPaymentMethod')
-  @summary('add a payment method to a client')
-  @body({
-    client_profile_id: {
-      type: 'string',
-      required: true,
-      description: 'client profile id to set up',
-    },
-    setupIntent: swaggerRefFromDefinitionName('SuccessfulStripeSetupIntent'),
-  })
-  @responses({
-    ...baseCodes([204, 401]),
-  })
-  public static async addPaymentMethod(ctx: AuthenticatedRequestContext) {
-    const { client_profile_id, setupIntent } = ctx.request.body as {
-      client_profile_id: string;
-      setupIntent: Stripe.SetupIntent;
-    };
-    await StripeHelper.addPrimaryPaymentMethod(client_profile_id, setupIntent);
-    ctx.status = 204;
-  }
-
-  @request('post', '/confirm_invoice_payment')
-  @operation('apiStripe_confirmInvoicePayment')
-  @summary('confirm payment on a pending invoice')
-  @body({
-    client_profile_id: {
-      type: 'string',
-      required: true,
-      description: 'client profile id for invoice',
-    },
-    invoice_id: {
-      type: 'string',
-      required: true,
-      description: 'invoice id to pay',
-    },
-    setup_future_usage: {
-      type: 'boolean',
-      required: true,
-      description: 'can we save the card for automatic future payments',
-    },
-    paymentIntent: swaggerRefFromDefinitionName(
-      'SuccessfulStripePaymentIntent',
-    ),
-  })
-  @responses({
-    ...baseCodes([204, 401]),
-  })
-  public static async confirmInvoicePayment(ctx: AuthenticatedRequestContext) {
-    const {
-      client_profile_id,
-      invoice_id,
-      setup_future_usage,
-      paymentIntent,
-    } = ctx.request.body as {
-      client_profile_id: string;
-      invoice_id: string;
-      setup_future_usage: boolean;
-      paymentIntent: Stripe.PaymentIntent;
-    };
-    if (paymentIntent.status === 'succeeded') {
-      const invoice = await Invoice.findByPk(invoice_id);
-      if (!invoice || invoice.client_profile_id !== client_profile_id) {
-        throw new NotFoundError();
-      }
-      invoice.status = InvoiceStatus.paid;
-      await invoice.save();
-    }
-    if (setup_future_usage) {
-      await StripeHelper.addPrimaryPaymentMethod(
-        client_profile_id,
-        paymentIntent,
-      );
-    }
-    ctx.status = 204;
   }
 
   @request('get', '/public_key')

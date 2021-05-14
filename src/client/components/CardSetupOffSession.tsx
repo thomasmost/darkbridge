@@ -5,7 +5,6 @@ import { CardEntryChangeEvent } from './CardSection';
 import { toast } from 'react-toastify';
 import { postRequest } from '../services/api.svc';
 import { ClientProfileAttributes } from '../../models/client_profile.model';
-import { useNavigate } from '@reach/router';
 import { CardSetupForm } from './CardSetupForm';
 
 export const CardSetupOffSession: React.FC<
@@ -13,11 +12,11 @@ export const CardSetupOffSession: React.FC<
     token: string;
     client_secret: string;
     client_profile: ClientProfileAttributes;
+    onSuccess: () => void;
   } & CardEntryChangeEvent
-> = ({ token, client_profile, client_secret, onChange }) => {
+> = ({ token, client_profile, client_secret, onChange, onSuccess }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const navigate = useNavigate();
   const [isRequestPending, setRequestPending] = useState<boolean>(false);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
@@ -68,7 +67,7 @@ export const CardSetupOffSession: React.FC<
         toast.error(add_res.error);
         return;
       }
-      navigate('/clients');
+      onSuccess();
       // The setup has succeeded. Display a success message and send
       // result.setupIntent.payment_method to your server to save the
       // card to a Customer

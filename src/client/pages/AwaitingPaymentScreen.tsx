@@ -6,10 +6,7 @@ import styled from '@emotion/styled';
 import { theme } from '../theme';
 import { InvoiceItemType } from '../../shared/enums';
 import { toMajorUnits } from '../../helpers/currency.helper';
-import { CardSetupLive } from '../components/CardSetupLive';
 import { InvoiceAttributes } from '../../models/invoice.model';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
 
 const InfoContainer = styled.div`
   margin: 20px;
@@ -22,21 +19,13 @@ const InfoContainer = styled.div`
   }
 `;
 
-type AddClientPaymentOnsiteProps = RouteComponentProps & {
+type AwaitingPaymentScreenProps = RouteComponentProps & {
   appointment: AppointmentAttributes;
   invoice: InvoiceAttributes | null;
   includeTaxes: boolean;
 };
 
-const stripePromise = loadStripe(
-  ((global as unknown) as {
-    config: {
-      env: { STRIPE_PUBLIC_KEY: string };
-    };
-  }).config.env.STRIPE_PUBLIC_KEY,
-);
-
-export const AddClientPaymentOnsite: React.FC<AddClientPaymentOnsiteProps> = ({
+export const AwaitingPaymentScreen: React.FC<AwaitingPaymentScreenProps> = ({
   appointment,
   invoice,
 }) => {
@@ -85,22 +74,20 @@ export const AddClientPaymentOnsite: React.FC<AddClientPaymentOnsiteProps> = ({
   }
 
   return (
-    <Elements stripe={stripePromise}>
+    <div>
       <InfoContainer>
         <label>
           Total: <span>${total}</span>
         </label>
         <div>Paid by {payment_method === 'cash' ? 'cash' : 'card'}</div>
       </InfoContainer>
-      <CardSetupLive
-        client_secret={client_secret}
-        invoice_id={invoice.id}
-        client_profile={clientProfile}
-        onChange={() => null}
-      />
+      <div>
+        A request has been sent to the client to enter their card details.
+        Please leave the app open until they do.
+      </div>
       {/* <Button onClick={() => onSubmit(invoice, appointment, navigate)}>
         Confirm Payment
       </Button> */}
-    </Elements>
+    </div>
   );
 };

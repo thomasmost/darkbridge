@@ -57,7 +57,7 @@ const onSubmit = async (
     if (data?.status === InvoiceStatus.paid) {
       navigate('success');
     } else {
-      navigate('add-card');
+      navigate('awaiting-payment');
     }
   }
 };
