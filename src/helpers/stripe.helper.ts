@@ -33,7 +33,7 @@ export abstract class StripeHelper {
 
   public static async onboardUser(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
-    const strippedPhone = user.phone.replace(/\D/g, '');
+    const strippedPhone = user.phone && user.phone.replace(/\D/g, '');
     // Stripe is picky about phone numbers so let's make sure it's valid
     const phone = strippedPhone.match(usPhoneRegex) ? strippedPhone : undefined;
     const product_description = 'Residential field service';

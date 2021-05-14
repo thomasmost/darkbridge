@@ -72,7 +72,7 @@ api.swagger({
   title: 'Teddy Internal API',
   description:
     "API DOC for Teddy's internal-facing API, serving the web and mobile clients",
-  version: '0.1.3',
+  version: '0.1.5',
   prefix: '/api',
   swaggerConfiguration: {
     display: {
