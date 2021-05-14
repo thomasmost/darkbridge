@@ -28,9 +28,10 @@
 							<inputSpec>swagger.json</inputSpec>
 		
 							<generatorName>typescript-angular</generatorName>
+              <template>/Users/thomas/swagger-codegen/modules/swagger-codegen/src/main/resources/typescript-angular</template>
+              <templateEngine>mustache</templateEngine>
 							<output>mobile/src/backend</output>
 							<removeOperationIdPrefix>true</removeOperationIdPrefix>
-							
 							<additionalProperties>
 								<ngVersion>11.0.0</ngVersion>
 							</additionalProperties>
