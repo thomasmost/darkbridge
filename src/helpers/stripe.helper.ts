@@ -68,7 +68,11 @@ export abstract class StripeHelper {
 
       await user.save();
 
-      const origin = `${process.env.HOST_DOMAIN}/onboarding/complete`;
+      if (!process.env.HOST_DOMAIN) {
+        throw Error('Missing config, host domain');
+      }
+
+      const origin = process.env.HOST_DOMAIN;
       const accountLinkURL = await StripeHelper.generateAccountLink(
         account.id,
         origin,
