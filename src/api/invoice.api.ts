@@ -452,12 +452,12 @@ async function handlePaymentIntentPromise(
     if (paymentIntent.status === 'succeeded') {
       kirk.info('Payment succeeded', {
         stripe_payment_intent_id
-      })
+      });
       await invoice.update({ status: 'paid', stripe_payment_intent_id });
     } else {
       kirk.info('Payment intent created but did not succeed', {
         stripe_payment_intent_id
-      })
+      });
       await invoice.update({ stripe_payment_intent_id });
     }
     return paymentIntent;

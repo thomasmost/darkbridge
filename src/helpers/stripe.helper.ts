@@ -176,6 +176,13 @@ export abstract class StripeHelper {
       throw Error('Expected an amount in minor units; received a decimal');
     }
     try {
+      kirk.info('chargeExistingPaymentMethod', {
+        stripe_customer_id,
+        stripe_service_provider_account_id,
+        amount,
+        application_fee_amount,
+        currency,
+      });
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
         application_fee_amount,
@@ -191,11 +198,11 @@ export abstract class StripeHelper {
       return { paymentIntent };
     } catch (error) {
       // Error code will be authentication_required if authentication is needed
-      kirk.error('Error code is: ', error.code);
-      const paymentIntentRetrieved = await stripe.paymentIntents.retrieve(
-        error.raw.payment_intent.id,
-      );
-      kirk.info('PI retrieved: ', paymentIntentRetrieved.id);
+      kirk.error('chargeExistingPaymentMethod.error', error);
+      // const paymentIntentRetrieved = await stripe.paymentIntents.retrieve(
+      //   error.raw.payment_intent.id,
+      // );
+      // kirk.info('PI retrieved: ', paymentIntentRetrieved.id);
       return { error };
     }
   }
