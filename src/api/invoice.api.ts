@@ -182,7 +182,7 @@ export class InvoiceAPI {
       throw Error('This should never happen');
     }
     if (invoice.payment_method === 'credit_card') {
-      invoice.client_secret = await handleAutomaticPayment(
+      await handleAutomaticPayment(
         invoice,
         user,
         client_profile,
@@ -399,7 +399,16 @@ async function handleAutomaticPayment(
   client_profile: ClientProfile,
 ) {
   const { stripe_customer_id, primary_payment_method_id } = client_profile;
+  kirk.info('handleAutomaticPayment', {
+    invoice_id: invoice.id,
+    client_profile_id: client_profile.id,
+    service_provider_user_id: user.id,
+  });
   if (stripe_customer_id && primary_payment_method_id) {
+    kirk.info('handleAutomaticPayment: Charging existing payment method', {
+      invoice_id: invoice.id,
+      client_profile_id: client_profile.id
+    });
     const promise = StripeHelper.chargeExistingPaymentMethod(
       stripe_customer_id,
       primary_payment_method_id,
@@ -409,16 +418,11 @@ async function handleAutomaticPayment(
       'usd',
     );
     return handlePaymentIntentPromise(invoice, promise);
-  } else if (stripe_customer_id) {
-    const promise = StripeHelper.createPendingCharge(
-      stripe_customer_id,
-      user.stripe_express_account_id,
-      invoice.total_to_be_charged,
-      invoice.processing_fee,
-      'usd',
-    );
-    return handlePaymentIntentPromise(invoice, promise);
   }
+  kirk.info('handleAutomaticPayment: No primary payment method to charge', {
+    invoice_id: invoice.id,
+    client_profile_id: client_profile.id,
+  });
   return null;
 }
 
@@ -446,12 +450,16 @@ async function handlePaymentIntentPromise(
     }
     const stripe_payment_intent_id = paymentIntent.id;
     if (paymentIntent.status === 'succeeded') {
+      kirk.info('Payment succeeded', {
+        stripe_payment_intent_id
+      })
       await invoice.update({ status: 'paid', stripe_payment_intent_id });
     } else {
+      kirk.info('Payment intent created but did not succeed', {
+        stripe_payment_intent_id
+      })
       await invoice.update({ stripe_payment_intent_id });
     }
-
-    const { client_secret } = paymentIntent;
-    return client_secret;
+    return paymentIntent;
   }
 }
