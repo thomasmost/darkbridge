@@ -256,7 +256,7 @@ export class InvoiceAPI {
       return;
     }
 
-    kirk.error('pollForPayment: Successfully processed payment', {
+    kirk.info('pollForPayment: Successfully processed payment', {
       invoice_id: id,
     });
 

@@ -47,6 +47,14 @@ export abstract class StripeHelper {
       });
       const account = await stripe.accounts.create({
         type: 'express',
+        capabilities: {
+          card_payments: {
+            requested: true,
+          },
+          transfers: {
+            requested: true,
+          },
+        },
         email: user.email,
         business_type: 'individual',
         individual: {
