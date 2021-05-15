@@ -182,11 +182,7 @@ export class InvoiceAPI {
       throw Error('This should never happen');
     }
     if (invoice.payment_method === 'credit_card') {
-      await handleAutomaticPayment(
-        invoice,
-        user,
-        client_profile,
-      );
+      await handleAutomaticPayment(invoice, user, client_profile);
     }
     invoice.invoice_items = items;
     ctx.status = 200;
@@ -407,7 +403,7 @@ async function handleAutomaticPayment(
   if (stripe_customer_id && primary_payment_method_id) {
     kirk.info('handleAutomaticPayment: Charging existing payment method', {
       invoice_id: invoice.id,
-      client_profile_id: client_profile.id
+      client_profile_id: client_profile.id,
     });
     const promise = StripeHelper.chargeExistingPaymentMethod(
       stripe_customer_id,
@@ -451,12 +447,12 @@ async function handlePaymentIntentPromise(
     const stripe_payment_intent_id = paymentIntent.id;
     if (paymentIntent.status === 'succeeded') {
       kirk.info('Payment succeeded', {
-        stripe_payment_intent_id
+        stripe_payment_intent_id,
       });
       await invoice.update({ status: 'paid', stripe_payment_intent_id });
     } else {
       kirk.info('Payment intent created but did not succeed', {
-        stripe_payment_intent_id
+        stripe_payment_intent_id,
       });
       await invoice.update({ stripe_payment_intent_id });
     }
