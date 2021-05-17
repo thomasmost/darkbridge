@@ -216,7 +216,9 @@ export const invoiceReceiptTemplate = html`<h2 style="margin-top: 0;">
     Payment received
   </h2>
   <div>Here's your receipt for service completed on ${'appointment_date'}.</div>
-  <div>Service Provider: <strong>${'service_provider'}</strong></div>
+  <div style="margin-top: 20px;">
+    Service Provider: <strong>${'service_provider'}</strong>
+  </div>
   <div>Location: <strong>${'location'}</strong></div>
   <div>
     <table style="width: 100%; margin: 20px auto; border-collapse: collapse;">
