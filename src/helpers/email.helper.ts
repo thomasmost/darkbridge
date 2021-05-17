@@ -225,6 +225,4 @@ export const invoiceReceiptTemplate = html`<h2 style="margin-top: 0;">
       ${'tableContents'}
     </table>
   </div>
-  <div>
-    Payment processed by <strong>Teddy</strong>. Thanks for your business!
-  </div>`;
+  <div>${'processingStatement'} Thanks for your business!</div>`;

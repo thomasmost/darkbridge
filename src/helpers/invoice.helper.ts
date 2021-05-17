@@ -205,6 +205,12 @@ export async function sendReceipt(
     service_provider +=
       ' at ' + service_provider_user.contractor_profile.company_name;
   }
+
+  const processingStatement =
+    invoice.payment_method === InvoicePaymentMethod.cash
+      ? 'Payment was made by cash or check.'
+      : 'Payment processed by <strong>Teddy</strong>.';
+
   const emailData = {
     to: client_profile.email,
     subject: `Receipt for ${appointment_date}`,
@@ -213,6 +219,7 @@ export async function sendReceipt(
       service_provider,
       location,
       tableContents: constructReceiptTableFromInvoice(invoice),
+      processingStatement,
     }),
     text: `Thanks for your business! Your total was $${toMajorUnits(
       invoice.total_to_be_charged,
