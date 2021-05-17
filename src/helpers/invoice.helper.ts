@@ -9,6 +9,7 @@ import { ClientProfile } from '../models/client_profile.model';
 import { format } from 'date-fns-tz';
 import { constructEmail, invoiceReceiptTemplate } from './email.helper';
 import { orderEmail } from '../task';
+import { User } from '../models/user.model';
 
 export function totalToBePaidOut(invoice: InvoiceAttributes) {
   const {
@@ -189,6 +190,7 @@ export function constructReceiptTableFromInvoice(invoice: Invoice) {
 
 export async function sendReceipt(
   appointment: Appointment,
+  service_provider_user: User,
   client_profile: ClientProfile,
   invoice: Invoice,
 ) {
@@ -196,11 +198,20 @@ export async function sendReceipt(
     new Date(appointment.datetime_local),
     'LLLL do',
   );
+  const location = appointment.address_street + ', ' + appointment.address_city;
+  let service_provider =
+    service_provider_user.given_name + ' ' + service_provider_user.family_name;
+  if (service_provider_user.contractor_profile?.company_name) {
+    service_provider +=
+      ' at ' + service_provider_user.contractor_profile.company_name;
+  }
   const emailData = {
     to: client_profile.email,
     subject: `Receipt for ${appointment_date}`,
     html: constructEmail(invoiceReceiptTemplate, {
       appointment_date,
+      service_provider,
+      location,
       tableContents: constructReceiptTableFromInvoice(invoice),
     }),
     text: `Thanks for your business! Your total was $${toMajorUnits(

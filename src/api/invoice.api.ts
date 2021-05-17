@@ -27,7 +27,6 @@ import {
   InvoiceItemModel,
 } from '../models/invoice_item.model';
 import {
-  constructReceiptTableFromInvoice,
   sendReceipt,
   totalToBePaidOut,
   validateInvoice,
@@ -40,13 +39,7 @@ import { ClientProfile } from '../models/client_profile.model';
 import { User } from '../models/user.model';
 import Stripe from 'stripe';
 import { kirk } from '../helpers/log.helper';
-import { format } from 'date-fns-tz';
 import { Appointment } from '../models/appointment.model';
-import {
-  constructEmail,
-  invoiceReceiptTemplate,
-} from '../helpers/email.helper';
-import { orderEmail } from '../task';
 
 const postParams = {
   appointment_id: {
@@ -208,7 +201,7 @@ export class InvoiceAPI {
     invoice.invoice_items = items;
 
     if (invoice.status === InvoiceStatus.paid) {
-      sendReceipt(appointment, client_profile, invoice);
+      sendReceipt(appointment, user, client_profile, invoice);
     }
 
     ctx.status = 200;
@@ -295,22 +288,8 @@ export class InvoiceAPI {
       throw new Error('Appointment missing for this invoice.');
     }
 
-    const appointment_date = format(
-      new Date(appointment.datetime_local),
-      'LLLL do',
-    );
-    const emailData = {
-      to: clientProfile.email,
-      subject: `Receipt for ${appointment_date}`,
-      html: constructEmail(invoiceReceiptTemplate, {
-        appointment_date,
-        tableContents: constructReceiptTableFromInvoice(invoice),
-      }),
-      text: `Thanks for your business! Your total was $${invoice.total_to_be_charged}.`,
-      // 'v:host': '',
-      // 'v:token': resetPasswordRequest.verification_token,
-    };
-    await orderEmail(emailData);
+    // a bit dangerous to rely on the currently logged in user for this polling operation but fine for now
+    sendReceipt(appointment, user, clientProfile, invoice);
 
     ctx.status = 200;
     ctx.body = invoice;
