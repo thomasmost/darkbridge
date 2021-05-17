@@ -60,12 +60,12 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: teddy-web-ecr
-          IMAGE_TAG: ${{ $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG }}
+          IMAGE_TAG: teddy_web_image_${{ github.sha }}
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-def-prod.json
           container-name: teddy-web-container-prod
-          image: ${{ steps.build-image.outputs.image }}
+          image: image::${{ steps.login-ecr.outputs.registry }}/teddy-web-ecr:teddy_web_image_${{ github.sha }}"
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
