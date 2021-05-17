@@ -37,15 +37,15 @@
         },
         {
           "name": "HOST_DOMAIN",
-          "value": "https://staging.callteddy.com"
+          "value": "https://app.callteddy.com"
         },
         {
           "name": "NODE_ENV",
-          "value": "staging"
+          "value": "production"
         },
         {
           "name": "MAILGUN_DOMAIN",
-          "value": "staging.callteddy.com"
+          "value": "app.callteddy.com"
         },
         {
           "name": "STRIPE_PUBLIC_KEY",
