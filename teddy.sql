@@ -63,6 +63,7 @@ create table `appointment` (
   created_at BIGINT NOT NULL,
   started_at BIGINT NULL,
   completed_at BIGINT NULL,
+  client_confirmed_at BIGINT NULL,
   service_provider_user_id VARCHAR(255) NOT NULL,
   client_profile_id VARCHAR(255) NOT NULL,
   parent_appointment_id VARCHAR(255) NULL,
