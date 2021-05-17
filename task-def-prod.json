@@ -3,7 +3,6 @@
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "image": "temp",
       "name": "teddy-web-container-prod",
       "memory": 200,
       "cpu": 10,
