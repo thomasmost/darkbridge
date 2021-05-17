@@ -1,9 +1,10 @@
 {
-  "family": "darkbridge-task-prod",
+  "family": "teddy-web-task-prod",
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "darkbridge-prod",
+      "image": "temp",
+      "name": "teddy-web-container-prod",
       "memory": 200,
       "cpu": 10,
       "essential": true,
@@ -16,45 +17,75 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "awslogs-ecs-darkbridge-prod",
+          "awslogs-group": "awslogs-ecs-teddy-web-task-prod",
           "awslogs-region": "us-east-1",
-          "awslogs-stream-prefix": "awslogs-ecs-darkbridge-prod"
+          "awslogs-stream-prefix": "awslogs-ecs-teddy-web-task-prod"
         }
       },
       "environment": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "value": "AKIA3ONY3EZIX3SUPW5X"
+        },
         {
           "name": "MYSQL_PORT",
           "value": "3306"
         },
         {
-          "name": "EXAMPLE_PUBLIC_VARIABLE",
-          "value": "Not sensitive"
+          "name": "MYSQL_USERNAME",
+          "value": "web"
+        },
+        {
+          "name": "HOST_DOMAIN",
+          "value": "https://staging.callteddy.com"
+        },
+        {
+          "name": "NODE_ENV",
+          "value": "staging"
+        },
+        {
+          "name": "MAILGUN_DOMAIN",
+          "value": "staging.callteddy.com"
+        },
+        {
+          "name": "STRIPE_PUBLIC_KEY",
+          "value": "pk_test_51IVJgbBWX0co0tBCEqhzufX0K5aEpFUgUqdUf66JSIC7Vggzi4bJkqt3EdpzHfNuWZEaHyYbXxKC9125gb7ZvYQI00U2V9Q1Fb"
         }
       ],
       "secrets": [
         {
-          "name": "EXAMPLE_SECRET_VARIABLE",
-          "valueFrom": "[[arn]]"
-        },
-        {
-          "name": "MYSQL_USERNAME",
-          "valueFrom": "[[arn]]"
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_FARGATE_SERVER_AWS_SECRET_KEY-kzu6Fx"
         },
         {
           "name": "MYSQL_HOST",
-          "valueFrom": "[[arn]]"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MYSQL_HOST-v01lbv"
         },
         {
           "name": "MYSQL_PASSWORD",
-          "valueFrom": "[[arn]]"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MYSQL_PASSWORD-5gMKpW"
+        },
+        {
+          "name": "IPGEOLOCATION_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_IPGEOLOCATION_API_KEY-F3rxGf"
+        },
+        {
+          "name": "GOOGLE_CLOUD_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_GOOGLE_CLOUD_API_KEY-eU5VSu"
+        },
+        {
+          "name": "STRIPE_SECRET_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_STRIPE_SECRET_KEY-zlqsGF"
+        },
+        {
+          "name": "MAILGUN_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MAILGUN_API_KEY-rSPzOG"
         }
       ]
     }
   ],
-  "executionRoleArn": "arn:aws:iam::921538683536:role/ecsTaskExecutionRole",
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
+  "executionRoleArn": "arn:aws:iam::786903541329:role/ecsTaskExecutionRole",
+  "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512"
 }

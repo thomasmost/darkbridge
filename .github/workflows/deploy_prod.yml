@@ -28,6 +28,14 @@ on: workflow_dispatch
 name: Deploy to Production
 
 jobs:
+  cancel-previous:
+    name: Cancel Prior Pending Deploys
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel workflow action
+        uses: styfle/cancel-workflow-action@0.7.0
+        with:
+          access_token: ${{ github.token }}
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -56,14 +64,14 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-def-prod.json
-          container-name: darkbridge-container
+          container-name: teddy-web-container-prod
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: darkbridge-service-prod
-          cluster: darkbridge-cluster-prod
+          service: teddy-web-service-staging
+          cluster: teddy-web-cluster-staging
           wait-for-service-stability: true
           wait-for-minutes: 20
