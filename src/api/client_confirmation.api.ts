@@ -31,11 +31,6 @@ import {
 import { StripeHelper } from '../helpers/stripe.helper';
 import Stripe from 'stripe';
 
-type BodyParameter = {
-  type: 'string' | 'integer' | 'boolean';
-  description: string;
-};
-
 const SESSION_NO_LONGER_VALID = 'This session is no longer valid';
 
 @prefix('/client_confirmation')

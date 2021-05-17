@@ -402,7 +402,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
       navigate,
     );
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('payment_method', event.target.checked ? 'cash' : 'credit_card');
+    setValue('payment_method', event.target.checked ? 'credit_card' : 'cash');
   };
   const setMaterials = (materials: ILineItem[]) => {
     let total = 0;
@@ -473,10 +473,10 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({
 
       <ToggleContainer>
         <div>
-          Paid in cash
+          Paid {payment_method === 'cash' ? 'in cash' : 'by card'}
           <Switch
             color="primary"
-            checked={payment_method === 'cash'}
+            checked={payment_method === 'credit_card'}
             onChange={handleChange}
           />
         </div>

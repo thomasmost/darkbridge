@@ -2,6 +2,13 @@ import { BadRequestError } from './error.helper';
 import { Invoice, InvoiceAttributes } from '../models/invoice.model';
 import { InvoiceItemAttributes } from '../models/invoice_item.model';
 import { kirk } from './log.helper';
+import { toMajorUnits } from './currency.helper';
+import { InvoiceItemType, InvoicePaymentMethod } from '../shared/enums';
+import { Appointment } from '../models/appointment.model';
+import { ClientProfile } from '../models/client_profile.model';
+import { format } from 'date-fns-tz';
+import { constructEmail, invoiceReceiptTemplate } from './email.helper';
+import { orderEmail } from '../task';
 
 export function totalToBePaidOut(invoice: InvoiceAttributes) {
   const {
@@ -44,7 +51,7 @@ export function validateInvoiceItem(item: InvoiceItemAttributes) {
       `Expected a numeric amount_in_minor_units; received a ${typeof amount_in_minor_units}`,
     );
   }
-  if (typeof quantity !== 'number') {
+  if (typeof quantity !== 'number' && Number.isNaN(parseInt(quantity, 10))) {
     throw new BadRequestError(
       `Expected a numeric quantity; received a ${typeof quantity}`,
     );
@@ -68,4 +75,139 @@ export function validateInvoice(invoice: Invoice) {
   validateAmountField(invoice, 'flat_rate');
   validateAmountField(invoice, 'minutes_billed');
   validateAmountField(invoice, 'days_billed');
+}
+
+export function timeRows(invoice: Invoice) {
+  let timeRows = '';
+  if (invoice.flat_rate) {
+    timeRows += `
+      <tr>
+        <td style="padding-bottom: 10px;">Appointment Fee</td>
+        <td style="padding-bottom: 10px; text-align: right;">$${toMajorUnits(
+          invoice.flat_rate,
+        )}</td>
+      </tr>
+    `;
+  }
+  if (invoice.minutes_billed) {
+    timeRows += `
+      <tr>
+        <td style="padding-bottom: 10px;">Time</td>
+        <td style="padding-bottom: 10px; text-align: right;">$${toMajorUnits(
+          Math.ceil((invoice.hourly_rate * invoice.minutes_billed) / 60),
+        )}</td>
+      </tr>
+    `;
+    return timeRows;
+  }
+  if (invoice.days_billed) {
+    timeRows += `
+      <tr>
+        <td style="padding-bottom: 10px;">Time</td>
+        <td style="padding-bottom: 10px; text-align: right;">$${toMajorUnits(
+          invoice.daily_rate * invoice.days_billed,
+        )}</td>
+      </tr>
+    `;
+  }
+  return timeRows;
+}
+
+export function materialsRows(invoice: Invoice) {
+  if (!invoice.invoice_items?.length) {
+    return '';
+  }
+  const { invoice_items } = invoice;
+  let materialsRows = '';
+  for (const item of invoice_items) {
+    if (item.type !== InvoiceItemType.materials) {
+      continue;
+    }
+    materialsRows += `
+      <tr>
+        <td style="padding-bottom: 10px;">${item.description}</td>
+        <td style="padding-bottom: 10px; text-align: right;">$${toMajorUnits(
+          item.quantity * item.amount_in_minor_units,
+        )}</td>
+      </tr>
+    `;
+  }
+  return materialsRows;
+}
+
+export function taxRows(invoice: Invoice) {
+  if (!invoice.invoice_items?.length) {
+    return '';
+  }
+  const { invoice_items } = invoice;
+  let taxRows = '';
+  for (const item of invoice_items) {
+    if (item.type !== InvoiceItemType.tax) {
+      continue;
+    }
+    taxRows += `
+      <tr>
+        <td style="padding-bottom: 10px;">${item.description}</td>
+        <td style="padding-bottom: 10px; text-align: right;">$${toMajorUnits(
+          item.amount_in_minor_units,
+        )}</td>
+      </tr>
+    `;
+  }
+  return taxRows;
+}
+
+export function processingFeeRow(invoice: Invoice) {
+  if (invoice.payment_method === InvoicePaymentMethod.cash) {
+    return '';
+  }
+  return `
+      <tr>
+        <td style="padding-bottom: 10px;">Processing Fee</td>
+        <td style="padding-bottom: 10px; text-align: right;">$${toMajorUnits(
+          invoice.processing_fee,
+        )}</td>
+      </tr>
+    `;
+}
+
+export function constructReceiptTableFromInvoice(invoice: Invoice) {
+  let tableRows = '';
+  tableRows += timeRows(invoice);
+  tableRows += materialsRows(invoice);
+  tableRows += taxRows(invoice);
+  tableRows += processingFeeRow(invoice);
+  tableRows += `
+  <tr style="border-top: 2px solid #101042;">
+    <td style="font-weight: 600; padding: 10px 0;">Total</td>
+    <td style="font-weight: 600; padding: 10px 0; text-align: right;">$${toMajorUnits(
+      invoice.total_to_be_charged,
+    )}</td>
+  </tr>`;
+  return `<tbody>${tableRows}</tbody>`;
+}
+
+export async function sendReceipt(
+  appointment: Appointment,
+  client_profile: ClientProfile,
+  invoice: Invoice,
+) {
+  const appointment_date = format(
+    new Date(appointment.datetime_local),
+    'LLLL do',
+  );
+  const emailData = {
+    to: client_profile.email,
+    subject: `Receipt for ${appointment_date}`,
+    html: constructEmail(invoiceReceiptTemplate, {
+      appointment_date,
+      tableContents: constructReceiptTableFromInvoice(invoice),
+    }),
+    text: `Thanks for your business! Your total was $${toMajorUnits(
+      invoice.total_to_be_charged,
+    )}.`,
+    // 'v:host': '',
+    // 'v:token': resetPasswordRequest.verification_token,
+  };
+  await orderEmail(emailData);
 }

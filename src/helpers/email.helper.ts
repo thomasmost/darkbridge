@@ -211,3 +211,14 @@ export const clientPaymentRequestTemplate = html` <h2 style="margin-top: 0;">
       Pay now
     </a>
   </div>`;
+
+export const invoiceReceiptTemplate = html`<h2 style="margin-top: 0;">
+    Payment received
+  </h2>
+  <div>Here's your receipt for service completed on ${'appointment_date'}.</div>
+  <div>
+    <table style="width: 100%; margin: 20px auto; border-collapse: collapse;">
+      ${'tableContents'}
+    </table>
+  </div>
+  <div>Thanks for your business!</div>`;
