@@ -19,6 +19,7 @@ export interface AppointmentAttributes {
   created_at: number;
   started_at: number;
   completed_at: number;
+  client_confirmed_at: number;
   // (future) in the future appointment requests might also be stored in this table;
   // we might then want a separate 'created_by_user_id' field
   service_provider_user_id: string;
@@ -76,6 +77,7 @@ export type AppointmentCreationAttributes = Omit<
   | 'created_at'
   | 'started_at'
   | 'completed_at'
+  | 'client_confirmed_at'
   | 'rating_of_client'
   | 'rating_of_service'
   | 'notes'
@@ -133,6 +135,7 @@ export class Appointment
   public readonly created_at!: number;
   public started_at!: number;
   public completed_at!: number;
+  public client_confirmed_at!: number;
 }
 
 export const AppointmentModel = Appointment.initWithPermissions(
@@ -160,6 +163,10 @@ export const AppointmentModel = Appointment.initWithPermissions(
       visible: toServiceProvider,
     },
     completed_at: {
+      type: DataTypes.NUMBER,
+      visible: toServiceProvider,
+    },
+    client_confirmed_at: {
       type: DataTypes.NUMBER,
       visible: toServiceProvider,
     },

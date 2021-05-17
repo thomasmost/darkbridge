@@ -163,7 +163,7 @@ export class ClientConfirmationAPI {
     await StripeHelper.addPrimaryPaymentMethod(client_profile_id, setupIntent);
     const appointment = await Appointment.findByPk(appointment_id);
     if (!appointment) throw Error();
-    await appointment.update({ client_confirmed: true });
+    await appointment.update({ client_confirmed_at: Date.now() });
     confirmation_request.fulfilled_at = Date.now();
     confirmation_request.fulfilled_with = 'confirmed_with_payment_details';
     await confirmation_request.save();
@@ -189,7 +189,7 @@ export class ClientConfirmationAPI {
 
     const appointment = await Appointment.findByPk(appointment_id);
     if (!appointment) throw Error();
-    await appointment.update({ client_confirmed: true });
+    await appointment.update({ client_confirmed_at: Date.now() });
     confirmation_request.fulfilled_at = Date.now();
     confirmation_request.fulfilled_with = 'confirmed_without_payment_details';
     await confirmation_request.save();
