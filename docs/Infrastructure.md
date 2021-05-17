@@ -34,7 +34,7 @@ Ensure that the `ecsTaskExecutionRole` role is available and can be assumed by t
 }
 ```
 
-Now register the task definition:
+Now register the task definition. **Note that you will need to add an `image` attribute under the `containerDefinition` with a temporary value (e.g. "temp") for the registration to succeed.** Delete this attribute after registering the task-definition, it will be filled in during deploys.
 
 ```bash
 aws ecs register-task-definition --region us-east-1 --cli-input-json file://$HOME/teddy/task-def-staging.json
@@ -55,7 +55,7 @@ Make sure to specify the cluster for your service
 E.g.
 
 ```bash
-aws ecs create-service --region us-east-1 --service-name teddy-web-service-staging --task-definition teddy-web-task-staging:1 --desired-count 2 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[ [[subnet-publicid1]], [[subnet-publicid2]] ],securityGroups=[ [[sg]] ]}" --load-balancers "targetGroupArn=[[arn]], containerName=teddy-web-container-staging, containerPort=80" --cluster teddy-web-cluster-staging --output json
+aws ecs create-service --region us-east-1 --service-name teddy-web-service-staging --task-definition teddy-web-task-staging:1 --desired-count 2 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[ [[subnet-private-id1]], [[subnet-private-id2]] ],securityGroups=[ [[sg]] ]}" --load-balancers "targetGroupArn=[[arn]], containerName=teddy-web-container-staging, containerPort=80" --cluster teddy-web-cluster-staging --output json
 ```
 
 ## Working with Environment Variables
@@ -76,6 +76,8 @@ See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/specifying-sens
 - RE: ENV VARIABLES, Fargate only supports secrets that are a single value, not the JSON or key value secrets. So choose OTHER when creating the secret and just put a single text value there.
 - Fargate **services** (see [creating the service](#create-a-fargate-service)) deployed to public subnets need to explicitly be told to expose a public IP address in order to connect to the internet and pull their container images from the registry. This can result in a `CannotPullContainerError`. **WARNING: this is a poor security practice in any case and should not be used for production setups** (see below).
 - Fargate services deployed to _private_ subnets don't need the assignPublicIp property to be included, but they will need a NAT gateway to allow for outbound traffic and an Application Load Balancer for inbound traffic. **This is the recommended practice for production-security setups.**
+- You may want to add an `--output json` flag to the ends of your aws CLI commands depending on your configuration
+- For a production-quality environment, the Fargate cluster should be deployed to **private subnets only**. The Fargate cluster should have its own security group accepting HTTP traffic from the load balancer, and the load balancer should have an outbound rule allowing HTTP traffic to the Fargate security group.
 
 ## Testing the Docker Image Locally
 
