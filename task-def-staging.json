@@ -44,7 +44,7 @@
         },
         {
           "name": "MAILGUN_DOMAIN",
-          "value": "staging.callteddy.com"
+          "value": "notifications.callteddy.com"
         },
         {
           "name": "STRIPE_PUBLIC_KEY",

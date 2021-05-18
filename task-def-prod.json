@@ -24,7 +24,7 @@
       "environment": [
         {
           "name": "AWS_ACCESS_KEY_ID",
-          "value": "AKIA3ONY3EZIX3SUPW5X"
+          "value": "AKIA3ONY3EZI4GG4TYLN"
         },
         {
           "name": "MYSQL_PORT",
@@ -44,17 +44,17 @@
         },
         {
           "name": "MAILGUN_DOMAIN",
-          "value": "app.callteddy.com"
+          "value": "notifications.callteddy.com"
         },
         {
           "name": "STRIPE_PUBLIC_KEY",
-          "value": "pk_test_51IVJgbBWX0co0tBCEqhzufX0K5aEpFUgUqdUf66JSIC7Vggzi4bJkqt3EdpzHfNuWZEaHyYbXxKC9125gb7ZvYQI00U2V9Q1Fb"
+          "value": "pk_live_51IVJgbBWX0co0tBCeWO0jH69QqAw5k1AvJr7pwcS2X0VMW47kEMvu35swikPxPCi9mTe2ikf18Cisz8jPJ64TXtk00qBhvj63V"
         }
       ],
       "secrets": [
         {
           "name": "AWS_SECRET_ACCESS_KEY",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_FARGATE_SERVER_AWS_SECRET_KEY-kzu6Fx"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:PROD_FARGATE_SERVER_AWS_SECRET_KEY-sidUgE"
         },
         {
           "name": "MYSQL_HOST",
@@ -74,11 +74,11 @@
         },
         {
           "name": "STRIPE_SECRET_KEY",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_STRIPE_SECRET_KEY-zlqsGF"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:PROD_STRIPE_SECRET_KEY-a9gA7w"
         },
         {
           "name": "MAILGUN_API_KEY",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MAILGUN_API_KEY-rSPzOG"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:MAILGUN_API_KEY-JKxzkz"
         }
       ]
     }
