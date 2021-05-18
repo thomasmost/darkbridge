@@ -71,7 +71,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: teddy-web-service-staging
-          cluster: teddy-web-cluster-staging
+          service: teddy-web-service-prod
+          cluster: teddy-web-cluster-prod
           wait-for-service-stability: true
           wait-for-minutes: 20
