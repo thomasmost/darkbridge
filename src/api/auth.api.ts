@@ -459,7 +459,7 @@ export class AuthAPI {
 
     await Promise.all([user.save(), verificationRequest.save()]);
 
-    return ctx.redirect('/');
+    return ctx.redirect('/email_verified');
   }
 
   @request('get', '/current_user')

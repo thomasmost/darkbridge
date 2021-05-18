@@ -10,6 +10,7 @@ import { AuthProvider } from '../AuthProvider';
 import { Logout } from '../pages/Logout';
 import { RequestPasswordReset } from '../pages/RequestPasswordReset';
 import { ResetPassword } from '../pages/ResetPassword';
+import { EmailVerified } from '../pages/EmailVerified';
 
 if (typeof window !== 'undefined') {
   require('react-toastify/dist/ReactToastify.css');
@@ -50,6 +51,7 @@ const UnauthorizedApp = () => {
         <Main>
           <Router>
             <Redirect from="/" to="register" />
+            <EmailVerified path="email_verified" />
             <Login path="login" />
             <Logout path="logout" />
             <Register path="register" />

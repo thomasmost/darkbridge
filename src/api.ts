@@ -368,3 +368,7 @@ api.get('/timezone', async (ctx) => {
   const { city, state } = ctx.request.query;
   ctx.body = await getTimeZone(city, state);
 });
+
+api.get('/node_env', async (ctx) => {
+  ctx.body = process.env.NODE_ENV;
+});
