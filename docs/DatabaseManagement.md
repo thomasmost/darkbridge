@@ -39,3 +39,7 @@ For each database instance (staging and prod, for example) you will need a separ
 - Run `yum install mysql` (may need `sudo`?)
 - Connect to your RDS database from the command line
 - Create your schema and run your setup script
+
+## Maintenance and Migrating
+
+1. Currently I am changing the route table to use the igw (Internet Gateway) instead of the nat gateway. This allows me to temporarily connect from my laptop. This is suboptimal and is not a long term solution.
