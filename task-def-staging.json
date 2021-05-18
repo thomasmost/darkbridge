@@ -43,6 +43,10 @@
           "value": "staging"
         },
         {
+          "name": "PROCESS_NAME",
+          "value": "fg-staging"
+        },
+        {
           "name": "WORKER_FUNCTION",
           "value": "worker-staging"
         },

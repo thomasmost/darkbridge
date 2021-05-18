@@ -14,6 +14,7 @@ export type SendEmailPayload = {
   'h:X-Mailgun-Variables'?: Record<string, string>;
 };
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 export const sendEmail = async (data: SendEmailPayload) => {
   if (!DOMAIN || !API_KEY) {
     kirk.warn(`Missing Mailgun Config:
@@ -40,9 +41,10 @@ You may encounter this error if calling sendEmail directly from the server, try 
     from,
   };
   if (process.env.DEV_EMAIL) {
+    const prefix = NODE_ENV === 'staging' ? 'STG' : 'DEV';
     kirk.warn(`Overriding with DEV_EMAIL: ${process.env.DEV_EMAIL}`);
     payload.to = process.env.DEV_EMAIL;
-    payload.subject = `DEV: ${payload.subject}`;
+    payload.subject = `${prefix}: ${payload.subject}`;
     payload.text = `Originally sent to ${data.to}...\n\n ${data.text}`;
     payload.html = `<strong>Originally sent to ${data.to}...</strong>
       <hr />

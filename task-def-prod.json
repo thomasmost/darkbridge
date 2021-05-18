@@ -43,6 +43,10 @@
           "value": "production"
         },
         {
+          "name": "PROCESS_NAME",
+          "value": "fg-prod"
+        },
+        {
           "name": "WORKER_FUNCTION",
           "value": "worker-prod"
         },
