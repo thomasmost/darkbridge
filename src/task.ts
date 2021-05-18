@@ -20,7 +20,9 @@ export async function assignTask(task: Task, data: unknown) {
 }
 
 export async function orderEmail(data: SendEmailPayload) {
-  kirk.info('Ordering an email to the worker lambda');
+  kirk.info('Ordering an email to the worker lambda:', {
+    subject: data.subject,
+  });
   if (process.env.NODE_ENV === 'test') {
     return;
   }
