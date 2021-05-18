@@ -2,7 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useAuthFactory, IAuthContext } from './useAuth';
 import { IUserDto, UserUpdateFields } from '../shared/user.dto';
 
-const unauthorizedRoutes = ['/', 'login', 'register', 'reset_password'];
+const unauthorizedRoutes = [
+  '/',
+  'login',
+  'register',
+  'reset_password',
+  'email_verified',
+];
 
 function getCurrentUser() {
   return fetch('/api/auth/current_user', {}).then(function (response) {

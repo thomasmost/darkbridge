@@ -29,6 +29,7 @@ import { RescheduleAppointment } from '../pages/RescheduleAppointment';
 import { PaymentFlow } from '../pages/PaymentFlow';
 import { ViewClients } from '../pages/ViewClients';
 import { EditClientProfile } from '../pages/EditClientProfile';
+import { EmailVerified } from '../pages/EmailVerified';
 
 const muiTheme = createMuiTheme({
   palette: {
@@ -112,6 +113,7 @@ const App = ({ isMobile }: { isMobile?: boolean }) => {
                     <Profile path="profile" />
                     <RescheduleAppointment path="reschedule-appointment/:appointment_id" />
                     <ViewClients path="clients" />
+                    <EmailVerified path="email_verified" />
                   </Router>
                 </Main>
               </ScrollWrapper>
