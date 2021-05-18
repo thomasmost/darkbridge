@@ -10,7 +10,7 @@ type Task = 'send_email' | 'ping';
 
 export async function assignTask(task: Task, data: unknown) {
   const params = {
-    FunctionName: 'worker-staging',
+    FunctionName: process.env.WORKER_FUNCTION || '',
     InvokeArgs: JSON.stringify({
       task,
       data,

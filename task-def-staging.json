@@ -43,6 +43,10 @@
           "value": "staging"
         },
         {
+          "name": "WORKER_FUNCTION",
+          "value": "worker-staging"
+        },
+        {
           "name": "MAILGUN_DOMAIN",
           "value": "notifications.callteddy.com"
         },

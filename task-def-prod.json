@@ -43,6 +43,10 @@
           "value": "production"
         },
         {
+          "name": "WORKER_FUNCTION",
+          "value": "worker-prod"
+        },
+        {
           "name": "MAILGUN_DOMAIN",
           "value": "notifications.callteddy.com"
         },
