@@ -1,10 +1,10 @@
 on: workflow_dispatch
 
-name: Deploy Lambda
+name: Deploy Lambda to Prod
 
 jobs:
   deploy-worker:
-    name: Deploy Lambda
+    name: Deploy Lambda to Prod
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -31,5 +31,5 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-east-1
-          function_name: worker-staging
+          function_name: worker-prod
           zip_file: bundle.zip
