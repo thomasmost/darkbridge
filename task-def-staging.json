@@ -79,10 +79,6 @@
         {
           "name": "STRIPE_SECRET_KEY",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_STRIPE_SECRET_KEY-zlqsGF"
-        },
-        {
-          "name": "MAILGUN_API_KEY",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:STAGING_MAILGUN_API_KEY-rSPzOG"
         }
       ]
     }

@@ -79,10 +79,6 @@
         {
           "name": "STRIPE_SECRET_KEY",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:PROD_STRIPE_SECRET_KEY-a9gA7w"
-        },
-        {
-          "name": "MAILGUN_API_KEY",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:786903541329:secret:MAILGUN_API_KEY-JKxzkz"
         }
       ]
     }

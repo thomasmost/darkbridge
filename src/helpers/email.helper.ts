@@ -17,7 +17,8 @@ export type SendEmailPayload = {
 export const sendEmail = async (data: SendEmailPayload) => {
   if (!DOMAIN || !API_KEY) {
     kirk.warn(`Missing Mailgun Config:
-Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email integration
+Add a MAILGUN_DOMAIN, MAILGUN_API_KEY, and DEV_EMAIL to start testing the email integration;
+You may encounter this error if calling sendEmail directly from the server, try task.orderEmail instead
     `);
     return;
   }
