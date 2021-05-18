@@ -16,7 +16,9 @@ For each environment (staging and prod, for example) you will need a new IAM Rol
 
 4. Run the deploy to push code to the new lambda
 
-5. Copy the Lambda ARN to configure the security policy next...
+5. Ensure that the necessary Environment Variables are configured on the lambda (e.g. MAILGUN_API_KEY)
+
+6. Copy the Lambda ARN to configure the security policy next...
 
 ## Connecting to a Worker
 
