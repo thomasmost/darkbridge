@@ -20,6 +20,7 @@ import { swaggerRefFromDefinitionName } from '../helpers/swagger.helper';
 import { authUser } from './middlewares';
 import { getNextAvailableAppointmentSlot } from '../helpers/appointment.helper';
 import { kirk } from '../helpers/log.helper';
+import { getRadiusForDay } from '../helpers/location.helper';
 
 @prefix('/calendar')
 @securityAll([{ token: [] }])
@@ -107,7 +108,7 @@ const dailyInfoFromData = (
     return {
       appointments,
       nextAppointment: null,
-      summary: `Looks like you don't have any appointments today. Time to kick back (or head over to your Calendar to add a new job)!`,
+      summary: `Looks like you don't have any appointments today. Add an appointment below, or enjoy the day off!"`,
     };
   }
   const lastAppointment = appointments[countAppointments - 1];
@@ -126,12 +127,16 @@ const dailyInfoFromData = (
   } = breakdownFromSortedListOfAppointments(appointmentsWithProfiles);
 
   const noun = countAppointments === 1 ? 'appointment' : 'appointments';
+  const radiusString =
+    countAppointments > 1
+      ? `, within a ${getRadiusForDay(appointments)} mile radius`
+      : '';
   if (countCompleted === 0) {
     return {
       appointments: appointmentsWithProfiles,
       nextAppointment,
       currentAppointment,
-      summary: `Today you have ${countAppointments} ${noun}, within a 15 mile radius. You should be done by ${doneBy}.`,
+      summary: `Today you have ${countAppointments} ${noun}${radiusString}. You should be done by ${doneBy}.`,
     };
   }
   if (countCompleted === countAppointments) {
@@ -146,7 +151,7 @@ const dailyInfoFromData = (
     appointments: appointmentsWithProfiles,
     nextAppointment,
     currentAppointment,
-    summary: `Today you have ${countAppointments} ${noun}, within a 15 mile radius. You've already knocked out ${countCompleted}! You should be done by ${doneBy} this evening.`,
+    summary: `Today you have ${countAppointments} ${noun}${radiusString}. You've already knocked out ${countCompleted}! You should be done by ${doneBy} this evening.`,
   };
 };
 

@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import { Client } from '@googlemaps/google-maps-services-js';
 import { kirk } from './log.helper';
+import { Appointment } from '../models/appointment.model';
 const GoogleCloudClient = new Client({});
 
 type IPGeolocationResponse = {
@@ -78,3 +79,80 @@ export const getGeocodingForAddress = async (
     return { error };
   }
 };
+
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+//:::                                                                         :::
+//:::  This routine calculates the distance between two points (given the     :::
+//:::  latitude/longitude of those points).                                   :::
+//:::                                                                         :::
+//:::  Definitions:                                                           :::
+//:::    South latitudes are negative, east longitudes are positive           :::
+//:::                                                                         :::
+//:::  Passed to function:                                                    :::
+//:::    lat1, lon1 = Latitude and Longitude of point 1 (in decimal degrees)  :::
+//:::    lat2, lon2 = Latitude and Longitude of point 2 (in decimal degrees)  :::
+//:::    unit = the unit you desire for results                               :::
+//:::           where: 'M' is statute miles (default)                         :::
+//:::                  'K' is kilometers                                      :::
+//:::                  'N' is nautical miles                                  :::
+//:::                                                                         :::
+
+//:::                                                                         :::
+//:::               GeoDataSource.com (C) All Rights Reserved 2018            :::
+//:::                                                                         :::
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+function distanceFromCoordinates(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+  unit: 'M' | 'K' | 'N',
+) {
+  if (lat1 == lat2 && lon1 == lon2) {
+    return 0;
+  } else {
+    const radlat1 = (Math.PI * lat1) / 180;
+    const radlat2 = (Math.PI * lat2) / 180;
+    const theta = lon1 - lon2;
+    const radtheta = (Math.PI * theta) / 180;
+    let dist =
+      Math.sin(radlat1) * Math.sin(radlat2) +
+      Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    if (dist > 1) {
+      dist = 1;
+    }
+    dist = Math.acos(dist);
+    dist = (dist * 180) / Math.PI;
+    dist = dist * 60 * 1.1515;
+    if (unit == 'K') {
+      dist = dist * 1.609344;
+    }
+    if (unit == 'N') {
+      dist = dist * 0.8684;
+    }
+    return dist;
+  }
+}
+
+export function getRadiusForDay(appointments: Appointment[]) {
+  let maxDistance = 0;
+  for (const a1 of appointments) {
+    for (const a2 of appointments) {
+      if (a1.id === a2.id) {
+        continue;
+      }
+      const distance = distanceFromCoordinates(
+        a1.latitude,
+        a1.longitude,
+        a2.latitude,
+        a2.longitude,
+        'M',
+      );
+      if (distance > maxDistance) {
+        maxDistance = distance;
+      }
+    }
+  }
+  return Math.ceil(maxDistance / 2);
+}
