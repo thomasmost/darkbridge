@@ -15,6 +15,7 @@ const workOptions = [
   { value: 'electrical', label: 'Electrical' },
   { value: 'hvac', label: 'HVAC' },
   { value: 'plumbing', label: 'Plumbing' },
+  { value: 'other', label: 'Other' },
 ];
 
 const selectStyles: Styles<IGenericOption | IsoState, false> = {

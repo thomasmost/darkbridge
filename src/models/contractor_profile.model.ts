@@ -11,6 +11,7 @@ export const PrimaryWork = {
   plumbing: 'plumbing',
   carpentry: 'carpentry',
   handiwork: 'handiwork',
+  other: 'other',
 };
 
 // These are all the attributes in the ContractorProfile model
