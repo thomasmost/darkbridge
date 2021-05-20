@@ -189,9 +189,8 @@ export class InvoiceAPI {
 
     unsaved_invoice.total_from_line_items = sumTotalFromLineItems;
     if (payment_method !== 'cash') {
-      unsaved_invoice.processing_fee = Math.ceil(
-        totalToBePaidOut(unsaved_invoice) * 0.04,
-      );
+      unsaved_invoice.processing_fee =
+        Math.ceil(totalToBePaidOut(unsaved_invoice) * 0.04) + 30;
     }
     const invoice = await unsaved_invoice.save();
     const itemPromises = unsaved_items.map((item) => item.save());

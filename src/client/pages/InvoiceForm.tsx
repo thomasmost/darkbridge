@@ -96,7 +96,7 @@ const costBreakdownInMinorUnits = (
   const postTaxTotal = preTaxTotal + taxTotal;
   const processing_fee = exclude_processing_fee
     ? 0
-    : Math.ceil(postTaxTotal * 0.04);
+    : Math.ceil(postTaxTotal * 0.04) + 30;
   return {
     hourlyTotal,
     dailyTotal,
