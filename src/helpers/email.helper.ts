@@ -120,7 +120,7 @@ export const resetPasswordTemplate = html`<h2 style="margin-top: 0;">
   </div>`;
 
 export const verifyEmailTemplate = html`<h2 style="margin-top: 0;">
-    Verify your email
+    Welcome to Teddy
   </h2>
   <div>
     To verify your email,
