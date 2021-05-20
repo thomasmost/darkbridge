@@ -7,7 +7,11 @@ import { InvoiceItemType, InvoicePaymentMethod } from '../shared/enums';
 import { Appointment } from '../models/appointment.model';
 import { ClientProfile } from '../models/client_profile.model';
 import { format } from 'date-fns-tz';
-import { constructEmail, invoiceReceiptTemplate } from './email.helper';
+import {
+  constructEmail,
+  invoiceReceiptTemplate,
+  transactionAlertTemplate,
+} from './email.helper';
 import { orderEmail } from '../task';
 import { User } from '../models/user.model';
 
@@ -232,4 +236,23 @@ export async function sendReceipt(
     // 'v:token': resetPasswordRequest.verification_token,
   };
   await orderEmail(emailData);
+
+  if (invoice.payment_method === InvoicePaymentMethod.credit_card) {
+    const total = toMajorUnits(invoice.total_to_be_charged);
+    const client = client_profile.full_name;
+    const alertData = {
+      to: 'receipts@callteddy.com',
+      subject: `CC Transaction Processed for $${total}`,
+      html: constructEmail(transactionAlertTemplate, {
+        appointment_date,
+        service_provider,
+        location,
+        tableContents: constructReceiptTableFromInvoice(invoice),
+        client,
+        total,
+      }),
+      text: `A transaction was processed for $${total}.`,
+    };
+    await orderEmail(alertData);
+  }
 }

@@ -229,3 +229,20 @@ export const invoiceReceiptTemplate = html`<h2 style="margin-top: 0;">
     </table>
   </div>
   <div>${'processingStatement'} Thanks for your business!</div>`;
+
+export const transactionAlertTemplate = html`<h2 style="margin-top: 0;">
+    An invoice was processed for $${'total'}
+  </h2>
+  <div style="margin-top: 20px;">
+    Service Provider: <strong>${'service_provider'}</strong>
+  </div>
+  <div>Client: <strong>${'client'}</strong></div>
+  <div>Appointment Date: <strong>${'appointment_date'}</strong></div>
+  <div>Location: <strong>${'location'}</strong></div>
+  <h3 style="margin-top: 20px;">Breakdown</h3>
+  <div>
+    <table style="width: 100%; margin: 20px auto; border-collapse: collapse;">
+      ${'tableContents'}
+    </table>
+  </div>
+  <div></div>`;
