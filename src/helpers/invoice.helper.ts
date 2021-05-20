@@ -14,6 +14,8 @@ import {
 } from './email.helper';
 import { orderEmail } from '../task';
 import { User } from '../models/user.model';
+import { DateTimeHelper } from './datetime.helper';
+import { Op } from 'sequelize';
 
 export function totalToBePaidOut(invoice: InvoiceAttributes) {
   const {
@@ -254,5 +256,37 @@ export async function sendReceipt(
       text: `A transaction was processed for $${total}.`,
     };
     await orderEmail(alertData);
+  }
+}
+
+export async function validateInvoiceAggregate(
+  user_id: string,
+  requestedInvoice: Invoice,
+) {
+  const invoices = await Invoice.findAll({
+    where: {
+      service_provider_user_id: user_id,
+      payment_method: InvoicePaymentMethod.credit_card,
+      created_at: {
+        [Op.gt]: DateTimeHelper.subtract(new Date(), 8, 'days').valueOf(),
+      },
+    },
+  });
+  let preTotal = 0;
+  for (const invoice of invoices) {
+    preTotal += invoice.total_to_be_charged;
+  }
+  const nextTotal = preTotal + requestedInvoice.total_to_be_charged;
+  const willAllow = nextTotal <= 2000000;
+  kirk.info('validateInvoiceAggregate', {
+    user_id,
+    preTotal,
+    nextTotal,
+    willAllow,
+  });
+  if (!willAllow) {
+    throw new BadRequestError(
+      'Cannot invoice more than $20,000 per week at this time',
+    );
   }
 }

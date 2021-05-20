@@ -31,6 +31,7 @@ import {
   sendReceipt,
   totalToBePaidOut,
   validateInvoice,
+  validateInvoiceAggregate,
   validateInvoiceItem,
 } from '../helpers/invoice.helper';
 // import { authUser } from './middlewares';
@@ -144,9 +145,8 @@ export class InvoiceAPI {
     );
 
     if (!ctx.user.verified_at) {
-      const user_id = user.id;
       kirk.warn('Unverified user creating invoice', {
-        user_id,
+        service_provider_user_id,
         appointment_id,
         payment_method,
       });
@@ -181,6 +181,7 @@ export class InvoiceAPI {
     });
 
     validateInvoice(unsaved_invoice);
+    await validateInvoiceAggregate(service_provider_user_id, unsaved_invoice);
 
     const { sumTotalFromLineItems, unsaved_items } = processLineItems(
       unsaved_invoice,
