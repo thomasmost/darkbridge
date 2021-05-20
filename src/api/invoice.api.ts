@@ -8,6 +8,7 @@ import {
   responses,
   operation,
   path,
+  middlewaresAll,
   // middlewaresAll,
 } from '@callteddy/koa-swagger-decorator';
 
@@ -40,6 +41,7 @@ import { User } from '../models/user.model';
 import Stripe from 'stripe';
 import { kirk } from '../helpers/log.helper';
 import { Appointment } from '../models/appointment.model';
+import { authUser } from './middlewares';
 
 const postParams = {
   appointment_id: {
@@ -92,7 +94,7 @@ const postParams = {
 
 @prefix('/invoice')
 @securityAll([{ token: [] }])
-// @middlewaresAll(authUser)
+@middlewaresAll(authUser)
 @tagsAll(['invoice'])
 export class InvoiceAPI {
   private static validateRequestBodyToCreate(
@@ -122,11 +124,6 @@ export class InvoiceAPI {
   })
   public static async createInvoice(ctx: AuthenticatedRequestContext) {
     const user = ctx.user;
-    if (!ctx.user) {
-      throw new AuthenticationError(
-        'Only logged in users may access the invoice api',
-      );
-    }
     const service_provider_user_id = user.id;
     const {
       appointment_id,
@@ -145,6 +142,15 @@ export class InvoiceAPI {
       minutes_billed,
       days_billed,
     );
+
+    if (!ctx.user.verified_at) {
+      const user_id = user.id;
+      kirk.warn('Unverified user creating invoice', {
+        user_id,
+        appointment_id,
+        payment_method,
+      });
+    }
 
     // For now users can only invoice their own appointments
     const appointment = await loadAndAuthorizeAppointment(appointment_id, user);
@@ -309,11 +315,6 @@ export class InvoiceAPI {
     ...baseCodes([401, 404]),
   })
   public static async getInvoiceById(ctx: AuthenticatedRequestContext) {
-    if (!ctx.user) {
-      throw new AuthenticationError(
-        'Only logged in users may access the invoice api',
-      );
-    }
     const { id } = ctx.validatedParams;
     const invoicePromise = Invoice.findByPk(id);
     const itemPromise = InvoiceItem.findAll({

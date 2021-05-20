@@ -71,6 +71,10 @@ export function validateInvoiceItem(item: InvoiceItemAttributes) {
 
 export function validateInvoice(invoice: Invoice) {
   kirk.info('Validating the invoice...');
+  if (invoice.total_to_be_charged > 500000) {
+    kirk.error('Invoice total greater than $5000');
+    throw new BadRequestError(`Invoices cannot exceed $5000`);
+  }
   validateAmountField(invoice, 'hourly_rate');
   validateAmountField(invoice, 'daily_rate');
   validateAmountField(invoice, 'flat_rate');
