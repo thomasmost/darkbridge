@@ -108,7 +108,7 @@ const dailyInfoFromData = (
     return {
       appointments,
       nextAppointment: null,
-      summary: `Looks like you don't have any appointments today. Add an appointment below, or enjoy the day off!"`,
+      summary: `Looks like you don't have any appointments today. Add an appointment below, or enjoy the day off!`,
     };
   }
   const lastAppointment = appointments[countAppointments - 1];
