@@ -12,6 +12,8 @@ create table `user` (
   password_hash varchar(255) NULL,
   password_salt varchar(255) NULL,
   stripe_express_account_id varchar(255) NULL,
+  stripe_charges_enabled TINYINT NOT NULL default 0,
+  stripe_details_submitted TINYINT NOT NULL default 0,
   UNIQUE KEY(email),
   UNIQUE KEY(recovery_email)
 );
