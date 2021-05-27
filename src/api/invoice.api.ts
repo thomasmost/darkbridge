@@ -43,6 +43,7 @@ import Stripe from 'stripe';
 import { kirk } from '../helpers/log.helper';
 import { Appointment } from '../models/appointment.model';
 import { authUser } from './middlewares';
+import { validateAndUpdateUserStripeConnection } from '../helpers/user.helper';
 
 const postParams = {
   appointment_id: {
@@ -111,6 +112,33 @@ export class InvoiceAPI {
     }
   }
 
+  private static validateUserForInvoiceCreation(
+    user: User,
+    payment_method: InvoicePaymentMethod,
+  ) {
+    const service_provider_user_id = user.id;
+    if (
+      payment_method === InvoicePaymentMethod.credit_card &&
+      !user.stripe_charges_enabled
+    ) {
+      kirk.warn(
+        'User without charges enabled tried to create credit card invoice',
+        {
+          service_provider_user_id,
+        },
+      );
+      throw new BadRequestError(
+        'You have to finish setting up Stripe before accepting credit card payments',
+      );
+    }
+    if (!user.verified_at) {
+      kirk.warn('Unverified user creating invoice', {
+        service_provider_user_id,
+        payment_method,
+      });
+    }
+  }
+
   // eslint-disable-next-line max-lines-per-function
   @request('post', '')
   @operation('apiInvoice_create')
@@ -124,6 +152,14 @@ export class InvoiceAPI {
     ...baseCodes([401, 405]),
   })
   public static async createInvoice(ctx: AuthenticatedRequestContext) {
+    try {
+      ctx.user = await validateAndUpdateUserStripeConnection(ctx.user);
+    } catch (err) {
+      kirk.error(
+        'Validating the user stripe connection failed due to an error:',
+        err,
+      );
+    }
     const user = ctx.user;
     const service_provider_user_id = user.id;
     const {
@@ -143,14 +179,7 @@ export class InvoiceAPI {
       minutes_billed,
       days_billed,
     );
-
-    if (!ctx.user.verified_at) {
-      kirk.warn('Unverified user creating invoice', {
-        service_provider_user_id,
-        appointment_id,
-        payment_method,
-      });
-    }
+    InvoiceAPI.validateUserForInvoiceCreation(user, payment_method);
 
     // For now users can only invoice their own appointments
     const appointment = await loadAndAuthorizeAppointment(appointment_id, user);
