@@ -20,6 +20,10 @@ export type StripeAddress = {
 const usPhoneRegex = /^(1?)([0-9]{3}|[0-9]{3})[0-9]{3}[0-9]{4}$/;
 
 export abstract class StripeHelper {
+  // *********
+  // Accounts
+  // *********
+
   private static async generateAccountLink(accountID: string, origin: string) {
     return stripe.accountLinks
       .create({
@@ -121,6 +125,28 @@ export abstract class StripeHelper {
     }
   }
 
+  public static async getAccountDetails(stripe_express_account_id: string) {
+    kirk.info('Invoked: StripeHelper.getAccountDetails');
+    try {
+      const account = await stripe.accounts.retrieve(stripe_express_account_id);
+      const { charges_enabled, details_submitted } = account;
+      kirk.info('StripeHelper.getAccountDetails', {
+        account,
+        charges_enabled,
+        details_submitted,
+      });
+      return { account };
+    } catch (error) {
+      // Error code will be authentication_required if authentication is needed
+      kirk.error('Error code is: ', error.code);
+      return { error };
+    }
+  }
+
+  // *********
+  // Customers
+  // *********
+
   public static async createCustomer(
     name: string,
     email: string,
@@ -172,6 +198,10 @@ export abstract class StripeHelper {
     await client_profile.save();
   }
 
+  // *********
+  // Payments
+  // *********
+
   public static async chargeExistingPaymentMethod(
     stripe_customer_id: string,
     stripe_payment_method_id: string,
@@ -214,7 +244,6 @@ export abstract class StripeHelper {
       return { error };
     }
   }
-
   public static async createPendingCharge(
     stripe_customer_id: string,
     stripe_service_provider_account_id: string,
