@@ -20,6 +20,8 @@ export interface UserAttributes {
   password_hash: string;
   password_salt: string;
   stripe_express_account_id: string;
+  stripe_charges_enabled: boolean;
+  stripe_details_submitted: boolean;
   has_connected_stripe: boolean;
   verified_at: number;
   contractor_profile?: ContractorProfile;
@@ -35,6 +37,8 @@ type UserCreationAttributes = Optional<
   | 'given_name'
   | 'phone'
   | 'stripe_express_account_id'
+  | 'stripe_charges_enabled'
+  | 'stripe_details_submitted'
   | 'has_connected_stripe'
 >;
 
@@ -49,6 +53,8 @@ export class User
   public family_name!: string;
   public given_name!: string; // for nullable fields
   public stripe_express_account_id!: string;
+  public stripe_charges_enabled!: boolean;
+  public stripe_details_submitted!: boolean;
   public has_connected_stripe!: boolean;
 
   // timestamps
@@ -113,6 +119,14 @@ export const UserModel = User.initWithPermissions(
     },
     stripe_express_account_id: {
       type: DataTypes.STRING,
+      visible: false,
+    },
+    stripe_charges_enabled: {
+      type: DataTypes.BOOLEAN,
+      visible: false,
+    },
+    stripe_details_submitted: {
+      type: DataTypes.BOOLEAN,
       visible: false,
     },
     has_connected_stripe: {
