@@ -67,11 +67,11 @@ jobs:
           container-name: darkbridge-container-prod
           image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: darkbridge-service-prod
-        cluster: darkbridge-cluster-prod
-        wait-for-service-stability: true
-        wait-for-minutes: 20
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: darkbridge-service-prod
+          cluster: darkbridge-cluster-prod
+          wait-for-service-stability: true
+          wait-for-minutes: 20
