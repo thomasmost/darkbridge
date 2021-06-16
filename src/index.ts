@@ -24,6 +24,7 @@ import {
 } from './api/auth.api';
 import { consumeToken } from './helpers/auth_token.helper';
 import { ssr } from './ssr';
+import { SemiAuthenticatedRequestContext } from './api/types';
 
 const app = new Koa();
 const router = new Router();
@@ -53,7 +54,10 @@ app.use(async (ctx, next) => {
 api.post('/register', register);
 api.get('/verify_email', verifyEmail);
 api.post('/login', login);
-api.get('/current_user', (ctx) => (ctx.body = (ctx as any).user));
+api.get(
+  '/current_user',
+  (ctx) => (ctx.body = (ctx as SemiAuthenticatedRequestContext).user),
+);
 
 api.get('/do_math', (ctx) => {
   const { x, y } = ctx.request.query;

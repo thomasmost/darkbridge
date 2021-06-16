@@ -34,6 +34,7 @@ async function registerUser(
       confirm_password,
     }),
   });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = (await result.json()) as { token: string; user: any };
   clientTokenStore.set(data.token);
   return data.user;
