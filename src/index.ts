@@ -1,16 +1,10 @@
 import bodyParser from 'koa-bodyparser';
 import dotenv from 'dotenv';
-import fs from 'fs';
-import util from 'util';
 import Koa from 'koa';
 import path from 'path';
-import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 import Router from 'koa-router';
 import serveStatic from 'koa-static';
 import { createHttpTerminator } from 'http-terminator';
-
-import { ServerLocation } from '@reach/router';
 
 import request from 'request';
 
@@ -29,6 +23,7 @@ import {
   verifyEmail,
 } from './api/auth.api';
 import { consumeToken } from './helpers/auth_token.helper';
+import { ssr } from './ssr';
 
 const app = new Koa();
 const router = new Router();
@@ -89,21 +84,7 @@ router.get(/\//, async (ctx) => {
     ctx.status = 400;
     return;
   }
-  const app = ReactDOMServer.renderToString(
-    <ServerLocation url={ctx.req.url}>
-      <App />
-    </ServerLocation>,
-  );
-
-  console.log(path.resolve('./views/index.html'));
-  const indexFile = path.resolve('./views/index.html');
-  const data = await util.promisify(fs.readFile)(indexFile, 'utf8');
-
-  return (ctx.body = data.replace(
-    '<div id="root"></div>',
-    `<div id="root">${app}</div>
-<script src="/build/app.js"></script>`,
-  ));
+  await ssr(ctx, App, 'app.js');
 });
 
 app.use(serveStatic(path.resolve('./public')));
