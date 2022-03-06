@@ -156,10 +156,10 @@ create table `client_profile` (
   address_postal_code VARCHAR(255) NOT NULL,
   timezone VARCHAR(255) NOT NULL,
   timezone_offset TINYINT NOT NULL,
-  coordinates POINT NULL,
+  coordinates POINT NOT NULL,
   stripe_customer_id VARCHAR(255) NULL,
   primary_payment_method_id VARCHAR(255) NULL,
-  -- SPATIAL INDEX `SPATIAL` (`coordinates`),
+  SPATIAL INDEX `SPATIAL` (`coordinates`),
   UNIQUE KEY(user_id)
 );
 

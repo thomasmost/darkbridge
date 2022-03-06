@@ -4,7 +4,7 @@ import { kirk } from './helpers/log.helper';
 
 const { MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT } = process.env;
 
-if (!MYSQL_HOST || !MYSQL_PORT || !MYSQL_USERNAME || !MYSQL_PASSWORD) {
+if (!MYSQL_HOST || !MYSQL_PORT || !MYSQL_USERNAME) {
   throw Error('Missing config');
 }
 
@@ -14,6 +14,6 @@ export const sequelize = new Sequelize({
   host: MYSQL_HOST,
   port: parseInt(MYSQL_PORT),
   username: MYSQL_USERNAME,
-  password: MYSQL_PASSWORD,
+  password: '',
   logging: process.env.NODE_ENV === 'test' ? false : (msg) => kirk.debug(msg),
 });

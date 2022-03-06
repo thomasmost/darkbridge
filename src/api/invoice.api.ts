@@ -511,16 +511,7 @@ async function handleAutomaticPayment(
 
 async function handlePaymentIntentPromise(
   invoice: Invoice,
-  payment_intent_promise: Promise<
-    | {
-        paymentIntent: Stripe.Response<Stripe.PaymentIntent>;
-        error?: undefined;
-      }
-    | {
-        paymentIntent: undefined;
-        error: Error;
-      }
-  >,
+  payment_intent_promise: any
 ) {
   const res = await payment_intent_promise;
   if (res.error) {
@@ -536,7 +527,7 @@ async function handlePaymentIntentPromise(
       kirk.info('Payment succeeded', {
         stripe_payment_intent_id,
       });
-      await invoice.update({ status: 'paid', stripe_payment_intent_id });
+      await invoice.update({ status: InvoiceStatus.paid, stripe_payment_intent_id });
     } else {
       kirk.info('Payment intent created but did not succeed', {
         stripe_payment_intent_id,

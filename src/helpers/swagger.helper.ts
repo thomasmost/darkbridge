@@ -80,7 +80,7 @@ export const swaggerPropertyFromAttribute = (
     } as SwaggerProperty;
   }
   try {
-    const typeString = attribute.type.toString({});
+    const typeString = attribute.type.toString();
     switch (typeString) {
       case 'VARCHAR(255)':
         swaggerProperty.type = 'string';

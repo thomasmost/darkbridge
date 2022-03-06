@@ -39,6 +39,8 @@ export const createClientProfileForServiceProvider = async (
   //   coordinates: [location.lat, location.lng],
   // };
 
+  const coordinates =  { type: 'Point', coordinates: [location.lat,location.lng]};
+
   const profile = await ClientProfile.create({
     created_by_user_id,
     email,
@@ -51,11 +53,8 @@ export const createClientProfileForServiceProvider = async (
     address_postal_code,
     timezone,
     timezone_offset,
+    coordinates
   });
-
-  await sequelize.query(
-    `update client_profile set coordinates=ST_GeomFromText('POINT(${location.lat} ${location.lng})') WHERE id='${profile.id}'`,
-  );
 
   if (create_stripe_customer) {
     const name = `${given_name} ${family_name}`;
